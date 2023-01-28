@@ -7,7 +7,7 @@ export class AuthController {
 
   @Get()
   getAuth() {
-    return this.service.getHello();
+    return this.service.getAuth();
   }
   /*  @Get('lobby')
   getLobby() {
