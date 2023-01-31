@@ -6,6 +6,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Put,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -36,4 +37,9 @@ export class UsersController {
   deleteUserById(@Param('id', ParseIntPipe) id: number) {
     return this.userService.deleteUser(id);
   }
+
+  /*  @Put('update')
+  updateUser() {
+    return 'TBD';
+  } */
 }
