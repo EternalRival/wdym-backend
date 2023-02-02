@@ -1,3 +1,4 @@
-export interface IJwtToken {
+export interface ILoginResponse {
   access_token: string;
+  image: string;
 }

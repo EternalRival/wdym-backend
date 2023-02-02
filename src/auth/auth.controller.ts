@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
-import { IJwtToken } from 'src/types/auth';
+import { ILoginResponse } from 'src/types/auth';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
 import { LocalAuthGuard } from './guard/local-auth.guard';
@@ -10,7 +10,7 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('auth/login')
-  login(@Request() request): IJwtToken {
+  login(@Request() request): Promise<ILoginResponse> {
     return this.authService.login(request.user);
   }
 
@@ -22,7 +22,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Post('refresh')
-  refreshToken(@Request() request): IJwtToken {
+  refreshToken(@Request() request): Promise<ILoginResponse> {
     return this.authService.login(request.user);
   }
 }
