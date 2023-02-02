@@ -19,6 +19,10 @@ export class UsersService {
     return this.usersRepository.findOneBy({ id });
   }
 
+  findUserByUsername(username: string): Promise<User> {
+    return this.usersRepository.findOneBy({ username });
+  }
+
   createUser(createUserDto: CreateUserDto): Promise<User> {
     const user = this.usersRepository.create(createUserDto);
     return this.usersRepository.save(user);
@@ -27,10 +31,4 @@ export class UsersService {
   deleteUserById(id: number): Promise<DeleteResult> {
     return this.usersRepository.delete(id);
   }
-
-  /* 
-  findUserByLogin(login: string) {
-    return this.userRepository.findOneBy({ login });
-  }
- */
 }
