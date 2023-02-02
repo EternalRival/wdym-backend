@@ -6,40 +6,36 @@ import {
   Param,
   ParseIntPipe,
   Post,
-  Put,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { CreateUserDto } from './users.dto';
+import { DeleteResult } from 'typeorm';
+import { CreateUserDto } from './dto/create-user.dto';
+import { User } from './entity/users.entity';
 import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly userService: UsersService) {}
+  constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  getUsers() {
-    return this.userService.getUsers();
+  findAllUsers(): Promise<User[]> {
+    return this.usersService.findAllUsers();
   }
 
   @Get('id/:id')
-  findUserById(@Param('id', ParseIntPipe) id: number) {
-    return this.userService.findUserById(id);
+  findUserById(@Param('id', ParseIntPipe) id: number): Promise<User> {
+    return this.usersService.findUserById(id);
   }
 
   @Post('create')
   @UsePipes(ValidationPipe)
-  createUser(@Body() createUserDto: CreateUserDto) {
-    return this.userService.createUser(createUserDto);
+  createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
+    return this.usersService.createUser(createUserDto);
   }
 
   @Delete('id/:id')
-  deleteUserById(@Param('id', ParseIntPipe) id: number) {
-    return this.userService.deleteUser(id);
+  deleteUserById(@Param('id', ParseIntPipe) id: number): Promise<DeleteResult> {
+    return this.usersService.deleteUserById(id);
   }
-
-  /*  @Put('update')
-  updateUser() {
-    return 'TBD';
-  } */
 }

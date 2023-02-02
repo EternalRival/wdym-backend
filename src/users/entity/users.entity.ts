@@ -5,9 +5,9 @@ export class User {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
   id: number;
 
-  @Column({ nullable: false, unique: true, length: 24, default: 'Player' })
-  login: string;
+  @Column({ nullable: false, unique: true, length: 24 })
+  username: string;
 
-  @Column({ nullable: false, length: 50, default: '' })
+  @Column({ nullable: false, length: 50 })
   password: string;
 }
