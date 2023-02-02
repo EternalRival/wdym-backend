@@ -10,8 +10,8 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { DeleteResult } from 'typeorm';
-import { CreateUserDto } from './create-user.dto';
-import { User } from './users.entity';
+import { CreateUserDto } from './dto/create-user.dto';
+import { User } from './entity/users.entity';
 import { UsersService } from './users.service';
 
 @Controller('users')
