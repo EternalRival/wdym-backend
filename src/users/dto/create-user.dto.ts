@@ -11,6 +11,5 @@ export class CreateUserDto {
   @MaxLength(20)
   password: string;
 
-  @IsUrl()
   image: string;
 }
