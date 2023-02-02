@@ -19,4 +19,10 @@ export class AuthController {
   getProfile(@Request() request) {
     return request.user;
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('refresh')
+  refreshToken(@Request() request): IJwtToken {
+    return this.authService.login(request.user);
+  }
 }
