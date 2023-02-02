@@ -24,9 +24,9 @@ export class UsersService {
     return this.usersRepository.findOneBy({ username });
   }
 
-  async isUsernameExistsInUsers(username: string) {
-    // TODO refactor
-    return Boolean(await this.usersRepository.findOneBy({ username }));
+  async isUsernameExistsInUsers(username: string): Promise<{ value: boolean }> {
+    const value = Boolean(await this.usersRepository.findOneBy({ username }));
+    return { value };
   }
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {

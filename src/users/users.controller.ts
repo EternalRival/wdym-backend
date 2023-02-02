@@ -18,8 +18,8 @@ export class UsersController {
     return this.usersService.findUserById(id);
   }
 
-  @Get('user/:username')
-  isUsernameExistsInUsers(@Param('username') username: string): Promise<boolean> {
+  @Get('user/:username') // TODO заменить user
+  isUsernameExistsInUsers(@Param('username') username: string): Promise<{ value: boolean }> {
     return this.usersService.isUsernameExistsInUsers(username);
   }
 
