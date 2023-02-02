@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { compare } from 'bcrypt';
 import { IJwtToken } from 'src/types/auth';
+import { User } from 'src/users/entity/users.entity';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
@@ -10,18 +12,18 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  // TODO заменить на хешированные пароли
-  async validateUser(username: string, password: string) {
+  async validateUser(username: string, password: string): Promise<User> {
     const user = await this.usersService.findUserByUsername(username);
-    if (user && user.password === password) {
-      const { password, ...result } = user;
-      return result;
+
+    if (user && (await compare(password, user.password))) {
+      delete user.password;
+      return user;
     }
     return null;
   }
 
-  login(user): IJwtToken {
-    const payload = { username: user.username, sub: user.userId };
+  login(user: User): IJwtToken {
+    const payload = { username: user.username, sub: user.id };
     return { access_token: this.jwtService.sign(payload) };
   }
 }
