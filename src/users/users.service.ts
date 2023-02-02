@@ -24,6 +24,11 @@ export class UsersService {
     return this.usersRepository.findOneBy({ username });
   }
 
+  async isUsernameExistsInUsers(username: string) {
+    // TODO refactor
+    return Boolean(await this.usersRepository.findOneBy({ username }));
+  }
+
   async createUser(createUserDto: CreateUserDto): Promise<User> {
     const { username, password } = createUserDto;
     const encrypted = await hash(password, Math.random());

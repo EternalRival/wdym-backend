@@ -18,6 +18,11 @@ export class UsersController {
     return this.usersService.findUserById(id);
   }
 
+  @Get('user/:username')
+  isUsernameExistsInUsers(@Param('username') username: string): Promise<boolean> {
+    return this.usersService.isUsernameExistsInUsers(username);
+  }
+
   @Post('create')
   @UsePipes(ValidationPipe)
   createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
