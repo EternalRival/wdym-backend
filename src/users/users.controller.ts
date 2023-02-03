@@ -11,10 +11,12 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { CreateUserDto } from './user/create-user.dto';
 import { User } from './user/user.entity';
 import { UsersService } from './users.service';
 
+@ApiTags('Users')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -31,18 +33,17 @@ export class UsersController {
   }
 
   @Get('id/:id')
-  private findUserById(@Param('id', ParseIntPipe) id: User['id']): Promise<User> {
+  private findUserById(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return this.usersService.findUserById(id);
   }
+
   @Delete('id/:id')
-  private deleteUserById(@Param('id', ParseIntPipe) id: User['id']): Promise<User> {
+  private deleteUserById(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return this.usersService.deleteUserById(id);
   }
+
   @Put('id/:id')
-  private updateUserById(
-    @Param('id', ParseIntPipe) id: User['id'],
-    @Body() createUserDto: CreateUserDto,
-  ): Promise<User> {
+  private updateUserById(@Param('id', ParseIntPipe) id: number, @Body() createUserDto: CreateUserDto): Promise<User> {
     return this.usersService.updateUserById(id, createUserDto);
   }
 
