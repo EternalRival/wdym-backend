@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcrypt';
-import { ILoginResponse } from '../types/auth';
+import { Response } from 'express';
+import { AccessToken } from '../types/auth';
 import { LoginUserDto } from '../users/user/login-user.dto';
 import { User } from '../users/user/user.entity';
 import { UsersService } from '../users/users.service';
@@ -19,9 +20,22 @@ export class AuthService {
     return null;
   }
 
-  public async login(login: LoginUserDto): Promise<ILoginResponse> {
-    const { id, image, username } = await this.usersService.findUserByUsername(login.username);
-    const payload = { sub: id, image, username };
-    return { access_token: this.jwtService.sign(payload) };
+  public async generateToken(username: User['username']): Promise<AccessToken> {
+    const entity = await this.usersService.findUserByUsername(username);
+    const payload = { sub: entity.id, image: entity.image, username: entity.username };
+    return this.jwtService.sign(payload);
+  }
+
+  public login(login: LoginUserDto): Promise<AccessToken> {
+    const token = this.generateToken(login.username);
+    return token;
+  }
+  public refreshToken(login: LoginUserDto): Promise<AccessToken> {
+    const token = this.generateToken(login.username);
+    return token;
+  }
+
+  public setCookies(response: Response, token: AccessToken, hours: number): void {
+    response.cookie('access_token', token, { maxAge: 3600000 * hours, httpOnly: true });
   }
 }
