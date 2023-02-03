@@ -1,7 +1,6 @@
-import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
+import { Controller, Post, Request, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { ILoginResponse } from '../types/auth';
-import { User } from '../users/user/user.entity';
+import { ILoginRequest, ILoginResponse } from '../types/auth';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
 import { LocalAuthGuard } from './guard/local-auth.guard';
@@ -11,21 +10,24 @@ import { LocalAuthGuard } from './guard/local-auth.guard';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  /*  @ApiBody({schema:{}}) */
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  private login(@Request() request: { user: User }): Promise<ILoginResponse> {
-    return this.authService.login(request.user);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Get('profile')
-  private getProfile(@Request() request: { user: unknown }): unknown {
-    return request.user;
+  public login(@Request() { user }: ILoginRequest): Promise<ILoginResponse> {
+    return this.authService.login(user);
   }
 
   @UseGuards(JwtAuthGuard)
   @Post('refresh')
-  private refreshToken(@Request() request: { user: User }): Promise<ILoginResponse> {
-    return this.authService.login(request.user);
+  public refreshToken(@Request() { user }: ILoginRequest): Promise<ILoginResponse> {
+    return this.authService.login(user);
   }
+
+  //? YAGNI
+  /*
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  public getProfile(@Request() request: Request): Request['user'] {
+    return request.user;
+  } */
 }
