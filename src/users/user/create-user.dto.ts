@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsUrl, MaxLength, MinLength } from 'class-validator';
+import { IsNotEmpty, MaxLength, MinLength } from 'class-validator';
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -11,5 +11,5 @@ export class CreateUserDto {
   @MaxLength(20)
   public password: string;
 
-  private image: string;
+  public image: string;
 }
