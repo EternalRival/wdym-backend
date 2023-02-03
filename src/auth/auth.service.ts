@@ -21,7 +21,7 @@ export class AuthService {
 
   public async login(user: User): Promise<ILoginResponse> {
     const { id, image, username } = await this.usersService.findUserByUsername(user.username);
-    const payload = { username, sub: id };
-    return { access_token: this.jwtService.sign(payload), image };
+    const payload = { sub: id, image, username };
+    return { access_token: this.jwtService.sign(payload) };
   }
 }
