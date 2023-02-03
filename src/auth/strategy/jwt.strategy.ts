@@ -12,7 +12,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       secretOrKey: configService.get('JWT_SECRET'),
     });
   }
-  validate(payload) {
+  private validate(payload: { sub: unknown; username: unknown }): unknown {
     return { userId: payload.sub, username: payload.username };
   }
 }

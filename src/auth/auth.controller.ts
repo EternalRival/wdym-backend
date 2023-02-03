@@ -1,5 +1,6 @@
 import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
-import { ILoginResponse } from 'src/types/auth';
+import { ILoginResponse } from '../types/auth';
+import { User } from '../users/entity/users.entity';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
 import { LocalAuthGuard } from './guard/local-auth.guard';
@@ -10,19 +11,19 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('auth/login')
-  login(@Request() request): Promise<ILoginResponse> {
+  private login(@Request() request: { user: User }): Promise<ILoginResponse> {
     return this.authService.login(request.user);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('profile')
-  getProfile(@Request() request) {
+  private getProfile(@Request() request: { user: unknown }): unknown {
     return request.user;
   }
 
   @UseGuards(JwtAuthGuard)
   @Post('refresh')
-  refreshToken(@Request() request): Promise<ILoginResponse> {
+  private refreshToken(@Request() request: { user: User }): Promise<ILoginResponse> {
     return this.authService.login(request.user);
   }
 }

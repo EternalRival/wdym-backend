@@ -4,12 +4,12 @@ export class CreateUserDto {
   @IsNotEmpty()
   @MinLength(4)
   @MaxLength(24)
-  username: string;
+  public username: string;
 
   @IsNotEmpty()
   @MinLength(8)
   @MaxLength(20)
-  password: string;
+  public password: string;
 
-  image: string;
+  private image: string;
 }
