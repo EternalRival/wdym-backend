@@ -34,12 +34,17 @@ export class UsersService {
   }
 
   public async updateUserById(id: User['id'], createUserDto: CreateUserDto): Promise<User> {
+    const user = structuredClone(createUserDto);
+    if ('password' in user) {
+      user.password = await hash(user.password, Math.random());
+    }
+
     const entity = await this.findUserById(id);
     if (!entity) {
       teapot(`updateUser failed: can't find user ${id}`);
     }
     return this.usersRepository
-      .save({ ...entity, ...createUserDto })
+      .save({ ...entity, ...user })
       .catch((e) => teapot(`updateUser failed: ${e.detail || e.message}`));
   }
 
