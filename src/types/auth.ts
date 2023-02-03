@@ -1,10 +1,9 @@
-import { User } from '../users/user/user.entity';
+import { LoginUserDto } from '../users/user/login-user.dto';
 
 export interface ILoginResponse {
   access_token: string;
-  image: string;
 }
 
 export interface ILoginRequest {
-  user: User;
+  user: LoginUserDto;
 }
