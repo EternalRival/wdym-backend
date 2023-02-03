@@ -1,16 +1,35 @@
-import { Controller, Get, Param, ParseIntPipe, Post, UsePipes, ValidationPipe, Body, Delete } from '@nestjs/common';
-import { DeleteResult } from 'typeorm';
-import { CreateUserDto } from './dto/create-user.dto';
-import { User } from './entity/users.entity';
+import {
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  UsePipes,
+  ValidationPipe,
+  Body,
+  Delete,
+  Put,
+  Query,
+} from '@nestjs/common';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import { CreateUserDto } from './user/create-user.dto';
+import { User } from './user/user.entity';
 import { UsersService } from './users.service';
 
+@ApiTags('Users')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @Post()
+  @UsePipes(ValidationPipe)
+  private createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
+    return this.usersService.createUser(createUserDto);
+  }
+
   @Get()
-  private findAllUsers(): Promise<User[]> {
-    return this.usersService.findAllUsers();
+  private findAll(): Promise<User[]> {
+    return this.usersService.findAll();
   }
 
   @Get('id/:id')
@@ -18,19 +37,18 @@ export class UsersController {
     return this.usersService.findUserById(id);
   }
 
-  @Get('user/:username') // TODO заменить user
-  private isUsernameExistsInUsers(@Param('username') username: string): Promise<{ value: boolean }> {
-    return this.usersService.isUsernameExistsInUsers(username);
-  }
-
-  @Post('create')
-  @UsePipes(ValidationPipe)
-  private createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return this.usersService.createUser(createUserDto);
-  }
-
   @Delete('id/:id')
-  private deleteUserById(@Param('id', ParseIntPipe) id: number): Promise<DeleteResult> {
+  private deleteUserById(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return this.usersService.deleteUserById(id);
+  }
+
+  @Put('id/:id')
+  private updateUserById(@Param('id', ParseIntPipe) id: number, @Body() createUserDto: CreateUserDto): Promise<User> {
+    return this.usersService.updateUserById(id, createUserDto);
+  }
+
+  @Get('has')
+  private isUserExists(@Query('username') username: string): Promise<{ value: boolean }> {
+    return this.usersService.isUserExists(username);
   }
 }

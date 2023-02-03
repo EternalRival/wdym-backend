@@ -2,13 +2,13 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('users')
 export class User {
-  @PrimaryGeneratedColumn({ type: 'int' })
+  @PrimaryGeneratedColumn()
   public id: number;
 
-  @Column({ nullable: false, unique: true, length: 24 })
+  @Column({ unique: true, length: 24 })
   public username: string;
 
-  @Column({ nullable: false, length: 60 })
+  @Column({ length: 60 })
   public password: string;
 
   @Column({ default: 'https://i.imgur.com/Hemekr4.png' })

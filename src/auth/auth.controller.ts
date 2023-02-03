@@ -1,16 +1,18 @@
 import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { ILoginResponse } from '../types/auth';
-import { User } from '../users/entity/users.entity';
+import { User } from '../users/user/user.entity';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
 import { LocalAuthGuard } from './guard/local-auth.guard';
 
-@Controller()
+@ApiTags('Auth')
+@Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @UseGuards(LocalAuthGuard)
-  @Post('auth/login')
+  @Post('login')
   private login(@Request() request: { user: User }): Promise<ILoginResponse> {
     return this.authService.login(request.user);
   }

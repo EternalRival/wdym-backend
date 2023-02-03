@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcrypt';
 import { ILoginResponse } from '../types/auth';
-import { User } from '../users/entity/users.entity';
+import { User } from '../users/user/user.entity';
 import { UsersService } from '../users/users.service';
 
 @Injectable()
