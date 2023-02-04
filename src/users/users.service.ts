@@ -1,7 +1,7 @@
-import { Catch, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { hash } from 'bcrypt';
-import { Repository, DeleteResult, InsertResult, QueryFailedError, MustBeEntityError } from 'typeorm';
+import { Repository } from 'typeorm';
 import { teapot } from '../utils/custom-error';
 import { CreateUserDto } from './user/create-user.dto';
 import { User } from './user/user.entity';
