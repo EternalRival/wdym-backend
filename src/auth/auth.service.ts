@@ -36,6 +36,6 @@ export class AuthService {
   }
 
   public setCookies(response: Response, token: AccessToken, hours: number): void {
-    response.cookie('access_token', token, { maxAge: 3600000 * hours, httpOnly: true });
+    response.cookie('access_token', token, { maxAge: 3600000 * hours, httpOnly: false });
   }
 }
