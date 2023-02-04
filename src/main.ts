@@ -15,7 +15,7 @@ async function bootstrap(): Promise<void> {
   );
   SwaggerModule.setup('api', app, swagger);
 
-  app.use(cookieParser())
+  app.use(cookieParser());
 
   await app.listen(configService.get('SERVER_PORT', 3000));
 }

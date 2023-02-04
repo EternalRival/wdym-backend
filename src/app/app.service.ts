@@ -6,6 +6,18 @@ const date = new Date();
 @Injectable()
 export class AppService {
   public getHello(): string {
-    return `Hello World!<br><br><a href="/api">[API]</a><br><br>${date.toLocaleString()}`;
+    return `WDYM-Server!
+
+<a href="/api">[API]</a>
+
+Last Build: ${date.toLocaleString()}
+
+Last Build: ${date.toISOString()}
+
+Last Build: ${date.toString()}
+
+Last Build: ${date.toUTCString()}
+
+Last Build: ${date.getTimezoneOffset()}`;
   }
 }
