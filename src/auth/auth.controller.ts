@@ -1,7 +1,7 @@
 import { Controller, Post, Request as Req, Res, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
-import { ILoginRequest } from '../types/auth';
+import { AccessToken, ILoginRequest, ILoginResponse } from '../types/auth';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
 import { LocalAuthGuard } from './guard/local-auth.guard';
@@ -14,9 +14,13 @@ export class AuthController {
   /*  @ApiBody({schema:{}}) */
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  public async login(@Req() { user }: ILoginRequest, @Res({ passthrough: true }) response: Response): Promise<void> {
+  public async login(
+    @Req() { user }: ILoginRequest,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<ILoginResponse> {
     const token = await this.authService.login(user);
     this.authService.setCookies(response, token, 0.05);
+    return { access_token: token };
   }
 
   @UseGuards(JwtAuthGuard)
@@ -24,9 +28,10 @@ export class AuthController {
   public async refreshToken(
     @Req() { user }: ILoginRequest,
     @Res({ passthrough: true }) response: Response,
-  ): Promise<void> {
+  ): Promise<ILoginResponse> {
     const token = await this.authService.refreshToken(user);
     this.authService.setCookies(response, token, 1);
+    return { access_token: token };
   }
 
   //? YAGNI
