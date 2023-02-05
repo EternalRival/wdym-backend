@@ -53,6 +53,7 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Put()
+  @UsePipes(ValidationPipe)
   private updateUserById(@Req() request: IJwtGuardRequest, @Body() createUserDto: CreateUserDto): Promise<User> {
     console.log('PUT users', request.user, createUserDto);
     return this.usersService.updateUserById(request.user.id, createUserDto);
