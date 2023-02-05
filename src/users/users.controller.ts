@@ -51,10 +51,11 @@ export class UsersController {
     return this.usersService.deleteUserById(request.user.id);
   }
 
-  @Put('id/:id')
-  private updateUserById(@Param('id', ParseIntPipe) id: number, @Body() createUserDto: CreateUserDto): Promise<User> {
-    console.log('PUT users/id/:id', createUserDto);
-    return this.usersService.updateUserById(id, createUserDto);
+  @UseGuards(JwtAuthGuard)
+  @Put()
+  private updateUserById(@Req() request: IJwtGuardRequest, @Body() createUserDto: CreateUserDto): Promise<User> {
+    console.log('PUT users', request.user, createUserDto);
+    return this.usersService.updateUserById(request.user.id, createUserDto);
   }
 
   @Get('has')

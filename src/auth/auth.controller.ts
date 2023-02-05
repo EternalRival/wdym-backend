@@ -44,5 +44,6 @@ export class AuthController {
   @Get('profile')
   public getProfile(@Req() request: Request): Request['user'] {
     return request.user;
-  } */
+  }
+  */
 }
