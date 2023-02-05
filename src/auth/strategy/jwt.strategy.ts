@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from 'express';
+import { IJwtGuardRequest, IJwtPayload } from '../../types/auth';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
@@ -13,9 +14,9 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       secretOrKey: configService.get('JWT_SECRET'),
     });
   }
-  private validate(payload: { sub: unknown; username: unknown }): unknown {
-    console.log('jwt validate used');
-    return { userId: payload.sub, username: payload.username };
+  private validate(payload: IJwtPayload): IJwtGuardRequest['user'] {
+    console.log('jwt validate used', payload);
+    return { id: payload.sub };
   }
 
   private static extractJWT(request: Request): string | null {

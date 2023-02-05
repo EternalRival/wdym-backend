@@ -1,11 +1,21 @@
 import { LoginUserDto } from '../users/user/login-user.dto';
+import { User } from '../users/user/user.entity';
 
-export interface ILoginResponse {
-  access_token: AccessToken | Promise<AccessToken>;
+export interface IJwtToken {
+  access_token: string;
 }
 
-export interface ILoginRequest {
-  user: LoginUserDto;
+export interface ILocalGuardRequest {
+  user: User;
+}
+export interface IJwtGuardRequest {
+  user: { id: User['id'] };
 }
 
-export type AccessToken = string;
+export interface IJwtPayload {
+  sub: number;
+  image: string;
+  username: string;
+  iat?: number;
+  exp?: number;
+}

@@ -1,7 +1,9 @@
 import { Controller, Post, Request as Req, Res, UseGuards } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
-import { AccessToken, ILoginRequest, ILoginResponse } from '../types/auth';
+import { IJwtGuardRequest, IJwtToken, ILocalGuardRequest } from '../types/auth';
+import { LoginUserDto } from '../users/user/login-user.dto';
+import { User } from '../users/user/user.entity';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
 import { LocalAuthGuard } from './guard/local-auth.guard';
@@ -11,27 +13,29 @@ import { LocalAuthGuard } from './guard/local-auth.guard';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  /*  @ApiBody({schema:{}}) */
+  @ApiBody({ type: LoginUserDto })
   @UseGuards(LocalAuthGuard)
   @Post('login')
   public async login(
-    @Req() { user }: ILoginRequest,
+    @Req() request: ILocalGuardRequest,
     @Res({ passthrough: true }) response: Response,
-  ): Promise<ILoginResponse> {
-    const token = await this.authService.login(user);
+  ): Promise<IJwtToken> {
+    console.log('login', request.user);
+    const token = await this.authService.login(request.user);
     this.authService.setCookies(response, token, 0.05);
-    return { access_token: token };
+    return token;
   }
 
   @UseGuards(JwtAuthGuard)
   @Post('refresh')
   public async refreshToken(
-    @Req() { user }: ILoginRequest,
+    @Req() request: IJwtGuardRequest,
     @Res({ passthrough: true }) response: Response,
-  ): Promise<ILoginResponse> {
-    const token = await this.authService.refreshToken(user);
+  ): Promise<IJwtToken> {
+    console.log('refresh', request.user);
+    const token = await this.authService.refreshToken(request.user.id);
     this.authService.setCookies(response, token, 1);
-    return { access_token: token };
+    return token;
   }
 
   //? YAGNI
