@@ -78,7 +78,7 @@ export class UsersController {
   @Get('has')
   private async isUserExists(@Query('username') username: string): Promise<ResponseBooleanDto> {
     const isExists = await this.usersService.isUserExists(username);
-    Logger.log(JSON.stringify(isExists));
+    Logger.log(JSON.stringify(isExists), 'isExists');
     return isExists;
   }
 }
