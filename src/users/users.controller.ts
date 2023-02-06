@@ -55,15 +55,6 @@ export class UsersController {
   private update(@Req() request: JwtAuthGuardRequestDto, @Body() updateUserDto: UpdateUserDto): Promise<User> {
     return this.usersService.update(request.user.id, updateUserDto);
   }
-  //? swagger не билдит хедер в swagger api
-  @ApiHeader({ name: 'Authorization', description: 'Bearer: access_token' })
-  @UseGuards(JwtAuthGuard)
-  @Put()
-  @UsePipes(ValidationPipe)
-  private updateOld(@Req() request: JwtAuthGuardRequestDto, @Body() updateUserDto: UpdateUserDto): Promise<User> {
-    console.log('PUT users', request.user, updateUserDto);
-    return this.usersService.update(request.user.id, updateUserDto);
-  }
 
   //? swagger не билдит хедер в swagger api
   @ApiHeader({ name: 'Authorization', description: 'Bearer: access_token' })

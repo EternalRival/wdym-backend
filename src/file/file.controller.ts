@@ -1,20 +1,5 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  ParseIntPipe,
-  Header,
-  StreamableFile,
-  Res,
-} from '@nestjs/common';
+import { Controller, Get, Param, StreamableFile } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { Response } from 'express';
-import { createReadStream } from 'fs';
-import { join } from 'path';
 import { Folder } from './enums/folder.enum';
 import { FileService } from './file.service';
 

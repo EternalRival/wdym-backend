@@ -45,20 +45,8 @@ export class AuthController {
   //? swagger не билдит хедер в swagger api
   @ApiHeader({ name: 'Authorization', description: 'Bearer: access_token' })
   @UseGuards(JwtAuthGuard)
-  @Get('validate')
-  public async validatePasswordGet(
-    @Req() request: JwtAuthGuardRequestDto,
-    @Query('password') password: string,
-  ): Promise<ResponseBooleanDto> {
-    const isValid = await this.authService.validatePassword(request.user.id, password);
-    Logger.log(JSON.stringify(isValid), 'validate');
-    return isValid;
-  }
-  //? swagger не билдит хедер в swagger api
-  @ApiHeader({ name: 'Authorization', description: 'Bearer: access_token' })
-  @UseGuards(JwtAuthGuard)
   @Post('validate')
-  public async validatePasswordPost(
+  public async validatePassword(
     @Req() request: JwtAuthGuardRequestDto,
     @Body() body: PasswordUserDto,
   ): Promise<ResponseBooleanDto> {
