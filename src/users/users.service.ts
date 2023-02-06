@@ -57,7 +57,8 @@ export class UsersService {
 
   //? TL Request
   public async isUserExists(username: string): Promise<ResponseBooleanDto> {
-    const value = Boolean(await this.usersRepository.findOneBy({ username }));
+    const entity = await this.usersRepository.findOneBy({ username });
+    const value = Boolean(entity);
     return { value };
   }
 }
