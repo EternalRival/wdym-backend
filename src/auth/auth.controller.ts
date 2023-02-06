@@ -8,8 +8,8 @@ import { AuthService } from './auth.service';
 import { JwtAuthGuardRequestDto } from './dto/jwt-auth.guard.dto';
 import { JwtTokenDto } from './dto/jwt-token.dto';
 import { LocalAuthGuardRequestDto } from './dto/local-auth.guard.dto';
-import { JwtAuthGuard } from './guard/jwt-auth.guard';
-import { LocalAuthGuard } from './guard/local-auth.guard';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { LocalAuthGuard } from './guards/local-auth.guard';
 
 @ApiTags('Auth')
 @Controller('auth')

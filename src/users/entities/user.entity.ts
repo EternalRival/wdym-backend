@@ -11,6 +11,6 @@ export class User {
   @Column({ length: 60 })
   public password: string;
 
-  @Column({ default: 'https://i.imgur.com/Hemekr4.png' })
-  public image: string;
+  @Column({ default: 0 })
+  public image: number;
 }

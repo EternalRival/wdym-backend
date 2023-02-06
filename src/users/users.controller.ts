@@ -20,7 +20,7 @@ import { UsersService } from './users.service';
 import { SignUpUserDto } from './dto/sign-up-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ResponseBooleanDto } from '../types/response-boolean.dto';
 import { JwtAuthGuardRequestDto } from '../auth/dto/jwt-auth.guard.dto';
 
