@@ -14,6 +14,7 @@ import {
   Req,
   Put,
   Query,
+  Logger,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { SignUpUserDto } from './dto/sign-up-user.dto';
@@ -41,9 +42,8 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @Get(':id')
+  @Get('id/:id')
   private findOneById(@Param('id', ParseIntPipe) id: number): Promise<User> {
-    console.log('GET users/:id', id);
     return this.usersService.findOneById(id);
   }
 
@@ -53,7 +53,6 @@ export class UsersController {
   @Patch()
   @UsePipes(ValidationPipe)
   private update(@Req() request: JwtAuthGuardRequestDto, @Body() updateUserDto: UpdateUserDto): Promise<User> {
-    console.log('PUT users', request.user, updateUserDto);
     return this.usersService.update(request.user.id, updateUserDto);
   }
   //? swagger не билдит хедер в swagger api
@@ -77,8 +76,9 @@ export class UsersController {
 
   //? TL Request
   @Get('has')
-  private isUserExists(@Query('username') username: string): Promise<ResponseBooleanDto> {
-    console.log('GET users/has', username);
-    return this.usersService.isUserExists(username);
+  private async isUserExists(@Query('username') username: string): Promise<ResponseBooleanDto> {
+    const isExists = await this.usersService.isUserExists(username);
+    Logger.log(JSON.stringify(isExists));
+    return isExists;
   }
 }

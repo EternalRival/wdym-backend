@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
@@ -17,7 +17,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
   }
   private validate(payload: JwtPayloadDto): JwtAuthGuardRequestDto['user'] {
-    console.log('jwt validate used', payload);
+    Logger.log(`jwt validate used: ${JSON.stringify(payload)}`, 'Guard');
     return { id: payload.sub };
   }
 

@@ -43,6 +43,10 @@ export class AuthService {
   //? TL Request
   public async validatePassword(id: number, password: string): Promise<ResponseBooleanDto> {
     const user = await this.usersService.findOneById(id);
+    console.log(user);
+    console.log(password);
+    console.log(user.password);
+    console.log(await compare(password, user.password));
     return { value: user && (await compare(password, user.password)) };
   }
 }

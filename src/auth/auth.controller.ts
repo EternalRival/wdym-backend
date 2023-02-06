@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
 import { ApiBody, ApiHeader, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { ResponseBooleanDto } from '../types/response-boolean.dto';
@@ -23,7 +23,6 @@ export class AuthController {
     @Req() request: LocalAuthGuardRequestDto,
     @Res({ passthrough: true }) response: Response,
   ): Promise<JwtTokenDto> {
-    console.log('login', request.user);
     const token = await this.authService.login(request.user);
     this.authService.setCookies(response, token, 0.05);
     return token;
@@ -47,7 +46,17 @@ export class AuthController {
   @ApiHeader({ name: 'Authorization', description: 'Bearer: access_token' })
   @UseGuards(JwtAuthGuard)
   @Get('validate')
-  public validatePassword(
+  public validatePasswordGet(
+    @Req() request: JwtAuthGuardRequestDto,
+    @Query('password') password: string,
+  ): Promise<ResponseBooleanDto> {
+    return this.authService.validatePassword(request.user.id, password);
+  }
+  //? swagger не билдит хедер в swagger api
+  @ApiHeader({ name: 'Authorization', description: 'Bearer: access_token' })
+  @UseGuards(JwtAuthGuard)
+  @Post('validate')
+  public validatePasswordPost(
     @Req() request: JwtAuthGuardRequestDto,
     @Body() body: PasswordUserDto,
   ): Promise<ResponseBooleanDto> {
