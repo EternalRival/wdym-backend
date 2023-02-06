@@ -3,7 +3,9 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from 'express';
-import { IJwtGuardRequest, IJwtPayload } from '../../types/auth';
+import { JwtPayloadDto } from '../dto/jwt-payload.dto';
+import { JwtAuthGuardRequestDto } from '../dto/jwt-auth.guard.dto';
+import { JwtTokenDto } from '../dto/jwt-token.dto';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
@@ -14,12 +16,12 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       secretOrKey: configService.get('JWT_SECRET'),
     });
   }
-  private validate(payload: IJwtPayload): IJwtGuardRequest['user'] {
+  private validate(payload: JwtPayloadDto): JwtAuthGuardRequestDto['user'] {
     console.log('jwt validate used', payload);
     return { id: payload.sub };
   }
 
-  private static extractJWT(request: Request): string | null {
+  private static extractJWT(request: Request): JwtTokenDto['access_token'] | null {
     if (request.cookies && 'access_token' in request.cookies) {
       return request.cookies.access_token;
     }

@@ -11,7 +11,6 @@ async function bootstrap(): Promise<void> {
   const swagger = SwaggerModule.createDocument(
     app,
     new DocumentBuilder().setTitle('WDYM-API').setVersion('1.0.1').build(),
-    {},
   );
   SwaggerModule.setup('api', app, swagger);
 
