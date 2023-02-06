@@ -9,5 +9,5 @@ export class SignUpUserDto {
   @MaxLength(20)
   public password: string;
 
-  public image: number;
+  public image: string;
 }

@@ -18,7 +18,7 @@ export class AuthService {
     return user && (await compare(signInData.password, user.password)) ? user : null;
   }
 
-  public generateJwtPayload(data: { id: number; image: number; username: string }): JwtPayloadDto {
+  public generateJwtPayload(data: { id: number; image: string; username: string }): JwtPayloadDto {
     return { sub: data.id, image: data.image, username: data.username };
   }
 

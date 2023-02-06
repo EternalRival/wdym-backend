@@ -1,7 +1,7 @@
 import { Injectable, StreamableFile } from '@nestjs/common';
 import { createReadStream } from 'fs';
 import { readdir } from 'fs/promises';
-import { basename, join, parse } from 'path';
+import { join, parse } from 'path';
 import { Folder } from './enums/folder.enum';
 
 @Injectable()
