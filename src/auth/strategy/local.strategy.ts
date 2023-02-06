@@ -1,9 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
-import { ILocalGuardRequest } from '../../types/auth';
-import { User } from '../../users/user/user.entity';
+import { SignInUserDto } from '../../users/dto/sign-in-user.dto';
 import { AuthService } from '../auth.service';
+import { LocalAuthGuardRequestDto } from '../dto/local-auth.guard.dto';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy, 'local') {
@@ -11,9 +11,14 @@ export class LocalStrategy extends PassportStrategy(Strategy, 'local') {
     super();
   }
 
-  private async validate(username: string, password: string): Promise<ILocalGuardRequest['user']> {
-    console.log('local validate used', { username, password });
-    const user = await this.authService.validateUser({ username, password });
+  private async validate(
+    username: SignInUserDto['username'],
+    password: SignInUserDto['password'],
+  ): Promise<LocalAuthGuardRequestDto['user']> {
+    const signInData = { username, password };
+    console.log('local validate used', signInData);
+
+    const user = await this.authService.validateUser(signInData);
     if (user) {
       return user;
     }

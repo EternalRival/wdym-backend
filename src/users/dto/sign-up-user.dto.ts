@@ -1,6 +1,6 @@
 import { MaxLength, MinLength } from 'class-validator';
 
-export class CreateUserDto {
+export class SignUpUserDto {
   @MinLength(4)
   @MaxLength(24)
   public username: string;
