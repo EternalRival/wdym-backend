@@ -38,7 +38,6 @@ export class UsersController {
 
   @Get()
   private findAll(): Promise<User[]> {
-    console.log('GET users');
     return this.usersService.findAll();
   }
 
