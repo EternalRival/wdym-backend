@@ -32,13 +32,11 @@ export class UsersController {
   @Post()
   @UsePipes(ValidationPipe)
   private create(@Body() signUpUserDto: SignUpUserDto): Promise<User> {
-    console.log('POST users', signUpUserDto);
     return this.usersService.create(signUpUserDto);
   }
 
   @Get()
   private findAll(): Promise<User[]> {
-    console.log('GET users');
     return this.usersService.findAll();
   }
 

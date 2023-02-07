@@ -7,12 +7,8 @@ import { AppService } from './app.service';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get()
-  public getHello(): string {
-    return this.appService.getHello();
-  }
-  @Get('kek')
-  private getTestResult(): string {
-    return 'kek';
+  @Get('uptime')
+  public getUptime(): number {
+    return this.appService.getUptime();
   }
 }

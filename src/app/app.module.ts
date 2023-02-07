@@ -1,6 +1,8 @@
+import { resolve } from 'path';
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from '../users/users.module';
@@ -26,15 +28,17 @@ import { FileModule } from '../file/file.module';
         ssl: true,
       }),
     }),
+    ServeStaticModule.forRoot({ rootPath: resolve('dist', 'docs'), serveRoot: '/docs' }),
+    ServeStaticModule.forRoot({ rootPath: resolve('src', 'public') }),
     UsersModule,
     AuthModule,
-    FileModule
+    FileModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {
   public configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(AppMiddleware).forRoutes('*');
+    consumer.apply(AppMiddleware).exclude('/js/(.*)', '/docs/(.*)').forRoutes('*');
   }
 }
