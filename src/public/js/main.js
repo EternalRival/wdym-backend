@@ -15,4 +15,4 @@ const main = async () => {
   document.body.append(`Uptime: ${toReadableTime(uptime * 1000)}`);
 };
 
-main();
+main().catch((e) => console.log(e.message));

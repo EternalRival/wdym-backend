@@ -32,7 +32,6 @@ export class UsersController {
   @Post()
   @UsePipes(ValidationPipe)
   private create(@Body() signUpUserDto: SignUpUserDto): Promise<User> {
-    console.log('POST users', signUpUserDto);
     return this.usersService.create(signUpUserDto);
   }
 
