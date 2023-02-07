@@ -8,17 +8,21 @@ import { FileService } from './file.service';
 export class FileController {
   constructor(private readonly fileService: FileService) {}
 
-  @Get(`${Folder.Avatars}/:id`)
-  public getAvatar(@Param('id') id: string): StreamableFile {
-    return this.fileService.getFile(Folder.Avatars, id);
+  @Get(`${Folder.Avatars}/:fileName`)
+  public getAvatar(@Param('fileName') fileName: string): Promise<StreamableFile> {
+    return this.fileService.getFile(Folder.Avatars, fileName);
   }
   @Get(`${Folder.Avatars}`)
-  public async getAvatarList(): Promise<number[]> {
-    return this.fileService.getFileList(Folder.Avatars);
+  public async getAvatarList(): Promise<string[]> {
+    return this.fileService.getFileNames(Folder.Avatars);
   }
 
-  @Get(`${Folder.Meme}/:id`)
-  public getMeme(@Param('id') id: string): StreamableFile {
-    return this.fileService.getFile(Folder.Meme, id);
+  @Get(`${Folder.Meme}/:fileName`)
+  public getMeme(@Param('fileName') fileName: string): Promise<StreamableFile> {
+    return this.fileService.getFile(Folder.Meme, fileName);
+  }
+  @Get(`${Folder.Meme}`)
+  public async getMemeList(): Promise<string[]> {
+    return this.fileService.getFileNames(Folder.Avatars);
   }
 }

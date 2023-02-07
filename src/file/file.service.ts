@@ -1,18 +1,45 @@
 import { Injectable, StreamableFile } from '@nestjs/common';
-import { createReadStream } from 'fs';
+import { createReadStream, ReadStream } from 'fs';
 import { readdir } from 'fs/promises';
-import { parse, resolve } from 'path';
+import { lookup } from 'mime-types';
+import { parse, resolve, ParsedPath } from 'path';
+import { Extension } from './enums/extension.enum';
 import { Folder } from './enums/folder.enum';
 
 @Injectable()
 export class FileService {
-  private assetsRoot = resolve('src', 'public', 'assets');
-  public getFile(folder: Folder, id: string): StreamableFile {
-    const path = resolve(this.assetsRoot, 'images', folder, `${id}.webp`);
-    const file = createReadStream(path);
-    return new StreamableFile(file, { type: 'image/webp' });
+  private ASSETS_ROOT: string = resolve('src', 'public', 'assets');
+  private ALLOWED_EXTENSIONS: string[] = Object.values(Extension);
+
+  public async getFile(dir: Folder, name: string): Promise<StreamableFile> {
+    const dirPath: string = resolve(this.ASSETS_ROOT, dir);
+    const path: string = await this.getFilePath(dirPath, name);
+    const stream: ReadStream = createReadStream(path);
+
+    return new StreamableFile(stream, { type: lookup(path) || 'text/plain' });
   }
-  public async getFileList(folder: Folder): Promise<number[]> {
-    return Array.from(await readdir(resolve(this.assetsRoot, 'images', folder)), (file) => +parse(file).name);
+
+  public async getFileNames(dir: Folder): Promise<string[]> {
+    const path: string = resolve(this.ASSETS_ROOT, dir);
+    const files: ParsedPath[] = await this.getFiles(path);
+
+    return files.reduce((fileNames, { name, ext }) => {
+      if (this.ALLOWED_EXTENSIONS.includes(ext)) {
+        fileNames.push(name);
+      }
+      return fileNames;
+    }, []);
+  }
+
+  private async getFilePath(dir: string, fileName: string): Promise<string> {
+    const inputFile: ParsedPath = parse(fileName);
+    const staticFiles: ParsedPath[] = await this.getFiles(dir);
+
+    const file: ParsedPath = staticFiles.find((staticFile) => staticFile.name === inputFile.name);
+    return resolve(dir, file.base);
+  }
+
+  private async getFiles(dir: string): Promise<ParsedPath[]> {
+    return Array.from(await readdir(dir), parse);
   }
 }

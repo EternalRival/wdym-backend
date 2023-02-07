@@ -1,4 +1,4 @@
 export enum Folder {
-  Avatars = 'avatars',
-  Meme = 'meme',
+  Avatars = 'images/avatars',
+  Meme = 'images/meme',
 }
