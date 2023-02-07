@@ -39,6 +39,6 @@ import { FileModule } from '../file/file.module';
 })
 export class AppModule {
   public configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(AppMiddleware).exclude('/js/(.*)', '/docs/(.*)').forRoutes('*');
+    consumer.apply(AppMiddleware).exclude('/js/*', '/docs/*').forRoutes('*');
   }
 }
