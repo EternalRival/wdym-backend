@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "build": "nest build",
-    "build:doc": "npx compodoc -p tsconfig.json -n \"WDYM Documentation\" -d dist/docs -t",
+    "build:doc": "npx compodoc -p tsconfig.json -n \"WDYM Documentation\" -d dist/docs",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -19,8 +19,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "hosting:build": "npm i && npm run build && npm run build:doc",
-    "hosting:start": "npm run start:prod"
+    "hosting:build": "npm i && nest build && npx compodoc -p tsconfig.json -n \"WDYM Documentation\" -d dist/docs",
+    "hosting:start": "node dist/main"
   },
   "jest": {
     "moduleFileExtensions": [
