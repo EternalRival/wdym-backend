@@ -11,6 +11,6 @@ export class User {
   @Column({ length: 60 })
   public password: string;
 
-  @Column({ default: '0' })
-  public image: string;
+  @Column({ nullable: true })
+  public image: string | null;
 }
