@@ -10,6 +10,8 @@ import { AuthModule } from '../auth/auth.module';
 import { User } from '../users/entities/user.entity';
 import { AppMiddleware } from './app.middleware';
 import { FileModule } from '../file/file.module';
+import { LobbiesModule } from '../lobbies/lobbies.module';
+import { ChatModule } from '../chat/chat.module';
 
 @Module({
   imports: [
@@ -33,6 +35,8 @@ import { FileModule } from '../file/file.module';
     UsersModule,
     AuthModule,
     FileModule,
+    ChatModule
+    /*  LobbiesModule */
   ],
   controllers: [AppController],
   providers: [AppService],
