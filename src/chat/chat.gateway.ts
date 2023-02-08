@@ -1,40 +1,46 @@
-import { Logger } from '@nestjs/common';
 import {
+  ConnectedSocket,
   MessageBody,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  OnGatewayInit,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
+  WsResponse,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { ChatMessage } from './dto/chat-message.dto';
 import { ChatService } from './chat.service';
 
 @WebSocketGateway({ cors: { origin: true } })
-export class ChatGateway /* implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect */ {
+export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   public server: Server;
-  public logger = new Logger('💬');
 
   constructor(private readonly chatService: ChatService) {}
 
-  @SubscribeMessage('message')
-  public kek(@MessageBody() data: string): unknown {
-    this.logger.log(data);
-    return '🌭'; // from([1, 2, 3]).pipe(map((item) => ({ event: 'events', data: item })));
+  @SubscribeMessage('messageToServer')
+  public handleMsgToServer(@MessageBody() data: ChatMessage, @ConnectedSocket() client: Socket): void {
+    const response = this.chatService.handleMessageEvent(data, client);
+    this.server.emit(response.event, response.data);
+    // from([1, 2, 3]).pipe(map((item) => ({ event: 'events', data: item })));
   }
 
-  /*   @SubscribeMessage('message')
-  public handleMessage(client: Socket, payload: string): string {
-    this.server.emit('message', payload);
-    return 'Hello world!';
-  } */
+  public afterInit(server: Server): WsResponse {
+    const event = 'gatewayInit';
+    const data = this.chatService.afterInit(server);
+    return { event, data };
+  }
 
-  public afterInit(server: Server): void {
-    this.logger.log(`Init: ${server}`);
+  public handleConnection(@ConnectedSocket() client: Socket, ...args: unknown[]): WsResponse {
+    const event = 'gatewayConnection';
+    const data = this.chatService.handleConnection(client, args);
+    return { event, data };
   }
-  public handleConnection(client: Socket, ...args: unknown[]): void {
-    this.logger.log(`Client connected: ${client} > ${args.join(';')}`);
-  }
-  public handleDisconnect(client: Socket): void {
-    this.logger.log(`Client disconnected: ${client}`);
+  public handleDisconnect(@ConnectedSocket() client: Socket): WsResponse {
+    const event = 'gatewayDisconnect';
+    const data = this.chatService.handleDisconnect(client);
+    return { event, data };
   }
 }
