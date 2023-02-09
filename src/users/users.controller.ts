@@ -23,10 +23,13 @@ import { User } from './entities/user.entity';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ResponseBooleanDto } from '../types/response-boolean.dto';
 import { JwtAuthGuardRequestDto } from '../auth/dto/jwt-auth.guard.dto';
+import { LoggerTag } from '../logger/enums/logger-tag.enum';
 
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {
+  private logger = new Logger(LoggerTag.USERS);
+
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
@@ -67,7 +70,7 @@ export class UsersController {
   @Get('has')
   private async isUserExists(@Query('username') username: string): Promise<ResponseBooleanDto> {
     const isExists = await this.usersService.isUserExists(username);
-    Logger.log(JSON.stringify(isExists), 'isExists');
+    this.logger.log(`isExists: ${JSON.stringify(isExists)}`);
     return isExists;
   }
 }

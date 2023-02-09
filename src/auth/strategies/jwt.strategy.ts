@@ -6,9 +6,12 @@ import { Request } from 'express';
 import { JwtPayloadDto } from '../dto/jwt-payload.dto';
 import { JwtAuthGuardRequestDto } from '../dto/jwt-auth.guard.dto';
 import { JwtTokenDto } from '../dto/jwt-token.dto';
+import { LoggerTag } from '../../logger/enums/logger-tag.enum';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
+  private logger = new Logger(LoggerTag.GUARD);
+
   constructor(configService: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([JwtStrategy.extractJWT, ExtractJwt.fromAuthHeaderAsBearerToken()]),
@@ -17,7 +20,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
   }
   private validate(payload: JwtPayloadDto): JwtAuthGuardRequestDto['user'] {
-    Logger.log(`jwt validate used: ${JSON.stringify(payload)}`, 'Guard');
+    this.logger.log(`jwt validate used: ${JSON.stringify(payload)}`);
     return { id: payload.sub };
   }
 
