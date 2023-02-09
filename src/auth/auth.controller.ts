@@ -2,13 +2,13 @@ import { Body, Controller, Get, Logger, Post, Query, Req, Res, UseGuards } from 
 import { ApiBody, ApiHeader, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { LoggerTag } from '../logger/enums/logger-tag.enum';
-import { ResponseBooleanDto } from '../types/response-boolean.dto';
+import { ResponseBooleanDto } from '../shared/dto/response-boolean.dto';
 import { PasswordUserDto } from '../users/dto/password.dto';
 import { SignInUserDto } from '../users/dto/sign-in-user.dto';
 import { AuthService } from './auth.service';
-import { JwtAuthGuardRequestDto } from './dto/jwt-auth.guard.dto';
+import { IJwtAuthGuardRequest } from './interfaces/jwt-auth.guard.interface';
 import { JwtTokenDto } from './dto/jwt-token.dto';
-import { LocalAuthGuardRequestDto } from './dto/local-auth.guard.dto';
+import { ILocalAuthGuardRequest } from './interfaces/local-auth.guard.interface';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 
@@ -21,7 +21,7 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('login')
   public async login(
-    @Req() request: LocalAuthGuardRequestDto,
+    @Req() request: ILocalAuthGuardRequest,
     @Res({ passthrough: true }) response: Response,
   ): Promise<JwtTokenDto> {
     const token = await this.authService.login(request.user);
@@ -34,7 +34,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Post('refresh')
   public async refreshToken(
-    @Req() request: JwtAuthGuardRequestDto,
+    @Req() request: IJwtAuthGuardRequest,
     @Res({ passthrough: true }) response: Response,
   ): Promise<JwtTokenDto> {
     console.log('refresh', request.user);
@@ -48,7 +48,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Post('validate')
   public async validatePassword(
-    @Req() request: JwtAuthGuardRequestDto,
+    @Req() request: IJwtAuthGuardRequest,
     @Body() body: PasswordUserDto,
   ): Promise<ResponseBooleanDto> {
     const isValid = await this.authService.validatePassword(request.user.id, body.password);

@@ -21,8 +21,8 @@ import { SignUpUserDto } from './dto/sign-up-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { ResponseBooleanDto } from '../types/response-boolean.dto';
-import { JwtAuthGuardRequestDto } from '../auth/dto/jwt-auth.guard.dto';
+import { ResponseBooleanDto } from '../shared/dto/response-boolean.dto';
+import { IJwtAuthGuardRequest } from '../auth/interfaces/jwt-auth.guard.interface';
 import { LoggerTag } from '../logger/enums/logger-tag.enum';
 
 @ApiTags('Users')
@@ -53,7 +53,7 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Patch()
   @UsePipes(ValidationPipe)
-  private update(@Req() request: JwtAuthGuardRequestDto, @Body() updateUserDto: UpdateUserDto): Promise<User> {
+  private update(@Req() request: IJwtAuthGuardRequest, @Body() updateUserDto: UpdateUserDto): Promise<User> {
     return this.usersService.update(request.user.id, updateUserDto);
   }
 
@@ -61,7 +61,7 @@ export class UsersController {
   @ApiHeader({ name: 'Authorization', description: 'Bearer: access_token' })
   @UseGuards(JwtAuthGuard)
   @Delete()
-  private remove(@Req() request: JwtAuthGuardRequestDto): Promise<User> {
+  private remove(@Req() request: IJwtAuthGuardRequest): Promise<User> {
     console.log('DELETE users', request.user);
     return this.usersService.remove(request.user.id);
   }

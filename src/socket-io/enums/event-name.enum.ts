@@ -4,4 +4,5 @@ export enum EventName {
   gatewayInit = 'gatewayInit',
   gatewayConnection = 'gatewayConnection',
   gatewayDisconnect = 'gatewayDisconnect',
+  joinRoom = "joinRoom"
 }
