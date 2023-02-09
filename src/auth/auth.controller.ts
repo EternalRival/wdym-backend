@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Logger, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
 import { ApiBody, ApiHeader, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
+import { LoggerTag } from '../logger/enums/logger-tag.enum';
 import { ResponseBooleanDto } from '../types/response-boolean.dto';
 import { PasswordUserDto } from '../users/dto/password.dto';
 import { SignInUserDto } from '../users/dto/sign-in-user.dto';
@@ -51,7 +52,7 @@ export class AuthController {
     @Body() body: PasswordUserDto,
   ): Promise<ResponseBooleanDto> {
     const isValid = await this.authService.validatePassword(request.user.id, body.password);
-    Logger.log(JSON.stringify(isValid), 'validate');
+    Logger.log(JSON.stringify(isValid), LoggerTag.VALIDATE);
     return isValid;
   }
 }

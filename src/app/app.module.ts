@@ -12,6 +12,7 @@ import { AppMiddleware } from './app.middleware';
 import { FileModule } from '../file/file.module';
 import { LobbiesModule } from '../lobbies/lobbies.module';
 import { ChatModule } from '../chat/chat.module';
+import { SocketIoModule } from '../socket-io/socket-io.module';
 
 @Module({
   imports: [
@@ -31,11 +32,16 @@ import { ChatModule } from '../chat/chat.module';
       }),
     }),
     ServeStaticModule.forRoot({ rootPath: resolve('dist', 'docs'), serveRoot: '/docs' }),
+    ServeStaticModule.forRoot({
+      rootPath: resolve('node_modules', '@socket.io', 'admin-ui', 'ui', 'dist'),
+      serveRoot: '/socketio',
+    }),
     ServeStaticModule.forRoot({ rootPath: resolve('src', 'public') }),
     UsersModule,
     AuthModule,
     FileModule,
-    ChatModule
+    SocketIoModule,
+    ChatModule,
     /*  LobbiesModule */
   ],
   controllers: [AppController],
@@ -43,6 +49,10 @@ import { ChatModule } from '../chat/chat.module';
 })
 export class AppModule {
   public configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(AppMiddleware).exclude('/js/(.*)', '/docs/(.*)').forRoutes('*');
+    const excluded = ['js', 'docs', 'socketio'].map((route) => `/${route}/(.*)`);
+    consumer
+      .apply(AppMiddleware)
+      .exclude(...excluded)
+      .forRoutes('*');
   }
 }
