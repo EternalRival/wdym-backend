@@ -3,5 +3,6 @@ export enum LoggerTag {
   REST = 'REST',
   VALIDATE = 'Validate',
   GUARD = 'Guard',
-  USERS = "USERS"
+  USERS = "USERS",
+  SOCKET_IO = "Socket.io"
 }

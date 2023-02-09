@@ -1,5 +1,5 @@
 export enum EventName {
-  globalChatMessage = 'globalChatMessage',
+  chatGlobalMessage = 'globalChatMessage',
   messageToServer = 'messageToServer',
   gatewayInit = 'gatewayInit',
   gatewayConnection = 'gatewayConnection',

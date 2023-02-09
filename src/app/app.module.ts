@@ -12,6 +12,7 @@ import { AppMiddleware } from './app.middleware';
 import { FileModule } from '../file/file.module';
 import { LobbiesModule } from '../lobbies/lobbies.module';
 import { ChatModule } from '../chat/chat.module';
+import { SocketIoModule } from '../socket-io/socket-io.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { ChatModule } from '../chat/chat.module';
     UsersModule,
     AuthModule,
     FileModule,
+    SocketIoModule,
     ChatModule,
     /*  LobbiesModule */
   ],
