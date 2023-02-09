@@ -8,6 +8,8 @@ import { ILocalAuthGuardRequest } from '../interfaces/local-auth.guard.interface
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy, 'local') {
+  private logger = new Logger(LoggerTag.GUARD);
+
   constructor(private authService: AuthService) {
     super();
   }
@@ -17,7 +19,7 @@ export class LocalStrategy extends PassportStrategy(Strategy, 'local') {
     password: SignInUserDto['password'],
   ): Promise<ILocalAuthGuardRequest['user']> {
     const signInData = { username, password };
-    Logger.log('local validate used', LoggerTag.GUARD);
+    this.logger.log('local validate used');
 
     const user = await this.authService.validateUser(signInData);
     if (user) {
