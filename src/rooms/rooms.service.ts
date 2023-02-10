@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
-import { LoggerTag } from '../../logger/enums/logger-tag.enum';
+import { LoggerTag } from '../logger/enums/logger-tag.enum';
 
 @Injectable()
 export class RoomsService {
