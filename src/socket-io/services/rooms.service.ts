@@ -24,4 +24,8 @@ export class RoomsService {
     const entries: [string, string[]][] = [...rooms.entries()].map(([room, clients]) => [room, [...clients]]);
     return Object.fromEntries(entries);
   }
+
+  public deleteRoom(server: Server, roomname: string): void {
+    server.in(roomname).socketsLeave(roomname);
+  }
 }
