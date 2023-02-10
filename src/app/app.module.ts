@@ -31,12 +31,12 @@ import { ChatModule } from '../chat/chat.module';
         ssl: true,
       }),
     }),
-    ServeStaticModule.forRoot({ rootPath: resolve('src', 'public') }),
     ServeStaticModule.forRoot({ rootPath: resolve('dist', 'docs'), serveRoot: '/docs' }),
     ServeStaticModule.forRoot({
       rootPath: resolve('node_modules', '@socket.io', 'admin-ui', 'ui', 'dist'),
       serveRoot: '/socketio',
     }),
+    ServeStaticModule.forRoot({ rootPath: resolve('src', 'public') }),
     UsersModule,
     AuthModule,
     FileModule,
