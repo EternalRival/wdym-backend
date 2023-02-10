@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcrypt';
 import { Response } from 'express';
-import { ResponseBooleanDto } from '../types/response-boolean.dto';
+import { ResponseBooleanDto } from '../shared/dto/response-boolean.dto';
 import { SignInUserDto } from '../users/dto/sign-in-user.dto';
 import { User } from '../users/entities/user.entity';
 import { UsersService } from '../users/users.service';
-import { JwtPayloadDto } from './dto/jwt-payload.dto';
+import { IJwtPayload } from './interfaces/jwt-payload.interface';
 import { JwtTokenDto } from './dto/jwt-token.dto';
 
 @Injectable()
@@ -18,13 +18,13 @@ export class AuthService {
     return user && (await compare(signInData.password, user.password)) ? user : null;
   }
 
-  public generateJwtPayload(data: { id: number; image: string; username: string }): JwtPayloadDto {
+  public generateJwtPayload(data: { id: number; image: string; username: string }): IJwtPayload {
     return { sub: data.id, image: data.image, username: data.username };
   }
 
   public async generateToken(id: User['id']): Promise<JwtTokenDto> {
     const entity: User = await this.usersService.findOneById(id);
-    const payload: JwtPayloadDto = this.generateJwtPayload(entity);
+    const payload: IJwtPayload = this.generateJwtPayload(entity);
     return { access_token: this.jwtService.sign(payload) };
   }
 

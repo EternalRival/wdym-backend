@@ -1,8 +1,9 @@
 export enum LoggerTag {
-  CHAT = 'CHAT',
-  REST = 'REST',
+  CHAT = 'Chat',
+  REST = 'Rest',
   VALIDATE = 'Validate',
   GUARD = 'Guard',
-  USERS = "USERS",
-  SOCKET_IO = "Socket.io"
+  USERS = 'Users',
+  SOCKET_IO = 'Socket.io',
+  ROOMS = "Rooms"
 }

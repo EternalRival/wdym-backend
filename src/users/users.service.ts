@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { hash } from 'bcrypt';
 import { Repository } from 'typeorm';
-import { ResponseBooleanDto } from '../types/response-boolean.dto';
+import { ResponseBooleanDto } from '../shared/dto/response-boolean.dto';
 import { teapot } from '../utils/custom-error';
 import { SignUpUserDto } from './dto/sign-up-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';

@@ -23,6 +23,6 @@ export class FileController {
   }
   @Get(`${Folder.Meme}`)
   public async getMemeList(): Promise<string[]> {
-    return this.fileService.getFileNames(Folder.Avatars);
+    return this.fileService.getFileNames(Folder.Meme);
   }
 }

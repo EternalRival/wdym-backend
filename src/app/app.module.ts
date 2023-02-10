@@ -1,18 +1,18 @@
 import { resolve } from 'path';
-import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
+import { AppMiddleware } from './app.middleware';
 import { AppService } from './app.service';
+import { User } from '../users/entities/user.entity';
 import { UsersModule } from '../users/users.module';
 import { AuthModule } from '../auth/auth.module';
-import { User } from '../users/entities/user.entity';
-import { AppMiddleware } from './app.middleware';
 import { FileModule } from '../file/file.module';
-import { LobbiesModule } from '../lobbies/lobbies.module';
-import { ChatModule } from '../chat/chat.module';
 import { SocketIoModule } from '../socket-io/socket-io.module';
+import { RoomsModule } from '../rooms/rooms.module';
+import { ChatModule } from '../chat/chat.module';
 
 @Module({
   imports: [
@@ -31,18 +31,18 @@ import { SocketIoModule } from '../socket-io/socket-io.module';
         ssl: true,
       }),
     }),
+    ServeStaticModule.forRoot({ rootPath: resolve('src', 'public') }),
     ServeStaticModule.forRoot({ rootPath: resolve('dist', 'docs'), serveRoot: '/docs' }),
     ServeStaticModule.forRoot({
       rootPath: resolve('node_modules', '@socket.io', 'admin-ui', 'ui', 'dist'),
       serveRoot: '/socketio',
     }),
-    ServeStaticModule.forRoot({ rootPath: resolve('src', 'public') }),
     UsersModule,
     AuthModule,
     FileModule,
     SocketIoModule,
+    RoomsModule,
     ChatModule,
-    /*  LobbiesModule */
   ],
   controllers: [AppController],
   providers: [AppService],
