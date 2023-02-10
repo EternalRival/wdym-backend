@@ -4,23 +4,23 @@ import { UpdateLobbyDto } from './dto/update-lobby.dto';
 
 @Injectable()
 export class LobbiesService {
-  create(createLobbyDto: CreateLobbyDto) {
+  public create(createLobbyDto: CreateLobbyDto): string {
     return 'This action adds a new lobby';
   }
 
-  findAll() {
+  public findAll(): string {
     return `This action returns all lobbies`;
   }
 
-  findOne(id: number) {
+  public findOne(id: number): string {
     return `This action returns a #${id} lobby`;
   }
 
-  update(id: number, updateLobbyDto: UpdateLobbyDto) {
+  public update(id: number, updateLobbyDto: UpdateLobbyDto): string {
     return `This action updates a #${id} lobby`;
   }
 
-  remove(id: number) {
+  public remove(id: number): string {
     return `This action removes a #${id} lobby`;
   }
 }

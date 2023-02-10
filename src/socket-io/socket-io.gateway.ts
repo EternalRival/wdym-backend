@@ -34,4 +34,12 @@ export class SocketIoGateway implements OnGatewayInit, OnGatewayConnection, OnGa
   public handleJoinRoom(@MessageBody() roomname: string, @ConnectedSocket() client: Socket): void {
     this.socketIoService.joinRoom(client, roomname);
   }
+  @SubscribeMessage(EventName.leaveRoom)
+  public handleLeaveRoom(@MessageBody() roomname: string, @ConnectedSocket() client: Socket): void {
+    this.socketIoService.leaveRoom(client, roomname);
+  }
+  @SubscribeMessage(EventName.getRoomList)
+  public handleGetRoomList(@ConnectedSocket() client: Socket): unknown {
+    return this.socketIoService.getRoomList(this.server, client);
+  }
 }

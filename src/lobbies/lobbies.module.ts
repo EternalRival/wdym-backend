@@ -3,6 +3,6 @@ import { LobbiesService } from './lobbies.service';
 import { LobbiesGateway } from './lobbies.gateway';
 
 @Module({
-  providers: [LobbiesGateway, LobbiesService]
+  providers: [LobbiesGateway, LobbiesService],
 })
 export class LobbiesModule {}

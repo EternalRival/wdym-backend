@@ -1,14 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { WebSocketServer } from '@nestjs/websockets';
-import { instrument } from '@socket.io/admin-ui';
 import { Server, Socket } from 'socket.io';
 import { LoggerTag } from '../logger/enums/logger-tag.enum';
-import { IJoinRoomData } from './interfaces/join-room.interface';
 
 @Injectable()
 export class SocketIoService {
-  @WebSocketServer()
-  public server: Server;
   public logger = new Logger(LoggerTag.SOCKET_IO);
 
   public afterInit(): void {
@@ -24,14 +19,22 @@ export class SocketIoService {
     this.logger.log(`Client disconnected: ${username}`);
   }
 
-  public get rooms(): Map<string, Set<string>> {
-    return this.server.sockets.adapter.rooms;
-  }
-
-  public async joinRoom(client: Socket, roomname: string): Promise<void> {
+  public joinRoom(client: Socket, roomname: string): void {
     const { username } = client.data;
 
-    await client.join(roomname);
+    client.join(roomname);
     this.logger.log(`User ${username} joined to ${roomname}`);
+  }
+  public leaveRoom(client: Socket, roomname: string): void {
+    const { username } = client.data;
+
+    client.leave(roomname);
+    this.logger.log(`User ${username} left ${roomname}`);
+  }
+
+  public getRoomList(server: Server, client: Socket): Record<string, string[]> /* : [string, string[]][] */ {
+    const { rooms } = server.sockets.adapter;
+    const entries: [string, string[]][] = [...rooms.entries()].map(([room, clients]) => [room, [...clients]]);
+    return Object.fromEntries(entries);
   }
 }
