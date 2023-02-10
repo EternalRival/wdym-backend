@@ -31,12 +31,12 @@ import { ChatModule } from '../chat/chat.module';
         ssl: true,
       }),
     }),
-    ServeStaticModule.forRoot({ rootPath: resolve('dist', 'docs'), serveRoot: '/docs' }),
+    ServeStaticModule.forRoot({ rootPath: resolve('src', 'public'), serveRoot: '/public' }),
     ServeStaticModule.forRoot({
       rootPath: resolve('node_modules', '@socket.io', 'admin-ui', 'ui', 'dist'),
       serveRoot: '/socketio',
     }),
-    ServeStaticModule.forRoot({ rootPath: resolve('src', 'public') }),
+    ServeStaticModule.forRoot({ rootPath: resolve('dist', 'docs') }),
     UsersModule,
     AuthModule,
     FileModule,
@@ -49,7 +49,8 @@ import { ChatModule } from '../chat/chat.module';
 })
 export class AppModule {
   public configure(consumer: MiddlewareConsumer): void {
-    const excluded = ['js', 'docs', 'socketio'].map((route) => `/${route}/(.*)`);
+    // const excluded = ['public', 'socketio', 'images', 'js', 'styles'].map((route) => `/${route}/(.*)`);
+    const excluded = ['js', 'ico', 'png', 'svg', 'woff2', 'css'].map((ext) => `/(.*).${ext}`);
     consumer
       .apply(AppMiddleware)
       .exclude(...excluded)
