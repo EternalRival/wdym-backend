@@ -18,23 +18,4 @@ export class SocketIoService {
     const { username } = client.data;
     this.logger.log(`Client disconnected: ${username}`);
   }
-
-  public joinRoom(client: Socket, roomname: string): void {
-    const { username } = client.data;
-
-    client.join(roomname);
-    this.logger.log(`User ${username} joined to ${roomname}`);
-  }
-  public leaveRoom(client: Socket, roomname: string): void {
-    const { username } = client.data;
-
-    client.leave(roomname);
-    this.logger.log(`User ${username} left ${roomname}`);
-  }
-
-  public getRoomList(server: Server, client: Socket): Record<string, string[]> /* : [string, string[]][] */ {
-    const { rooms } = server.sockets.adapter;
-    const entries: [string, string[]][] = [...rooms.entries()].map(([room, clients]) => [room, [...clients]]);
-    return Object.fromEntries(entries);
-  }
 }

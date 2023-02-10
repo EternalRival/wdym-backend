@@ -12,12 +12,13 @@ import { Server, Socket } from 'socket.io';
 import { instrument } from '@socket.io/admin-ui';
 import { EventName } from './enums/event-name.enum';
 import { SocketIoService } from './socket-io.service';
+import { RoomsService } from './services/rooms.service';
 
 @WebSocketGateway({ cors: { origin: true } })
 export class SocketIoGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   public server: Server;
-  constructor(private readonly socketIoService: SocketIoService) {}
+  constructor(private readonly socketIoService: SocketIoService, private readonly roomsService: RoomsService) {}
 
   public afterInit(server: Server): void {
     instrument(server, { auth: false, mode: 'development' });
@@ -32,14 +33,14 @@ export class SocketIoGateway implements OnGatewayInit, OnGatewayConnection, OnGa
 
   @SubscribeMessage(EventName.joinRoom)
   public handleJoinRoom(@MessageBody() roomname: string, @ConnectedSocket() client: Socket): void {
-    this.socketIoService.joinRoom(client, roomname);
+    this.roomsService.joinRoom(client, roomname);
   }
   @SubscribeMessage(EventName.leaveRoom)
   public handleLeaveRoom(@MessageBody() roomname: string, @ConnectedSocket() client: Socket): void {
-    this.socketIoService.leaveRoom(client, roomname);
+    this.roomsService.leaveRoom(client, roomname);
   }
   @SubscribeMessage(EventName.getRoomList)
   public handleGetRoomList(@ConnectedSocket() client: Socket): unknown {
-    return this.socketIoService.getRoomList(this.server, client);
+    return this.roomsService.getRoomList(this.server, client);
   }
 }
