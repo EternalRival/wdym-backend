@@ -20,7 +20,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "hosting:build": "npm i && npm run build",
-    "hosting:start": "npm run start:prod"
+    "hosting:start": "npm run start:prod",
+    "hosting:quickstart": "npm run hosting:build && npm run hosting:start"
   },
   "jest": {
     "moduleFileExtensions": [
