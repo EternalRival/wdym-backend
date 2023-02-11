@@ -1,14 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { Server, Socket } from 'socket.io';
 import { RoomsService } from '../rooms/rooms.service';
+import { getChunk } from '../utils/get-chunk';
 import { CreateLobbyDto } from './dto/create-lobby.dto';
 import { Lobby } from './entities/lobby.entity';
 import { Player } from './entities/player.entity';
+import { LobbyListOptions } from './types/lobby-list-options.type';
 
 @Injectable()
 export class LobbiesService {
-  private lobbyMap: Map<Lobby['uuid'], Lobby> = new Map();
+  private logger = new Logger('Lobbies');
+  private lobbyMap: Map<string, Lobby> = new Map(); // Map<Lobby['uuid'], Lobby>
 
   constructor(private roomsService: RoomsService) {}
 
@@ -16,6 +19,7 @@ export class LobbiesService {
     const uuid = this.generateUniqueUuid();
     const lobby = new Lobby(createLobbyDto, uuid);
     this.lobbyMap.set(lobby.uuid, lobby);
+    this.logger.log(`Lobby ${lobby.uuid} created`);
     return lobby;
   }
 
@@ -38,10 +42,12 @@ export class LobbiesService {
     if (lobby && username && (!lobby.password || lobby.password === password)) {
       const score = 0;
       const player = new Player({ username, score });
-      Object.assign(lobby.players, player);
-      this.roomsService.joinRoom(client, uuid);
+      lobby.players[player.username] = player;
+      this.roomsService.joinRoom(client, lobby.uuid);
+      this.logger.log(`Join: ${username} -> ${lobby.lobbyName}(${lobby.uuid})`);
       return lobby;
     }
+    this.logger.log(`Join failed: ${username} -> ${lobby.lobbyName}(${lobby.uuid})`);
     return false;
   }
 
@@ -50,8 +56,10 @@ export class LobbiesService {
     const { username } = client.data;
     if (lobby && username) {
       this.roomsService.leaveRoom(client, uuid);
+      this.logger.log(`Leave: ${username} -> ${lobby.lobbyName}(${lobby.uuid})`);
       return uuid;
     }
+    this.logger.log(`Leave failed: ${username} -> ${lobby.lobbyName}(${lobby.uuid})`);
     return false;
   }
 
@@ -59,13 +67,31 @@ export class LobbiesService {
     const res = this.lobbyMap.delete(uuid);
     if (res) {
       this.roomsService.deleteRoom(server, uuid);
+      this.logger.log(`Destroy: ${uuid}`);
       return uuid;
     }
+    this.logger.log(`Destroy failed: ${uuid}`);
     return false;
   }
 
   public getLobbyData(uuid: string): false | Lobby {
     const lobby = this.lobbyMap.get(uuid);
     return lobby ?? false;
+  }
+
+  public getLobbyList(options: LobbyListOptions): [string, Lobby][] {
+    this.logger.log(`GetLobbyLost: ${JSON.stringify(options)}`);
+
+    let list = [...this.lobbyMap.entries()];
+
+    if ('isPrivate' in options) {
+      list = list.filter(([_, lobby]) => !lobby.password);
+    }
+
+    if ('chunk' in options) {
+      list = getChunk(options.chunk.page, options.chunk.limit, list);
+    }
+
+    return list;
   }
 }

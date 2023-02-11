@@ -9,7 +9,7 @@ export class Lobby implements CreateLobbyDto {
   public readonly maxUsers: number;
   public readonly rounds: number;
 
-  public readonly players: Record<Player['username'], Player> = {};
+  public readonly players: Record<string, Player> = {}; // Record<Player['username'], Player>
 
   constructor(createLobbyDto: CreateLobbyDto, public readonly uuid: string) {
     Object.assign(this, createLobbyDto);
