@@ -13,6 +13,7 @@ import { FileModule } from '../file/file.module';
 import { SocketIoModule } from '../socket-io/socket-io.module';
 import { RoomsModule } from '../rooms/rooms.module';
 import { ChatModule } from '../chat/chat.module';
+import { LobbiesModule } from '../lobbies/lobbies.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { ChatModule } from '../chat/chat.module';
     SocketIoModule,
     RoomsModule,
     ChatModule,
+    LobbiesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
