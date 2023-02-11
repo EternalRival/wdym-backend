@@ -26,7 +26,7 @@ export class LobbiesGateway {
     console.log('handleIsUuidUniqueRequest', { uuid });
     return this.lobbiesService.isUuidUnique(uuid);
   } */
-  @SubscribeMessage(EventName.isPasswordCorrect)
+  @SubscribeMessage(EventName.isPasswordCorrectRequest)
   public handleIsPasswordCorrectRequest(
     @MessageBody('uuid', ParseUUIDPipe) uuid: string,
     @MessageBody('password') password: string,
