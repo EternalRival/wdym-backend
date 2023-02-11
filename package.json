@@ -6,21 +6,21 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "build": "nest build",
-    "build:doc": "npx compodoc -p tsconfig.json -n \"WDYM Documentation\" -d dist/docs",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "nest start",
+    "build": "nest build && npm run docs",
+    "docs": "npx compodoc -t -p tsconfig.json -n \"WDYM Documentation\" -d dist/docs --customFavicon src/public/assets/images/avatars/0.webp",
     "start:dev": "nest start --watch",
-    "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
+    "start:debug": "nest start --debug --watch",
+    "start": "nest start",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "hosting:build": "npm i && nest build && npx compodoc -p tsconfig.json -n \"WDYM Documentation\" -d dist/docs",
-    "hosting:start": "node dist/main"
+    "hosting:build": "npm i && npm run build",
+    "hosting:start": "npm run start:prod"
   },
   "jest": {
     "moduleFileExtensions": [
