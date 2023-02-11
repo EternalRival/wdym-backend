@@ -21,10 +21,17 @@ export class LobbiesGateway {
   }
 
   // ? возможно поменять на нейм а скорее всгео точнго
-  @SubscribeMessage(EventName.isUuidUniqueRequest)
+  /* @SubscribeMessage(EventName.isUuidUniqueRequest)
   public handleIsUuidUniqueRequest(@MessageBody('uuid', ParseUUIDPipe) uuid: string): boolean {
     console.log('handleIsUuidUniqueRequest', { uuid });
     return this.lobbiesService.isUuidUnique(uuid);
+  } */
+  @SubscribeMessage(EventName.isPasswordCorrectRequest)
+  public handleIsPasswordCorrectRequest(
+    @MessageBody('uuid', ParseUUIDPipe) uuid: string,
+    @MessageBody('password') password: string,
+  ): boolean {
+    return this.lobbiesService.isPasswordCorrect(uuid, password);
   }
 
   @SubscribeMessage(EventName.joinLobbyRequest)

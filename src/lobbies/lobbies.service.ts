@@ -35,9 +35,9 @@ export class LobbiesService {
     return !this.lobbyMap.has(uuid);
   }
   // TODO
-  /* public isPasswordCorrect(uuid: string, password: string): boolean {
+  public isPasswordCorrect(uuid: string, password: string): boolean {
     return this.lobbyMap.get(uuid)?.password === password;
-  } */
+  }
 
   public joinLobby(client: Socket, uuid: string, password?: string): false | Lobby {
     const lobby = this.lobbyMap.get(uuid);
