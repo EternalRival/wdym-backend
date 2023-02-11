@@ -14,8 +14,4 @@ export class Lobby implements CreateLobbyDto {
   constructor(createLobbyDto: CreateLobbyDto, public readonly uuid: string) {
     Object.assign(this, createLobbyDto);
   }
-
-  public get data(): this {
-    return this;
-  }
 }

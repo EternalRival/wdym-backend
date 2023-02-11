@@ -9,5 +9,7 @@ export enum EventName {
   joinLobbyRequest = "joinLobbyRequest",
   destroyLobbyRequest = "destroyLobbyRequest",
   getLobbyData = "getLobbyData",
-  getLobbyList = "getLobbyList"
+  getLobbyList = "getLobbyList",
+  lobbyCreated = "lobbyCreated",
+  isPasswordCorrect = "isPasswordCorrect"
 }

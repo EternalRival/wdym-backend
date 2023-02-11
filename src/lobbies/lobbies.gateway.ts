@@ -16,14 +16,22 @@ export class LobbiesGateway {
 
   @SubscribeMessage(EventName.createLobbyRequest)
   public handleCreateLobbyRequest(@MessageBody('lobby') lobby: CreateLobbyDto): Lobby {
-    console.log('handleCreateLobbyRequest', { lobby });
-    return this.lobbiesService.createLobby(lobby);
+    console.log('handleCreateLobbyRequest', JSON.stringify({ lobby }));
+    return this.lobbiesService.createLobby(this.server, lobby);
   }
 
-  @SubscribeMessage(EventName.isUuidUniqueRequest)
+  // ? возможно поменять на нейм а скорее всгео точнго
+  /* @SubscribeMessage(EventName.isUuidUniqueRequest)
   public handleIsUuidUniqueRequest(@MessageBody('uuid', ParseUUIDPipe) uuid: string): boolean {
     console.log('handleIsUuidUniqueRequest', { uuid });
     return this.lobbiesService.isUuidUnique(uuid);
+  } */
+  @SubscribeMessage(EventName.isPasswordCorrect)
+  public handleIsPasswordCorrectRequest(
+    @MessageBody('uuid', ParseUUIDPipe) uuid: string,
+    @MessageBody('password') password: string,
+  ): boolean {
+    return this.lobbiesService.isPasswordCorrect(uuid, password);
   }
 
   @SubscribeMessage(EventName.joinLobbyRequest)
@@ -54,5 +62,3 @@ export class LobbiesGateway {
     return this.lobbiesService.getLobbyList(options);
   }
 }
-
-// TODO ШТОТО С PLAYERS в LOBBY

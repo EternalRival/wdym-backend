@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { Server, Socket } from 'socket.io';
 import { RoomsService } from '../rooms/rooms.service';
+import { EventName } from '../socket-io/enums/event-name.enum';
 import { getChunk } from '../utils/get-chunk';
 import { CreateLobbyDto } from './dto/create-lobby.dto';
 import { Lobby } from './entities/lobby.entity';
@@ -15,11 +16,13 @@ export class LobbiesService {
 
   constructor(private roomsService: RoomsService) {}
 
-  public createLobby(createLobbyDto: CreateLobbyDto): Lobby {
+  public createLobby(server: Server, createLobbyDto: CreateLobbyDto): Lobby {
     const uuid = this.generateUniqueUuid();
     const lobby = new Lobby(createLobbyDto, uuid);
     this.lobbyMap.set(lobby.uuid, lobby);
     this.logger.log(`Lobby ${lobby.uuid} created`);
+
+    server.emit(EventName.lobbyCreated, lobby);
     return lobby;
   }
 
@@ -32,9 +35,9 @@ export class LobbiesService {
     return !this.lobbyMap.has(uuid);
   }
   // TODO
-  /* public isPasswordCorrect(uuid: string, password: string): boolean {
+  public isPasswordCorrect(uuid: string, password: string): boolean {
     return this.lobbyMap.get(uuid)?.password === password;
-  } */
+  }
 
   public joinLobby(client: Socket, uuid: string, password?: string): false | Lobby {
     const lobby = this.lobbyMap.get(uuid);
@@ -80,12 +83,12 @@ export class LobbiesService {
   }
 
   public getLobbyList(options: LobbyListOptions): [string, Lobby][] {
-    this.logger.log(`GetLobbyLost: ${JSON.stringify(options)}`);
+    this.logger.log(`GetLobbyList: ${JSON.stringify(options)}`);
 
     let list = [...this.lobbyMap.entries()];
 
     if ('isPrivate' in options) {
-      list = list.filter(([_, lobby]) => !lobby.password);
+      list = list.filter(([_, lobby]) => Boolean(lobby.password) === options.isPrivate);
     }
 
     if ('chunk' in options) {
