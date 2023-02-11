@@ -31,6 +31,9 @@ export class LobbiesService {
     return this.isUuidUnique(uuid) ? uuid : this.generateUniqueUuid();
   }
 
+  public isLobbyNameUnique(lobbyName: string): boolean {
+    return [...this.lobbyMap.values()].some((lobby) => lobby.lobbyName !== lobbyName);
+  }
   private isUuidUnique(uuid: string): boolean {
     return !this.lobbyMap.has(uuid);
   }

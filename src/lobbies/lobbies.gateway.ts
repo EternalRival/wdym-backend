@@ -26,6 +26,12 @@ export class LobbiesGateway {
     console.log('handleIsUuidUniqueRequest', { uuid });
     return this.lobbiesService.isUuidUnique(uuid);
   } */
+  @SubscribeMessage(EventName.isLobbyNameUniqueRequest)
+  private handleIsLobbyNameUniqueRequest(@MessageBody('lobbyName') lobbyName: string): boolean {
+    console.log('handleIsLobbyNameUniqueRequest', { lobbyName });
+    return this.lobbiesService.isLobbyNameUnique(lobbyName);
+  }
+
   @SubscribeMessage(EventName.isPasswordCorrectRequest)
   private handleIsPasswordCorrectRequest(
     @MessageBody('uuid', ParseUUIDPipe) uuid: string,
