@@ -80,12 +80,12 @@ export class LobbiesService {
   }
 
   public getLobbyList(options: LobbyListOptions): [string, Lobby][] {
-    this.logger.log(`GetLobbyLost: ${JSON.stringify(options)}`);
+    this.logger.log(`GetLobbyList: ${JSON.stringify(options)}`);
 
     let list = [...this.lobbyMap.entries()];
 
     if ('isPrivate' in options) {
-      list = list.filter(([_, lobby]) => !lobby.password);
+      list = list.filter(([_, lobby]) => Boolean(lobby.password) === options.isPrivate);
     }
 
     if ('chunk' in options) {

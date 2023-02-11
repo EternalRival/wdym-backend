@@ -54,5 +54,3 @@ export class LobbiesGateway {
     return this.lobbiesService.getLobbyList(options);
   }
 }
-
-// TODO ШТОТО С PLAYERS в LOBBY
