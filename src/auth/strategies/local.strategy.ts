@@ -8,7 +8,7 @@ import { ILocalAuthGuardRequest } from '../interfaces/local-auth.guard.interface
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy, 'local') {
-  private logger = new Logger(LoggerTag.GUARD);
+  public logger = new Logger(LoggerTag.GUARD);
 
   constructor(private authService: AuthService) {
     super();

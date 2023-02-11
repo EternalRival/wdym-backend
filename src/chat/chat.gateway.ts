@@ -7,17 +7,17 @@ import { ChatService } from './chat.service';
 @WebSocketGateway({ cors: { origin: true } })
 export class ChatGateway {
   @WebSocketServer()
-  public server: Server;
+  private server: Server;
 
   constructor(private chatService: ChatService, private roomService: RoomsService) {}
 
   @SubscribeMessage(EventName.messageToServer)
-  public handleMsgToServer(@MessageBody('message') message: string, @ConnectedSocket() client: Socket): void {
+  private handleMsgToServer(@MessageBody('message') message: string, @ConnectedSocket() client: Socket): void {
     this.chatService.handleMsgToServer(this.server, client, message);
   }
 
   @SubscribeMessage(EventName.joinGlobalChat)
-  public handleJoinGlobalChat(@ConnectedSocket() client: Socket): void {
+  private handleJoinGlobalChat(@ConnectedSocket() client: Socket): void {
     this.roomService.joinRoom(client, 'GlobalChat');
   }
 }

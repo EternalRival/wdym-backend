@@ -28,7 +28,7 @@ import { LoggerTag } from '../logger/enums/logger-tag.enum';
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {
-  private logger = new Logger(LoggerTag.USERS);
+  public logger = new Logger(LoggerTag.USERS);
 
   constructor(private readonly usersService: UsersService) {}
 

@@ -1,4 +1,6 @@
-export class CreateLobbyDto {
+import { ILobby } from '../interfaces/lobby.interface';
+
+export class CreateLobbyDto implements Omit<ILobby, 'players'> {
   public readonly lobbyName: string;
   public readonly password: string;
   public readonly lobbyOwner: string;

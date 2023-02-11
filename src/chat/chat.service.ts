@@ -7,9 +7,6 @@ import { EventName } from '../socket-io/enums/event-name.enum';
 @Injectable()
 export class ChatService {
   private GLOBAL_CHAT_NAME = 'GlobalChat';
-
-  @WebSocketServer()
-  public server: Server;
   public logger = new Logger(LoggerTag.CHAT);
 
   public handleMsgToServer(server: Server, client: Socket, message: string): void {

@@ -7,11 +7,11 @@ import { getChunk } from '../utils/get-chunk';
 import { CreateLobbyDto } from './dto/create-lobby.dto';
 import { Lobby } from './entities/lobby.entity';
 import { Player } from './entities/player.entity';
-import { LobbyListOptions } from './types/lobby-list-options.type';
+import { ILobbyListOptions } from './interfaces/lobby-list-options.interface';
 
 @Injectable()
 export class LobbiesService {
-  private logger = new Logger('Lobbies');
+  public logger = new Logger('Lobbies');
   private lobbyMap: Map<string, Lobby> = new Map(); // Map<Lobby['uuid'], Lobby>
 
   constructor(private roomsService: RoomsService) {}
@@ -31,7 +31,7 @@ export class LobbiesService {
     return this.isUuidUnique(uuid) ? uuid : this.generateUniqueUuid();
   }
 
-  public isUuidUnique(uuid: string): boolean {
+  private isUuidUnique(uuid: string): boolean {
     return !this.lobbyMap.has(uuid);
   }
   public isPasswordCorrect(uuid: string, password: string): boolean {
@@ -81,7 +81,7 @@ export class LobbiesService {
     return lobby ?? false;
   }
 
-  public getLobbyList(options: LobbyListOptions): [string, Lobby][] {
+  public getLobbyList(options: ILobbyListOptions): [string, Lobby][] {
     this.logger.log(`GetLobbyList: ${JSON.stringify(options)}`);
 
     const list = [...this.lobbyMap.entries()];

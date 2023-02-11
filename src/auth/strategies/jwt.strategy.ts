@@ -10,7 +10,7 @@ import { LoggerTag } from '../../logger/enums/logger-tag.enum';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
-  private logger = new Logger(LoggerTag.GUARD);
+  public logger = new Logger(LoggerTag.GUARD);
 
   constructor(configService: ConfigService) {
     super({

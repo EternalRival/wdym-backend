@@ -5,29 +5,29 @@ import { EventName } from '../socket-io/enums/event-name.enum';
 import { CreateLobbyDto } from './dto/create-lobby.dto';
 import { Lobby } from './entities/lobby.entity';
 import { LobbiesService } from './lobbies.service';
-import { LobbyListOptions } from './types/lobby-list-options.type';
+import { ILobbyListOptions } from './interfaces/lobby-list-options.interface';
 
 @WebSocketGateway({ cors: { origin: true } })
 export class LobbiesGateway {
   @WebSocketServer()
-  public server: Server;
+  private server: Server;
 
   constructor(private readonly lobbiesService: LobbiesService) {}
 
   @SubscribeMessage(EventName.createLobbyRequest)
-  public handleCreateLobbyRequest(@MessageBody('lobby') lobby: CreateLobbyDto): Lobby {
+  private handleCreateLobbyRequest(@MessageBody('lobby') lobby: CreateLobbyDto): Lobby {
     console.log('handleCreateLobbyRequest', JSON.stringify({ lobby }));
     return this.lobbiesService.createLobby(this.server, lobby);
   }
 
   // ? возможно поменять на нейм а скорее всгео точнго
   /* @SubscribeMessage(EventName.isUuidUniqueRequest)
-  public handleIsUuidUniqueRequest(@MessageBody('uuid', ParseUUIDPipe) uuid: string): boolean {
+  private handleIsUuidUniqueRequest(@MessageBody('uuid', ParseUUIDPipe) uuid: string): boolean {
     console.log('handleIsUuidUniqueRequest', { uuid });
     return this.lobbiesService.isUuidUnique(uuid);
   } */
   @SubscribeMessage(EventName.isPasswordCorrectRequest)
-  public handleIsPasswordCorrectRequest(
+  private handleIsPasswordCorrectRequest(
     @MessageBody('uuid', ParseUUIDPipe) uuid: string,
     @MessageBody('password') password: string,
   ): boolean {
@@ -35,7 +35,7 @@ export class LobbiesGateway {
   }
 
   @SubscribeMessage(EventName.joinLobbyRequest)
-  public handleJoinLobbyRequest(
+  private handleJoinLobbyRequest(
     @MessageBody('uuid', ParseUUIDPipe) uuid: string,
     @MessageBody('password') password: string,
     @ConnectedSocket() client: Socket,
@@ -45,19 +45,19 @@ export class LobbiesGateway {
   }
 
   @SubscribeMessage(EventName.destroyLobbyRequest)
-  public handleDestroyLobbyRequest(@MessageBody('uuid', ParseUUIDPipe) uuid: string): string | false {
+  private handleDestroyLobbyRequest(@MessageBody('uuid', ParseUUIDPipe) uuid: string): string | false {
     console.log('handleDestroyLobbyRequest', { uuid });
     return this.lobbiesService.destroyLobby(this.server, uuid);
   }
 
   @SubscribeMessage(EventName.getLobbyData)
-  public handleGetLobbyDataRequest(@MessageBody('uuid', ParseUUIDPipe) uuid: string): false | Lobby {
+  private handleGetLobbyDataRequest(@MessageBody('uuid', ParseUUIDPipe) uuid: string): false | Lobby {
     console.log('handleGetLobbyDataRequest', { uuid });
     return this.lobbiesService.getLobbyData(uuid);
   }
 
   @SubscribeMessage(EventName.getLobbyList)
-  public handleGetLobbyList(@MessageBody() options: LobbyListOptions): [string, Lobby][] {
+  private handleGetLobbyList(@MessageBody() options: ILobbyListOptions): [string, Lobby][] {
     console.log('handleGetLobbyList', options);
     return this.lobbiesService.getLobbyList(options);
   }

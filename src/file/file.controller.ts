@@ -9,20 +9,20 @@ export class FileController {
   constructor(private readonly fileService: FileService) {}
 
   @Get(`${Folder.Avatars}/:fileName`)
-  public getAvatar(@Param('fileName') fileName: string): Promise<StreamableFile> {
+  private getAvatar(@Param('fileName') fileName: string): Promise<StreamableFile> {
     return this.fileService.getFile(Folder.Avatars, fileName);
   }
   @Get(`${Folder.Avatars}`)
-  public async getAvatarList(): Promise<string[]> {
+  private async getAvatarList(): Promise<string[]> {
     return this.fileService.getFileNames(Folder.Avatars);
   }
 
   @Get(`${Folder.Meme}/:fileName`)
-  public getMeme(@Param('fileName') fileName: string): Promise<StreamableFile> {
+  private getMeme(@Param('fileName') fileName: string): Promise<StreamableFile> {
     return this.fileService.getFile(Folder.Meme, fileName);
   }
   @Get(`${Folder.Meme}`)
-  public async getMemeList(): Promise<string[]> {
+  private async getMemeList(): Promise<string[]> {
     return this.fileService.getFileNames(Folder.Meme);
   }
 }

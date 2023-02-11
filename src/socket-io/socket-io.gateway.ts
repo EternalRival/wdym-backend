@@ -13,7 +13,7 @@ import { SocketIoService } from './socket-io.service';
 @WebSocketGateway({ cors: { origin: true } })
 export class SocketIoGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
-  public server: Server;
+  private server: Server;
   constructor(private readonly socketIoService: SocketIoService) {}
 
   public afterInit(server: Server): void {
