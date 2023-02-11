@@ -4,4 +4,9 @@ export enum EventName {
   joinRoom = 'joinRoom',
   leaveRoom = 'leaveRoom',
   getRoomList = 'getRoomList',
+  createLobbyRequest = "createLobbyRequest",
+  isUuidUniqueRequest = "isUuidUniqueRequest",
+  joinLobbyRequest = "joinLobbyRequest",
+  destroyLobbyRequest = "destroyLobbyRequest",
+  getLobbyData = "getLobbyData"
 }

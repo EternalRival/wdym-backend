@@ -1,6 +1,4 @@
-<iframe
-  src="/public" style="width:100%;height:3.5em;"
-></iframe>
+<iframe src="/public" style="width:100%;height:3.5em;"></iframe>
 
 <details open>
 

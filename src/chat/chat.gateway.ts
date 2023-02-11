@@ -1,6 +1,5 @@
 import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { IChatMessage } from './interfaces/chat-message.interface';
 import { EventName } from '../socket-io/enums/event-name.enum';
 import { ChatService } from './chat.service';
 
@@ -11,7 +10,7 @@ export class ChatGateway {
   constructor(private chatService: ChatService) {}
 
   @SubscribeMessage(EventName.messageToServer)
-  public handleMsgToServer(@MessageBody() chatMessage: IChatMessage, @ConnectedSocket() client: Socket): void {
-    this.chatService.handleMsgToServer(this.server, client, chatMessage);
+  public handleMsgToServer(@MessageBody('message') message: string, @ConnectedSocket() client: Socket): void {
+    this.chatService.handleMsgToServer(this.server, client, message);
   }
 }
