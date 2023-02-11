@@ -12,4 +12,5 @@ export enum EventName {
   getLobbyList = 'getLobbyList',
   lobbyCreated = 'lobbyCreated',
   isPasswordCorrectRequest = 'isPasswordCorrectRequest',
+  joinGlobalChat = "joinGlobalChat"
 }
