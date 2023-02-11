@@ -5,6 +5,7 @@ import { EventName } from '../socket-io/enums/event-name.enum';
 import { CreateLobbyDto } from './dto/create-lobby.dto';
 import { Lobby } from './entities/lobby.entity';
 import { LobbiesService } from './lobbies.service';
+import { LobbyListOptions } from './types/lobby-list-options.type';
 
 @WebSocketGateway({ cors: { origin: true } })
 export class LobbiesGateway {
@@ -15,11 +16,13 @@ export class LobbiesGateway {
 
   @SubscribeMessage(EventName.createLobbyRequest)
   public handleCreateLobbyRequest(@MessageBody('lobby') lobby: CreateLobbyDto): Lobby {
+    console.log('handleCreateLobbyRequest', { lobby });
     return this.lobbiesService.createLobby(lobby);
   }
 
   @SubscribeMessage(EventName.isUuidUniqueRequest)
   public handleIsUuidUniqueRequest(@MessageBody('uuid', ParseUUIDPipe) uuid: string): boolean {
+    console.log('handleIsUuidUniqueRequest', { uuid });
     return this.lobbiesService.isUuidUnique(uuid);
   }
 
@@ -29,16 +32,27 @@ export class LobbiesGateway {
     @MessageBody('password') password: string,
     @ConnectedSocket() client: Socket,
   ): false | Lobby {
+    console.log('handleJoinLobbyRequest', { uuid, password });
     return this.lobbiesService.joinLobby(client, uuid, password);
   }
 
   @SubscribeMessage(EventName.destroyLobbyRequest)
   public handleDestroyLobbyRequest(@MessageBody('uuid', ParseUUIDPipe) uuid: string): string | false {
+    console.log('handleDestroyLobbyRequest', { uuid });
     return this.lobbiesService.destroyLobby(this.server, uuid);
   }
 
   @SubscribeMessage(EventName.getLobbyData)
   public handleGetLobbyDataRequest(@MessageBody('uuid', ParseUUIDPipe) uuid: string): false | Lobby {
+    console.log('handleGetLobbyDataRequest', { uuid });
     return this.lobbiesService.getLobbyData(uuid);
   }
+
+  @SubscribeMessage(EventName.getLobbyList)
+  public handleGetLobbyList(@MessageBody() options: LobbyListOptions): [string, Lobby][] {
+    console.log('handleGetLobbyList', options);
+    return this.lobbiesService.getLobbyList(options);
+  }
 }
+
+// TODO ШТОТО С PLAYERS в LOBBY

@@ -8,5 +8,6 @@ export enum EventName {
   isUuidUniqueRequest = "isUuidUniqueRequest",
   joinLobbyRequest = "joinLobbyRequest",
   destroyLobbyRequest = "destroyLobbyRequest",
-  getLobbyData = "getLobbyData"
+  getLobbyData = "getLobbyData",
+  getLobbyList = "getLobbyList"
 }
