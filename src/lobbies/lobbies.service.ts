@@ -34,7 +34,6 @@ export class LobbiesService {
   public isUuidUnique(uuid: string): boolean {
     return !this.lobbyMap.has(uuid);
   }
-  // TODO
   public isPasswordCorrect(uuid: string, password: string): boolean {
     return this.lobbyMap.get(uuid)?.password === password;
   }
@@ -85,16 +84,14 @@ export class LobbiesService {
   public getLobbyList(options: LobbyListOptions): [string, Lobby][] {
     this.logger.log(`GetLobbyList: ${JSON.stringify(options)}`);
 
-    let list = [...this.lobbyMap.entries()];
+    const list = [...this.lobbyMap.entries()];
 
-    if ('isPrivate' in options) {
-      list = list.filter(([_, lobby]) => Boolean(lobby.password) === options.isPrivate);
-    }
+    const filteredList = list.filter(
+      ([_, lobby]) =>
+        ('isPrivate' in options ? Boolean(lobby.password) === options.isPrivate : true) &&
+        ('nameContains' in options ? lobby.lobbyName.includes(options.nameContains) : true),
+    );
 
-    if ('chunk' in options) {
-      list = getChunk(options.chunk.page, options.chunk.limit, list);
-    }
-
-    return list;
+    return 'chunk' in options ? getChunk(options.chunk.page, options.chunk.limit, filteredList) : filteredList;
   }
 }

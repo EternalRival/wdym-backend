@@ -4,4 +4,5 @@ export type LobbyListOptions = {
     limit: number;
   };
   isPrivate?: boolean;
+  nameContains?: string;
 };
