@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { Server, Socket } from 'socket.io';
 import { RoomsService } from '../rooms/rooms.service';
+import { EventName } from '../socket-io/enums/event-name.enum';
 import { getChunk } from '../utils/get-chunk';
 import { CreateLobbyDto } from './dto/create-lobby.dto';
 import { Lobby } from './entities/lobby.entity';
@@ -15,11 +16,13 @@ export class LobbiesService {
 
   constructor(private roomsService: RoomsService) {}
 
-  public createLobby(createLobbyDto: CreateLobbyDto): Lobby {
+  public createLobby(server: Server, createLobbyDto: CreateLobbyDto): Lobby {
     const uuid = this.generateUniqueUuid();
     const lobby = new Lobby(createLobbyDto, uuid);
     this.lobbyMap.set(lobby.uuid, lobby);
     this.logger.log(`Lobby ${lobby.uuid} created`);
+
+    server.emit(EventName.lobbyCreated, lobby);
     return lobby;
   }
 

@@ -16,10 +16,11 @@ export class LobbiesGateway {
 
   @SubscribeMessage(EventName.createLobbyRequest)
   public handleCreateLobbyRequest(@MessageBody('lobby') lobby: CreateLobbyDto): Lobby {
-    console.log('handleCreateLobbyRequest', { lobby });
-    return this.lobbiesService.createLobby(lobby);
+    console.log('handleCreateLobbyRequest', JSON.stringify({ lobby }));
+    return this.lobbiesService.createLobby(this.server, lobby);
   }
 
+  // ? возможно поменять на нейм а скорее всгео точнго
   @SubscribeMessage(EventName.isUuidUniqueRequest)
   public handleIsUuidUniqueRequest(@MessageBody('uuid', ParseUUIDPipe) uuid: string): boolean {
     console.log('handleIsUuidUniqueRequest', { uuid });
