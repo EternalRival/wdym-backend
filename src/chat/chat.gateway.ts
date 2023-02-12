@@ -12,8 +12,12 @@ export class ChatGateway {
   constructor(private chatService: ChatService, private roomService: RoomsService) {}
 
   @SubscribeMessage(EventName.messageToServer)
-  private handleMsgToServer(@MessageBody('message') message: string, @ConnectedSocket() client: Socket): void {
-    this.chatService.handleMsgToServer(this.server, client, message);
+  private handleMsgToServer(
+    @MessageBody('message') message: string,
+    @MessageBody('roomname') roomname: string,
+    @ConnectedSocket() client: Socket,
+  ): void {
+    this.chatService.handleMsgToServer(this.server, client, message, roomname);
   }
 
   @SubscribeMessage(EventName.joinGlobalChat)
