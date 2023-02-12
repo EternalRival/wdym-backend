@@ -1,9 +1,12 @@
 import { Injectable, StreamableFile } from '@nestjs/common';
+import { WsException } from '@nestjs/websockets';
 import { createReadStream, ReadStream } from 'fs';
 import { readdir } from 'fs/promises';
 import { lookup } from 'mime-types';
 import { parse, resolve, ParsedPath } from 'path';
-import { getRandomArrayItem } from '../utils/randomize';
+import { Server, Socket } from 'socket.io';
+import { DefaultEventsMap } from 'socket.io/dist/typed-events';
+import { getRandomArrayItem, shuffle } from '../utils/randomize';
 import { Extension } from './enums/extension.enum';
 import { Folder } from './enums/folder.enum';
 
@@ -50,5 +53,14 @@ export class FileService {
     const files: ParsedPath[] = await this.getFiles(path);
     const randomFile = getRandomArrayItem(files);
     return this.getFile(Folder.Avatars, randomFile.name);
+  }
+
+  public async getRandomMemes(io: Server, client: Socket, quantity: number): Promise<StreamableFile[]> {
+    const path: string = resolve(this.ASSETS_ROOT, Folder.Meme);
+    const files: ParsedPath[] = await this.getFiles(path);
+    const randomFiles = shuffle(files).slice(0, quantity);
+    return Promise.all(randomFiles.map((file) => this.getFile(Folder.Meme, file.name))).catch((reason) => {
+      throw new WsException(reason);
+    });
   }
 }
