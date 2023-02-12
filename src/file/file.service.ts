@@ -3,6 +3,7 @@ import { createReadStream, ReadStream } from 'fs';
 import { readdir } from 'fs/promises';
 import { lookup } from 'mime-types';
 import { parse, resolve, ParsedPath } from 'path';
+import { getRandomArrayItem } from '../utils/randomize';
 import { Extension } from './enums/extension.enum';
 import { Folder } from './enums/folder.enum';
 
@@ -41,5 +42,13 @@ export class FileService {
 
   private async getFiles(dir: string): Promise<ParsedPath[]> {
     return Array.from(await readdir(dir), parse);
+  }
+
+  //? TL Req
+  public async getRandomAvatar(): Promise<StreamableFile> {
+    const path: string = resolve(this.ASSETS_ROOT, Folder.Avatars);
+    const files: ParsedPath[] = await this.getFiles(path);
+    const randomFile = getRandomArrayItem(files);
+    return this.getFile(Folder.Avatars, randomFile.name);
   }
 }
