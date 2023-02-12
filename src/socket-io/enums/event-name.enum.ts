@@ -16,4 +16,5 @@ export enum EventName {
   isLobbyNameUniqueRequest = 'isLobbyNameUniqueRequest',
   joinLobby = 'joinLobby',
   leaveLobby = 'leaveLobby',
+  leaveLobbyRequest = "leaveLobbyRequest"
 }

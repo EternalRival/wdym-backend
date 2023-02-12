@@ -50,6 +50,15 @@ export class LobbiesGateway {
     return this.lobbiesService.joinLobby(this.server, client, uuid, password);
   }
 
+  @SubscribeMessage(EventName.leaveLobbyRequest)
+  private handleLeaveLobbyRequest(
+    @MessageBody('uuid', ParseUUIDPipe) uuid: string,
+    @ConnectedSocket() client: Socket,
+  ): false | string {
+    console.log('handleLeaveLobbyRequest', { uuid });
+    return this.lobbiesService.leaveLobby(this.server, client, uuid);
+  }
+
   @SubscribeMessage(EventName.destroyLobbyRequest)
   private handleDestroyLobbyRequest(@MessageBody('uuid', ParseUUIDPipe) uuid: string): string | false {
     console.log('handleDestroyLobbyRequest', { uuid });
