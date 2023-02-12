@@ -1,5 +1,5 @@
 import { ParseUUIDPipe } from '@nestjs/common';
-import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { ConnectedSocket, MessageBody, SubscribeMessage } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { EventName } from '../io/enums/event-name.enum';
 import { CreateLobbyDto } from './dto/create-lobby.dto';
@@ -7,8 +7,9 @@ import { Lobby } from './entities/lobby.entity';
 import { LobbiesService } from './lobbies.service';
 import { ILobbyListOptions } from './interfaces/lobby-list-options.interface';
 import { IoGateway } from '../io/io.gateway';
+import { IoWsGateway } from '../io/io.decorator';
 
-@WebSocketGateway()
+@IoWsGateway()
 export class LobbiesGateway extends IoGateway {
   constructor(private readonly lobbiesService: LobbiesService) {
     super();

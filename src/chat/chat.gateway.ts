@@ -1,11 +1,12 @@
-import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
+import { ConnectedSocket, MessageBody, SubscribeMessage } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { RoomsService } from '../rooms/rooms.service';
 import { EventName } from '../io/enums/event-name.enum';
 import { ChatService } from './chat.service';
 import { IoGateway } from '../io/io.gateway';
+import { IoWsGateway } from '../io/io.decorator';
 
-@WebSocketGateway()
+@IoWsGateway()
 export class ChatGateway extends IoGateway {
   constructor(private chatService: ChatService, private roomService: RoomsService) {
     super();

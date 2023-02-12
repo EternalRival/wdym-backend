@@ -1,11 +1,12 @@
 import { StreamableFile } from '@nestjs/common';
-import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
+import { ConnectedSocket, MessageBody, SubscribeMessage } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { EventName } from '../io/enums/event-name.enum';
+import { IoWsGateway } from '../io/io.decorator';
 import { IoGateway } from '../io/io.gateway';
 import { FileService } from './file.service';
 
-@WebSocketGateway()
+@IoWsGateway()
 export class FileGateway extends IoGateway {
   constructor(private fileService: FileService) {
     super();

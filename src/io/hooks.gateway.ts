@@ -1,20 +1,12 @@
-import {
-  ConnectedSocket,
-  OnGatewayConnection,
-  OnGatewayDisconnect,
-  OnGatewayInit,
-  WebSocketGateway,
-  WebSocketServer,
-} from '@nestjs/websockets';
+import { ConnectedSocket, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { instrument } from '@socket.io/admin-ui';
-import { Logger, UseFilters } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { LoggerTag } from '../logger/enums/logger-tag.enum';
-import { IoExceptionFilter } from './io.filter';
 import { IoGateway } from './io.gateway';
+import { IoWsGateway } from './io.decorator';
 
-@UseFilters(new IoExceptionFilter())
-@WebSocketGateway({ cors: true })
+@IoWsGateway()
 export class HooksGateway extends IoGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   public logger = new Logger(LoggerTag.HOOKS);
 
