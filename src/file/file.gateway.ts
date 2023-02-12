@@ -16,7 +16,15 @@ export class FileGateway extends IoGateway {
   private handleGetRandomMemes(
     @MessageBody('quantity') quantity: number,
     @ConnectedSocket() client: Socket,
-  ): Promise<StreamableFile[]> {
+  ): Promise<string[]> {
     return this.fileService.getRandomMemes(this.io, client, quantity);
   }
+
+  /* @SubscribeMessage(EventName.getRandomMemes)
+  private handleGetRandomMemes(
+    @MessageBody('quantity') quantity: number,
+    @ConnectedSocket() client: Socket,
+  ): Promise<StreamableFile[]> {
+    return this.fileService.getRandomMemes(this.io, client, quantity);
+  } */
 }

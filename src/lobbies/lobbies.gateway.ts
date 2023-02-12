@@ -34,7 +34,7 @@ export class LobbiesGateway extends IoGateway {
   ): boolean {
     return this.lobbiesService.isPasswordCorrect(uuid, password);
   }
-
+ 
   @SubscribeMessage(EventName.joinLobbyRequest)
   private handleJoinLobbyRequest(
     @MessageBody('uuid', ParseUUIDPipe) uuid: string,
