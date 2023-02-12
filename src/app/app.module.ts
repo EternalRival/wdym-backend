@@ -10,7 +10,7 @@ import { User } from '../users/entities/user.entity';
 import { UsersModule } from '../users/users.module';
 import { AuthModule } from '../auth/auth.module';
 import { FileModule } from '../file/file.module';
-import { SocketIoModule } from '../socket-io/socket-io.module';
+import { IoModule } from '../io/io.module';
 import { RoomsModule } from '../rooms/rooms.module';
 import { ChatModule } from '../chat/chat.module';
 import { LobbiesModule } from '../lobbies/lobbies.module';
@@ -41,7 +41,7 @@ import { LobbiesModule } from '../lobbies/lobbies.module';
     UsersModule,
     AuthModule,
     FileModule,
-    SocketIoModule,
+    IoModule,
     RoomsModule,
     ChatModule,
     LobbiesModule,

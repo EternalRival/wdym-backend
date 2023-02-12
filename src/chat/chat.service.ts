@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 import { LoggerTag } from '../logger/enums/logger-tag.enum';
-import { EventName } from '../socket-io/enums/event-name.enum';
+import { EventName } from '../io/enums/event-name.enum';
 
 @Injectable()
 export class ChatService {

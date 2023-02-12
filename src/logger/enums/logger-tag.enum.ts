@@ -4,6 +4,7 @@ export enum LoggerTag {
   VALIDATE = 'Validate',
   GUARD = 'Guard',
   USERS = 'Users',
-  SOCKET_IO = 'Socket.io',
-  ROOMS = "Rooms"
+  HOOKS = 'Hooks',
+  ROOMS = 'Rooms',
+  IO = 'Io',
 }

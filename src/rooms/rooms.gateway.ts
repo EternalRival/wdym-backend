@@ -1,6 +1,6 @@
 import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { EventName } from '../socket-io/enums/event-name.enum';
+import { EventName } from '../io/enums/event-name.enum';
 import { RoomsService } from './rooms.service';
 
 @WebSocketGateway()

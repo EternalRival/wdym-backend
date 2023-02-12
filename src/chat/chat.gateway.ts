@@ -1,22 +1,15 @@
-import {
-  BaseWsExceptionFilter,
-  ConnectedSocket,
-  MessageBody,
-  SubscribeMessage,
-  WebSocketGateway,
-  WebSocketServer,
-} from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
+import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
+import { Socket } from 'socket.io';
 import { RoomsService } from '../rooms/rooms.service';
-import { EventName } from '../socket-io/enums/event-name.enum';
+import { EventName } from '../io/enums/event-name.enum';
 import { ChatService } from './chat.service';
+import { IoGateway } from '../io/io.gateway';
 
 @WebSocketGateway()
-export class ChatGateway {
-  @WebSocketServer()
-  private server: Server;
-
-  constructor(private chatService: ChatService, private roomService: RoomsService) {}
+export class ChatGateway extends IoGateway {
+  constructor(private chatService: ChatService, private roomService: RoomsService) {
+    super();
+  }
 
   @SubscribeMessage(EventName.messageToServer)
   private handleMsgToServer(
@@ -24,11 +17,11 @@ export class ChatGateway {
     @MessageBody('roomname') roomname: string,
     @ConnectedSocket() client: Socket,
   ): void {
-    this.chatService.handleMsgToServer(this.server, client, message, roomname);
+    this.chatService.handleMsgToServer(this.io, client, message, roomname);
   }
 
   @SubscribeMessage(EventName.joinGlobalChat)
   private handleJoinGlobalChat(@ConnectedSocket() client: Socket): void {
-    this.roomService.joinRoom(this.server, client, 'GlobalChat');
+    this.roomService.joinRoom(this.io, client, 'GlobalChat');
   }
 }

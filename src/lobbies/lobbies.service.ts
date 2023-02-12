@@ -1,8 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { Server, Socket } from 'socket.io';
+import { WsException } from '@nestjs/websockets';
 import { RoomsService } from '../rooms/rooms.service';
-import { EventName } from '../socket-io/enums/event-name.enum';
+import { EventName } from '../io/enums/event-name.enum';
 import { getChunk } from '../utils/get-chunk';
 import { CreateLobbyDto } from './dto/create-lobby.dto';
 import { Lobby } from './entities/lobby.entity';
@@ -41,7 +42,7 @@ export class LobbiesService {
     return this.lobbyMap.get(uuid)?.password === password;
   }
 
-  public joinLobby(server: Server, client: Socket, uuid: string, password?: string): false | Lobby {
+  public joinLobby(server: Server, client: Socket, uuid: string, password?: string): Lobby {
     const lobby = this.lobbyMap.get(uuid);
     const { username } = client.data;
     if (lobby && username && (!lobby.password || lobby.password === password)) {
@@ -54,11 +55,10 @@ export class LobbiesService {
       this.logger.log(`Join: ${username} -> ${lobby.lobbyName}(${lobby.uuid})`);
       return lobby;
     }
-    this.logger.log(`Join failed: ${username} -> ${lobby.lobbyName}(${lobby.uuid})`);
-    return false;
+    throw new WsException(`Join failed: ${username} -> ${lobby.lobbyName}(${lobby.uuid})`);
   }
 
-  public leaveLobby(server: Server, client: Socket, uuid: string): false | string {
+  public leaveLobby(server: Server, client: Socket, uuid: string): string {
     const lobby = this.lobbyMap.get(uuid);
     const { username } = client.data;
 
@@ -68,24 +68,25 @@ export class LobbiesService {
       this.logger.log(`Leave: ${username} -> ${lobby.lobbyName}(${lobby.uuid})`);
       return uuid;
     }
-    this.logger.log(`Leave failed: ${username} -> ${lobby.lobbyName}(${lobby.uuid})`);
-    return false;
+    throw new WsException(`Leave failed: ${username} -> ${lobby.lobbyName}(${lobby.uuid})`);
   }
 
-  public destroyLobby(server: Server, uuid: string): false | string {
+  public destroyLobby(server: Server, uuid: string): string {
     const res = this.lobbyMap.delete(uuid);
     if (res) {
       this.roomsService.deleteRoom(server, uuid);
       this.logger.log(`Destroy: ${uuid}`);
       return uuid;
     }
-    this.logger.log(`Destroy failed: ${uuid}`);
-    return false;
+    throw new WsException(`Destroy failed: ${uuid}`);
   }
 
-  public getLobbyData(uuid: string): false | Lobby {
+  public getLobbyData(uuid: string): Lobby {
     const lobby = this.lobbyMap.get(uuid);
-    return lobby ?? false;
+    if (lobby) {
+      return lobby;
+    }
+    throw new WsException(`No lobby with uuid ${uuid}`);
   }
 
   public getLobbyList(options: ILobbyListOptions): [string, Lobby][] {
