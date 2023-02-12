@@ -1,4 +1,4 @@
-import { Controller, Get, Param, StreamableFile } from '@nestjs/common';
+import { Controller, Get, Param, Query, StreamableFile } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Folder } from './enums/folder.enum';
 import { FileService } from './file.service';
@@ -15,6 +15,10 @@ export class FileController {
   @Get(`${Folder.Avatars}`)
   private async getAvatarList(): Promise<string[]> {
     return this.fileService.getFileNames(Folder.Avatars);
+  }
+  @Get('random-avatar')
+  private getRandomAvatar(): Promise<StreamableFile>{
+    return this.fileService.getRandomAvatar();
   }
 
   @Get(`${Folder.Meme}/:fileName`)
