@@ -6,7 +6,7 @@ import { LoggerTag } from '../logger/enums/logger-tag.enum';
 export class RoomsService {
   public logger = new Logger(LoggerTag.ROOMS);
 
-  public joinRoom(client: Socket, roomname: string): void {
+  public joinRoom(server: Server, client: Socket, roomname: string): void {
     const { username } = client.data;
 
     client.join(roomname);

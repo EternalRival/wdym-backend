@@ -22,6 +22,6 @@ export class ChatGateway {
 
   @SubscribeMessage(EventName.joinGlobalChat)
   private handleJoinGlobalChat(@ConnectedSocket() client: Socket): void {
-    this.roomService.joinRoom(client, 'GlobalChat');
+    this.roomService.joinRoom(this.server, client, 'GlobalChat');
   }
 }

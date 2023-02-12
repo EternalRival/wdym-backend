@@ -47,7 +47,7 @@ export class LobbiesGateway {
     @ConnectedSocket() client: Socket,
   ): false | Lobby {
     console.log('handleJoinLobbyRequest', { uuid, password });
-    return this.lobbiesService.joinLobby(client, uuid, password);
+    return this.lobbiesService.joinLobby(this.server, client, uuid, password);
   }
 
   @SubscribeMessage(EventName.destroyLobbyRequest)

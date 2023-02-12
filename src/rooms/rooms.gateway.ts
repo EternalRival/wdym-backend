@@ -9,11 +9,11 @@ export class RoomsGateway {
   private server: Server;
   constructor(private readonly roomsService: RoomsService) {}
 
-  @SubscribeMessage(EventName.joinRoom)
+  @SubscribeMessage(EventName.joinRoomRequest)
   private handleJoinRoom(@MessageBody('roomname') roomname: string, @ConnectedSocket() client: Socket): void {
-    this.roomsService.joinRoom(client, roomname);
+    this.roomsService.joinRoom(this.server, client, roomname);
   }
-  @SubscribeMessage(EventName.leaveRoom)
+  @SubscribeMessage(EventName.leaveRoomRequest)
   private handleLeaveRoom(@MessageBody('roomname') roomname: string, @ConnectedSocket() client: Socket): void {
     this.roomsService.leaveRoom(client, roomname);
   }

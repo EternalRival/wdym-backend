@@ -41,14 +41,15 @@ export class LobbiesService {
     return this.lobbyMap.get(uuid)?.password === password;
   }
 
-  public joinLobby(client: Socket, uuid: string, password?: string): false | Lobby {
+  public joinLobby(server: Server, client: Socket, uuid: string, password?: string): false | Lobby {
     const lobby = this.lobbyMap.get(uuid);
     const { username } = client.data;
     if (lobby && username && (!lobby.password || lobby.password === password)) {
       const score = 0;
       const player = new Player({ username, score });
       lobby.players[player.username] = player;
-      this.roomsService.joinRoom(client, lobby.uuid);
+      this.roomsService.joinRoom(server, client, lobby.uuid);
+      server.to(lobby.lobbyName).emit(EventName.joinLobby, player);
       this.logger.log(`Join: ${username} -> ${lobby.lobbyName}(${lobby.uuid})`);
       return lobby;
     }
@@ -56,11 +57,13 @@ export class LobbiesService {
     return false;
   }
 
-  public leaveLobby(client: Socket, uuid: string): false | string {
+  public leaveLobby(server: Server, client: Socket, uuid: string): false | string {
     const lobby = this.lobbyMap.get(uuid);
     const { username } = client.data;
-    if (lobby && username) {
+
+    if (lobby && username && username in lobby.players) {
       this.roomsService.leaveRoom(client, uuid);
+      server.to(lobby.lobbyName).emit(EventName.leaveLobby, lobby.players[username]);
       this.logger.log(`Leave: ${username} -> ${lobby.lobbyName}(${lobby.uuid})`);
       return uuid;
     }

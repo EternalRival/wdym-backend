@@ -1,8 +1,8 @@
 export enum EventName {
   chatGlobalMessage = 'globalChatMessage',
   messageToServer = 'messageToServer',
-  joinRoom = 'joinRoom',
-  leaveRoom = 'leaveRoom',
+  joinRoomRequest = 'joinRoom',
+  leaveRoomRequest = 'leaveRoom',
   getRoomList = 'getRoomList',
   createLobbyRequest = 'createLobbyRequest',
   isUuidUniqueRequest = 'isUuidUniqueRequest',
@@ -12,6 +12,8 @@ export enum EventName {
   getLobbyList = 'getLobbyList',
   lobbyCreated = 'lobbyCreated',
   isPasswordCorrectRequest = 'isPasswordCorrectRequest',
-  joinGlobalChat = "joinGlobalChat",
-  isLobbyNameUniqueRequest = "isLobbyNameUniqueRequest"
+  joinGlobalChat = 'joinGlobalChat',
+  isLobbyNameUniqueRequest = 'isLobbyNameUniqueRequest',
+  joinLobby = 'joinLobby',
+  leaveLobby = 'leaveLobby',
 }
