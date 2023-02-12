@@ -7,7 +7,7 @@ import { Lobby } from './entities/lobby.entity';
 import { LobbiesService } from './lobbies.service';
 import { ILobbyListOptions } from './interfaces/lobby-list-options.interface';
 
-@WebSocketGateway({ cors: { origin: true } })
+@WebSocketGateway()
 export class LobbiesGateway {
   @WebSocketServer()
   private server: Server;

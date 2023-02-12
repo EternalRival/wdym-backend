@@ -3,7 +3,7 @@ import { Server, Socket } from 'socket.io';
 import { EventName } from '../socket-io/enums/event-name.enum';
 import { RoomsService } from './rooms.service';
 
-@WebSocketGateway({ cors: { origin: true } })
+@WebSocketGateway()
 export class RoomsGateway {
   @WebSocketServer()
   private server: Server;

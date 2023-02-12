@@ -45,6 +45,7 @@ export class LobbiesService {
     const lobby = this.lobbyMap.get(uuid);
     const { username } = client.data;
     if (lobby && username && (!lobby.password || lobby.password === password)) {
+      // TODO обработать кейс, когда игрок уже в лобби (на свежую голову)
       const score = 0;
       const player = new Player({ username, score });
       lobby.players[player.username] = player;
