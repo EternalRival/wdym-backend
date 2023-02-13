@@ -1,4 +1,3 @@
-import { StreamableFile } from '@nestjs/common';
 import { ConnectedSocket, MessageBody, SubscribeMessage } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { EventName } from '../io/enums/event-name.enum';
@@ -15,16 +14,8 @@ export class FileGateway extends IoGateway {
   @SubscribeMessage(EventName.getRandomMemes)
   private handleGetRandomMemes(
     @MessageBody('quantity') quantity: number,
-    @ConnectedSocket() client: Socket,
+    @ConnectedSocket() socket: Socket,
   ): Promise<string[]> {
-    return this.fileService.getRandomMemes(this.io, client, quantity);
+    return this.fileService.getRandomMemes(this.io, socket, quantity);
   }
-
-  /* @SubscribeMessage(EventName.getRandomMemes)
-  private handleGetRandomMemes(
-    @MessageBody('quantity') quantity: number,
-    @ConnectedSocket() client: Socket,
-  ): Promise<StreamableFile[]> {
-    return this.fileService.getRandomMemes(this.io, client, quantity);
-  } */
 }

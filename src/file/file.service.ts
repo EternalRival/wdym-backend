@@ -1,12 +1,8 @@
-import { Injectable, StreamableFile } from '@nestjs/common';
-import { WsException } from '@nestjs/websockets';
-import { createReadStream, ReadStream } from 'fs';
-import { readdir, readFile } from 'fs/promises';
-import { lookup } from 'mime-types';
-import { parse, resolve, ParsedPath, join } from 'path';
+import { Injectable } from '@nestjs/common';
+import { readdir,  } from 'fs/promises';
+import { resolve, join } from 'path';
 import { Server, Socket } from 'socket.io';
 import { getRandomArrayItem, shuffle } from '../utils/randomize';
-import { Extension } from './enums/extension.enum';
 import { Folder } from './enums/folder.enum';
 
 enum Root {
@@ -36,11 +32,11 @@ export class FileService {
     return this.url(Root.web, Folder.Avatars, randomFileName);
   }
 
-  public async getRandomMemes(io: Server, client: Socket, quantity: number): Promise<string[]> {
+  public async getRandomMemes(io: Server, socket: Socket, quantity: number): Promise<string[]> {
     const dir = this.url(Root.src, Folder.Meme);
     const fileNames = await readdir(dir);
     const randomFileNames = shuffle(fileNames).slice(0, quantity);
-    const { host } = client.request.headers;
+    const { host } = socket.request.headers;
     return randomFileNames.map((fileName) => host + this.url(Root.web, Folder.Meme, fileName));
   }
 }

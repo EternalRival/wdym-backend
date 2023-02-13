@@ -42,15 +42,15 @@ export class LobbiesService {
     return this.lobbyMap.get(uuid)?.password === password;
   }
 
-  public joinLobby(server: Server, client: Socket, uuid: string, password?: string): Lobby {
+  public joinLobby(server: Server, socket: Socket, uuid: string, password?: string): Lobby {
     const lobby = this.lobbyMap.get(uuid);
-    const { username } = client.data;
+    const { username } = socket.data;
     if (lobby && username && (!lobby.password || lobby.password === password)) {
       // TODO обработать кейс, когда игрок уже в лобби (на свежую голову)
       const score = 0;
       const player = new Player({ username, score });
       lobby.players[player.username] = player;
-      this.roomsService.joinRoom(server, client, lobby.uuid);
+      this.roomsService.joinRoom(server, socket, lobby.uuid);
       server.to(lobby.lobbyName).emit(EventName.joinLobby, player);
       this.logger.log(`Join: ${username} -> ${lobby.lobbyName}(${lobby.uuid})`);
       return lobby;
@@ -58,12 +58,12 @@ export class LobbiesService {
     throw new WsException(`Join failed: ${username} -> ${lobby.lobbyName}(${lobby.uuid})`);
   }
 
-  public leaveLobby(server: Server, client: Socket, uuid: string): string {
+  public leaveLobby(server: Server, socket: Socket, uuid: string): string {
     const lobby = this.lobbyMap.get(uuid);
-    const { username } = client.data;
+    const { username } = socket.data;
 
     if (lobby && username && username in lobby.players) {
-      this.roomsService.leaveRoom(client, uuid);
+      this.roomsService.leaveRoom(socket, uuid);
       server.to(lobby.lobbyName).emit(EventName.leaveLobby, lobby.players[username]);
       this.logger.log(`Leave: ${username} -> ${lobby.lobbyName}(${lobby.uuid})`);
       return uuid;

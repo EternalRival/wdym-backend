@@ -16,13 +16,13 @@ export class ChatGateway extends IoGateway {
   private handleMsgToServer(
     @MessageBody('message') message: string,
     @MessageBody('roomname') roomname: string,
-    @ConnectedSocket() client: Socket,
+    @ConnectedSocket() socket: Socket,
   ): void {
-    this.chatService.handleMsgToServer(this.io, client, message, roomname);
+    this.chatService.handleMsgToServer(this.io, socket, message, roomname);
   }
 
   @SubscribeMessage(EventName.joinGlobalChat)
-  private handleJoinGlobalChat(@ConnectedSocket() client: Socket): void {
-    this.roomService.joinRoom(this.io, client, 'GlobalChat');
+  private handleJoinGlobalChat(@ConnectedSocket() socket: Socket): void {
+    this.roomService.joinRoom(this.io, socket, 'GlobalChat');
   }
 }

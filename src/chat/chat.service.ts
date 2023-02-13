@@ -8,8 +8,8 @@ export class ChatService {
   private GLOBAL_CHAT_NAME = 'GlobalChat';
   public logger = new Logger(LoggerTag.CHAT);
 
-  public handleMsgToServer(server: Server, client: Socket, message: string, roomname: string): void {
-    const { username } = client.data;
+  public handleMsgToServer(server: Server, socket: Socket, message: string, roomname: string): void {
+    const { username } = socket.data;
     const timestamp = Date.now();
 
     server.to(roomname || this.GLOBAL_CHAT_NAME).emit(EventName.chatGlobalMessage, { username, message, timestamp });

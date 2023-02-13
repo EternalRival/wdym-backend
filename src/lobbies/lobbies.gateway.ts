@@ -1,6 +1,6 @@
 import { ParseUUIDPipe } from '@nestjs/common';
 import { ConnectedSocket, MessageBody, SubscribeMessage } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
+import { Socket } from 'socket.io';
 import { EventName } from '../io/enums/event-name.enum';
 import { CreateLobbyDto } from './dto/create-lobby.dto';
 import { Lobby } from './entities/lobby.entity';
@@ -39,19 +39,19 @@ export class LobbiesGateway extends IoGateway {
   private handleJoinLobbyRequest(
     @MessageBody('uuid', ParseUUIDPipe) uuid: string,
     @MessageBody('password') password: string,
-    @ConnectedSocket() client: Socket,
+    @ConnectedSocket() socket: Socket,
   ): Lobby {
     console.log('handleJoinLobbyRequest', { uuid, password });
-    return this.lobbiesService.joinLobby(this.io, client, uuid, password);
+    return this.lobbiesService.joinLobby(this.io, socket, uuid, password);
   }
 
   @SubscribeMessage(EventName.leaveLobbyRequest)
   private handleLeaveLobbyRequest(
     @MessageBody('uuid', ParseUUIDPipe) uuid: string,
-    @ConnectedSocket() client: Socket,
+    @ConnectedSocket() socket: Socket,
   ): string {
     console.log('handleLeaveLobbyRequest', { uuid });
-    return this.lobbiesService.leaveLobby(this.io, client, uuid);
+    return this.lobbiesService.leaveLobby(this.io, socket, uuid);
   }
 
   @SubscribeMessage(EventName.destroyLobbyRequest)

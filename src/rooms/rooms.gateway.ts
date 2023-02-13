@@ -1,5 +1,5 @@
 import { ConnectedSocket, MessageBody, SubscribeMessage } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
+import { Socket } from 'socket.io';
 import { EventName } from '../io/enums/event-name.enum';
 import { IoWsGateway } from '../io/io.decorator';
 import { IoGateway } from '../io/io.gateway';
@@ -12,15 +12,15 @@ export class RoomsGateway extends IoGateway {
   }
 
   @SubscribeMessage(EventName.joinRoomRequest)
-  private handleJoinRoom(@MessageBody('roomname') roomname: string, @ConnectedSocket() client: Socket): void {
-    this.roomsService.joinRoom(this.io, client, roomname);
+  private handleJoinRoom(@MessageBody('roomname') roomname: string, @ConnectedSocket() socket: Socket): void {
+    this.roomsService.joinRoom(this.io, socket, roomname);
   }
   @SubscribeMessage(EventName.leaveRoomRequest)
-  private handleLeaveRoom(@MessageBody('roomname') roomname: string, @ConnectedSocket() client: Socket): void {
-    this.roomsService.leaveRoom(client, roomname);
+  private handleLeaveRoom(@MessageBody('roomname') roomname: string, @ConnectedSocket() socket: Socket): void {
+    this.roomsService.leaveRoom(socket, roomname);
   }
   @SubscribeMessage(EventName.getRoomList)
-  private handleGetRoomList(@ConnectedSocket() client: Socket): unknown {
-    return this.roomsService.getRoomList(this.io, client);
+  private handleGetRoomList(@ConnectedSocket() socket: Socket): unknown {
+    return this.roomsService.getRoomList(this.io, socket);
   }
 }
