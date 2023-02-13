@@ -1,7 +1,7 @@
 import { ParseUUIDPipe } from '@nestjs/common';
 import { ConnectedSocket, MessageBody, SubscribeMessage } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
-import { EventName } from '../io/enums/event-name.enum';
+import { IoInput } from '../io/enums/event-name.enum';
 import { CreateLobbyDto } from './dto/create-lobby.dto';
 import { Lobby } from './entities/lobby.entity';
 import { LobbiesService } from './lobbies.service';
@@ -15,27 +15,27 @@ export class LobbiesGateway extends IoGateway {
     super();
   }
 
-  @SubscribeMessage(EventName.createLobbyRequest)
+  @SubscribeMessage(IoInput.createLobbyRequest)
   private handleCreateLobbyRequest(@MessageBody('lobby') lobby: CreateLobbyDto): Lobby {
     console.log('handleCreateLobbyRequest', JSON.stringify({ lobby }));
     return this.lobbiesService.createLobby(this.io, lobby);
   }
 
-  @SubscribeMessage(EventName.isLobbyNameUniqueRequest)
+  @SubscribeMessage(IoInput.isLobbyNameUniqueRequest)
   private handleIsLobbyNameUniqueRequest(@MessageBody('lobbyName') lobbyName: string): boolean {
     console.log('handleIsLobbyNameUniqueRequest', { lobbyName });
     return this.lobbiesService.isLobbyNameUnique(lobbyName);
   }
 
-  @SubscribeMessage(EventName.isPasswordCorrectRequest)
+  @SubscribeMessage(IoInput.isPasswordCorrectRequest)
   private handleIsPasswordCorrectRequest(
     @MessageBody('uuid', ParseUUIDPipe) uuid: string,
     @MessageBody('password') password: string,
   ): boolean {
     return this.lobbiesService.isPasswordCorrect(uuid, password);
   }
- 
-  @SubscribeMessage(EventName.joinLobbyRequest)
+
+  @SubscribeMessage(IoInput.joinLobbyRequest)
   private handleJoinLobbyRequest(
     @MessageBody('uuid', ParseUUIDPipe) uuid: string,
     @MessageBody('password') password: string,
@@ -45,7 +45,7 @@ export class LobbiesGateway extends IoGateway {
     return this.lobbiesService.joinLobby(this.io, socket, uuid, password);
   }
 
-  @SubscribeMessage(EventName.leaveLobbyRequest)
+  @SubscribeMessage(IoInput.leaveLobbyRequest)
   private handleLeaveLobbyRequest(
     @MessageBody('uuid', ParseUUIDPipe) uuid: string,
     @ConnectedSocket() socket: Socket,
@@ -54,19 +54,19 @@ export class LobbiesGateway extends IoGateway {
     return this.lobbiesService.leaveLobby(this.io, socket, uuid);
   }
 
-  @SubscribeMessage(EventName.destroyLobbyRequest)
+  @SubscribeMessage(IoInput.destroyLobbyRequest)
   private handleDestroyLobbyRequest(@MessageBody('uuid', ParseUUIDPipe) uuid: string): string {
     console.log('handleDestroyLobbyRequest', { uuid });
     return this.lobbiesService.destroyLobby(this.io, uuid);
   }
 
-  @SubscribeMessage(EventName.getLobbyData)
+  @SubscribeMessage(IoInput.lobbyDataRequest)
   private handleGetLobbyDataRequest(@MessageBody('uuid', ParseUUIDPipe) uuid: string): Lobby {
     console.log('handleGetLobbyDataRequest', { uuid });
     return this.lobbiesService.getLobbyData(uuid);
   }
 
-  @SubscribeMessage(EventName.getLobbyList)
+  @SubscribeMessage(IoInput.lobbyListRequest)
   private handleGetLobbyList(@MessageBody() options: ILobbyListOptions): [string, Lobby][] {
     console.log('handleGetLobbyList', options);
     return this.lobbiesService.getLobbyList(options);

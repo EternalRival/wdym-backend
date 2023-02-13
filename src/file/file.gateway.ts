@@ -1,6 +1,6 @@
 import { ConnectedSocket, MessageBody, SubscribeMessage } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
-import { EventName } from '../io/enums/event-name.enum';
+import { IoInput } from '../io/enums/event-name.enum';
 import { IoWsGateway } from '../io/io.decorator';
 import { IoGateway } from '../io/io.gateway';
 import { FileService } from './file.service';
@@ -11,7 +11,7 @@ export class FileGateway extends IoGateway {
     super();
   }
 
-  @SubscribeMessage(EventName.getRandomMemes)
+  @SubscribeMessage(IoInput.randomMemesRequest)
   private handleGetRandomMemes(
     @MessageBody('quantity') quantity: number,
     @ConnectedSocket() socket: Socket,

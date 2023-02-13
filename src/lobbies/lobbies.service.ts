@@ -3,7 +3,7 @@ import { randomUUID } from 'crypto';
 import { Server, Socket } from 'socket.io';
 import { WsException } from '@nestjs/websockets';
 import { RoomsService } from '../rooms/rooms.service';
-import { EventName } from '../io/enums/event-name.enum';
+import { IoOutput, IoInput } from '../io/enums/event-name.enum';
 import { getChunk } from '../utils/get-chunk';
 import { CreateLobbyDto } from './dto/create-lobby.dto';
 import { Lobby } from './entities/lobby.entity';
@@ -23,7 +23,7 @@ export class LobbiesService {
     this.lobbyMap.set(lobby.uuid, lobby);
     this.logger.log(`Lobby ${lobby.uuid} created`);
 
-    server.emit(EventName.lobbyCreated, lobby);
+    server.emit(IoOutput.createLobby, lobby);
     return lobby;
   }
 
@@ -50,11 +50,11 @@ export class LobbiesService {
         const score = 0;
         const player = new Player({ username, score });
         lobby.players[player.username] = player;
-        this.roomsService.joinRoom(server, socket, lobby.uuid);
-        server.to(lobby.uuid).emit(EventName.joinLobby, lobby.players);
+        server.to(lobby.uuid).emit(IoOutput.joinLobby, lobby.players);
         this.logger.log(`Join: ${username} -> ${lobby.lobbyName}(${lobby.uuid})`);
         return lobby;
       }
+      this.roomsService.joinRoom(server, socket, lobby.uuid);
     }
     throw new WsException(`Join failed: ${username} -> ${lobby.lobbyName}(${lobby.uuid})`);
   }
@@ -65,7 +65,7 @@ export class LobbiesService {
 
     if (lobby && username && username in lobby.players) {
       this.roomsService.leaveRoom(socket, uuid);
-      server.to(lobby.lobbyName).emit(EventName.leaveLobby, lobby.players[username]);
+      server.to(lobby.uuid).emit(IoOutput.leaveLobby, lobby.players);
       this.logger.log(`Leave: ${username} -> ${lobby.lobbyName}(${lobby.uuid})`);
       return uuid;
     }
