@@ -52,9 +52,9 @@ export class LobbiesService {
         lobby.players[player.username] = player;
         server.to(lobby.uuid).emit(IoOutput.joinLobby, lobby.players);
         this.logger.log(`Join: ${username} -> ${lobby.lobbyName}(${lobby.uuid})`);
-        return lobby;
       }
       this.roomsService.joinRoom(server, socket, lobby.uuid);
+      return lobby;
     }
     throw new WsException(`Join failed: ${username} -> ${lobby.lobbyName}(${lobby.uuid})`);
   }

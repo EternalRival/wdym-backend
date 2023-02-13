@@ -17,13 +17,11 @@ export class LobbiesGateway extends IoGateway {
 
   @SubscribeMessage(IoInput.createLobbyRequest)
   private handleCreateLobbyRequest(@MessageBody('lobby') lobby: CreateLobbyDto): Lobby {
-    console.log('handleCreateLobbyRequest', JSON.stringify({ lobby }));
     return this.lobbiesService.createLobby(this.io, lobby);
   }
 
   @SubscribeMessage(IoInput.isLobbyNameUniqueRequest)
   private handleIsLobbyNameUniqueRequest(@MessageBody('lobbyName') lobbyName: string): boolean {
-    console.log('handleIsLobbyNameUniqueRequest', { lobbyName });
     return this.lobbiesService.isLobbyNameUnique(lobbyName);
   }
 
@@ -41,7 +39,6 @@ export class LobbiesGateway extends IoGateway {
     @MessageBody('password') password: string,
     @ConnectedSocket() socket: Socket,
   ): Lobby {
-    console.log('handleJoinLobbyRequest', { uuid, password });
     return this.lobbiesService.joinLobby(this.io, socket, uuid, password);
   }
 
@@ -50,25 +47,21 @@ export class LobbiesGateway extends IoGateway {
     @MessageBody('uuid', ParseUUIDPipe) uuid: string,
     @ConnectedSocket() socket: Socket,
   ): string {
-    console.log('handleLeaveLobbyRequest', { uuid });
     return this.lobbiesService.leaveLobby(this.io, socket, uuid);
   }
 
   @SubscribeMessage(IoInput.destroyLobbyRequest)
   private handleDestroyLobbyRequest(@MessageBody('uuid', ParseUUIDPipe) uuid: string): string {
-    console.log('handleDestroyLobbyRequest', { uuid });
     return this.lobbiesService.destroyLobby(this.io, uuid);
   }
 
   @SubscribeMessage(IoInput.lobbyDataRequest)
   private handleGetLobbyDataRequest(@MessageBody('uuid', ParseUUIDPipe) uuid: string): Lobby {
-    console.log('handleGetLobbyDataRequest', { uuid });
     return this.lobbiesService.getLobbyData(uuid);
   }
 
   @SubscribeMessage(IoInput.lobbyListRequest)
   private handleGetLobbyList(@MessageBody() options: ILobbyListOptions): [string, Lobby][] {
-    console.log('handleGetLobbyList', options);
     return this.lobbiesService.getLobbyList(options);
   }
 }
