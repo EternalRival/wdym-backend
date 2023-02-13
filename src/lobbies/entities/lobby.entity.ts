@@ -14,4 +14,8 @@ export class Lobby implements CreateLobbyDto {
   constructor(createLobbyDto: CreateLobbyDto, public readonly uuid: string) {
     Object.assign(this, createLobbyDto);
   }
+
+  public get isEmpty(): boolean {
+    return Object.keys(this.players).length < 1;
+  }
 }

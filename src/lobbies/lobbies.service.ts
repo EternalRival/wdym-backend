@@ -67,14 +67,17 @@ export class LobbiesService {
       this.roomsService.leaveRoom(socket, uuid);
       server.to(lobby.uuid).emit(IoOutput.leaveLobby, lobby.players);
       this.logger.log(`Leave: ${username} -> ${lobby.lobbyName}(${lobby.uuid})`);
+      if (lobby.isEmpty) {
+        this.destroyLobby(server, uuid);
+      }
       return uuid;
     }
     throw new WsException(`Leave failed: ${username} -> ${lobby.lobbyName}(${lobby.uuid})`);
   }
 
   public destroyLobby(server: Server, uuid: string): string {
-    const res = this.lobbyMap.delete(uuid);
-    if (res) {
+    const deleteResult = this.lobbyMap.delete(uuid);
+    if (deleteResult) {
       this.roomsService.deleteRoom(server, uuid);
       this.logger.log(`Destroy: ${uuid}`);
       return uuid;
@@ -93,14 +96,12 @@ export class LobbiesService {
   public getLobbyList(options: ILobbyListOptions): [string, Lobby][] {
     this.logger.log(`GetLobbyList: ${JSON.stringify(options)}`);
 
-    const list = [...this.lobbyMap.entries()];
-
-    const filteredList = list.filter(
+    const list = [...this.lobbyMap.entries()].filter(
       ([_, lobby]) =>
         ('isPrivate' in options ? Boolean(lobby.password) === options.isPrivate : true) &&
         ('nameContains' in options ? lobby.lobbyName.includes(options.nameContains) : true),
     );
 
-    return 'chunk' in options ? getChunk(options.chunk.page, options.chunk.limit, filteredList) : filteredList;
+    return 'chunk' in options ? getChunk(options.chunk.page, options.chunk.limit, list) : list;
   }
 }
