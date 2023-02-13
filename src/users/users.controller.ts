@@ -12,7 +12,6 @@ import {
   ParseIntPipe,
   UseGuards,
   Req,
-  Put,
   Query,
   Logger,
 } from '@nestjs/common';
