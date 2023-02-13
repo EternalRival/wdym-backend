@@ -9,6 +9,7 @@ import { CreateLobbyDto } from './dto/create-lobby.dto';
 import { Lobby } from './entities/lobby.entity';
 import { Player } from './entities/player.entity';
 import { ILobbyListOptions } from './interfaces/lobby-list-options.interface';
+import { LobbyListOptionsPrivacy } from './enum/lobby-list-options.enum';
 
 @Injectable()
 export class LobbiesService {
@@ -93,13 +94,43 @@ export class LobbiesService {
     throw new WsException(`No lobby with uuid ${uuid}`);
   }
 
-  public getLobbyList(options: ILobbyListOptions): [string, Lobby][] {
+  /*   public getLobbyList(options: ILobbyListOptions): [string, Lobby][] {
     this.logger.log(`GetLobbyList: ${JSON.stringify(options)}`);
 
     const list = [...this.lobbyMap.entries()].filter(
       ([_, lobby]) =>
         ('isPrivate' in options ? Boolean(lobby.password) === options.isPrivate : true) &&
         ('nameContains' in options ? lobby.lobbyName.includes(options.nameContains) : true),
+    );
+
+    return 'chunk' in options ? getChunk(options.chunk.page, options.chunk.limit, list) : list;
+  } */
+
+  public getLobbyList(options: ILobbyListOptions): [string, Lobby][] {
+    this.logger.log(`GetLobbyList: ${JSON.stringify(options)}`);
+
+    const handlePrivacyOption = (password: string): boolean => {
+      if ('privacy' in options) {
+        switch (options.privacy) {
+          case LobbyListOptionsPrivacy.PRIVATE:
+            return password !== '';
+          case LobbyListOptionsPrivacy.PUBLIC:
+            return password === '';
+          default:
+        }
+      }
+      return true;
+    };
+
+    const handleNameContainsOption = (lobbyName: string): boolean => {
+      if ('nameContains' in options) {
+        return lobbyName.includes(options.nameContains);
+      }
+      return true;
+    };
+
+    const list = [...this.lobbyMap.entries()].filter(
+      ([_, lobby]) => handlePrivacyOption(lobby.password) && handleNameContainsOption(lobby.lobbyName),
     );
 
     return 'chunk' in options ? getChunk(options.chunk.page, options.chunk.limit, list) : list;

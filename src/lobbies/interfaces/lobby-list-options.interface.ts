@@ -1,8 +1,10 @@
+import { LobbyListOptionsPrivacy } from '../enum/lobby-list-options.enum';
+
 export interface ILobbyListOptions {
   chunk?: {
     page: number;
     limit: number;
   };
-  isPrivate?: boolean;
+  privacy?: LobbyListOptionsPrivacy;
   nameContains?: string;
 }

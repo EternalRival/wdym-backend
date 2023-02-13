@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "build": "nest build && npm run docs",
-    "docs": "npx compodoc -t -p tsconfig.json -n \"WDYM Documentation\" -d dist/docs --customFavicon src/public/assets/images/avatars/0.webp",
+    "docs": "npx @compodoc/compodoc -t -p tsconfig.json -n \"WDYM Documentation\" -d dist/docs --customFavicon src/public/assets/images/avatars/0.webp",
     "start:dev": "nest start --watch",
     "start:prod": "node dist/main",
     "start:debug": "nest start --debug --watch",
