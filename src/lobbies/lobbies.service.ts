@@ -51,7 +51,7 @@ export class LobbiesService {
       const player = new Player({ username, score });
       lobby.players[player.username] = player;
       this.roomsService.joinRoom(server, socket, lobby.uuid);
-      server.to(lobby.lobbyName).emit(EventName.joinLobby, player);
+      server.to(lobby.uuid).emit(EventName.joinLobby, player);
       this.logger.log(`Join: ${username} -> ${lobby.lobbyName}(${lobby.uuid})`);
       return lobby;
     }

@@ -21,6 +21,7 @@ export class HooksGateway extends IoGateway implements OnGatewayInit, OnGatewayC
 
   public handleConnection(@ConnectedSocket() socket: Socket): void {
     try {
+      socket.setMaxListeners(0);
       const { username } = socket.handshake.auth;
       Object.assign(socket.data, { username });
       this.logger.log(`Client connected: ${username}`);
