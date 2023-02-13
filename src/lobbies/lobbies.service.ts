@@ -46,14 +46,15 @@ export class LobbiesService {
     const lobby = this.lobbyMap.get(uuid);
     const { username } = socket.data;
     if (lobby && username && (!lobby.password || lobby.password === password)) {
-      // TODO обработать кейс, когда игрок уже в лобби (на свежую голову)
-      const score = 0;
-      const player = new Player({ username, score });
-      lobby.players[player.username] = player;
-      this.roomsService.joinRoom(server, socket, lobby.uuid);
-      server.to(lobby.uuid).emit(EventName.joinLobby, player);
-      this.logger.log(`Join: ${username} -> ${lobby.lobbyName}(${lobby.uuid})`);
-      return lobby;
+      if (!(username in lobby.players)) {
+        const score = 0;
+        const player = new Player({ username, score });
+        lobby.players[player.username] = player;
+        this.roomsService.joinRoom(server, socket, lobby.uuid);
+        server.to(lobby.uuid).emit(EventName.joinLobby, lobby.players);
+        this.logger.log(`Join: ${username} -> ${lobby.lobbyName}(${lobby.uuid})`);
+        return lobby;
+      }
     }
     throw new WsException(`Join failed: ${username} -> ${lobby.lobbyName}(${lobby.uuid})`);
   }
