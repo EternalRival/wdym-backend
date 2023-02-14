@@ -4,34 +4,28 @@ import { ICreateLobbyData, ILobby, ILobbyData } from '../interfaces/lobby.interf
 import { Player } from './player';
 
 export class Lobby implements ILobby {
-  public readonly uuid: string;
-  public readonly title: string;
-  public readonly password: string;
-  public readonly owner: string;
-  public readonly image: string;
-  public readonly maxPlayers: number;
-  public readonly maxRounds: number;
+  public readonly uuid!: string;
+  public readonly title!: string;
+  public readonly password!: string;
+  public readonly owner!: string;
+  public readonly image!: string;
+  public readonly maxPlayers!: number;
+  public readonly maxRounds!: number;
 
   public readonly players: Record<string, Player> = {}; // Record<Player['username'], Player>
 
   public status: GameStatus = GameStatus.PREPARE;
   public currentRound: number = 1;
 
-  constructor(createLobbyData: ICreateLobbyData, uuid: string) {
-    this.uuid = uuid;
-    this.title = createLobbyData.lobbyName;
-    this.password = createLobbyData.password;
-    this.owner = createLobbyData.lobbyOwner;
-    this.image = createLobbyData.lobbyImage;
-    this.maxPlayers = createLobbyData.maxUsers;
-    this.maxRounds = createLobbyData.rounds;
+  constructor(uuid: string, createLobbyData: ICreateLobbyData) {
+    Object.assign(this, { uuid, ...createLobbyData });
   }
 
   private get playersQuantity(): number {
     return Object.keys(this.players).length;
   }
 
-  public addPlayer(player:Player) :void{
+  public addPlayer(player: Player): void {
     this.players[player.username] = player;
   }
   public hasPlayer(username: string): boolean {
@@ -57,13 +51,13 @@ export class Lobby implements ILobby {
   public get lobbyData(): ILobbyData {
     return {
       uuid: this.uuid,
-      lobbyImage: this.image,
-      lobbyOwner: this.owner,
+      image: this.image,
+      owner: this.owner,
       privacyType: this.privacyType,
-      lobbyName: this.title,
-      currentUsers: this.playersQuantity,
-      maxUsers: this.maxPlayers,
-      rounds: this.maxRounds,
+      title: this.title,
+      playersQuantity: this.playersQuantity,
+      maxPlayers: this.maxPlayers,
+      maxRounds: this.maxRounds,
     };
   }
 }

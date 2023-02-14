@@ -19,19 +19,6 @@ export class LobbiesGateway extends IoGateway {
     return this.lobbiesService.createLobby(this.io, createLobbyData);
   }
 
-  @SubscribeMessage(IoInput.isLobbyTitleUniqueRequest)
-  private handleIsLobbyTitleUniqueRequest(@MessageBody('lobbyName') title: string): boolean {
-    return this.lobbiesService.isLobbyTitleUnique(title);
-  }
-
-  @SubscribeMessage(IoInput.isPasswordCorrectRequest)
-  private handleIsPasswordCorrectRequest(
-    @MessageBody('uuid', ParseUUIDPipe) uuid: string,
-    @MessageBody('password') password: string,
-  ): boolean {
-    return this.lobbiesService.isPasswordCorrect(uuid, password);
-  }
-
   @SubscribeMessage(IoInput.joinLobbyRequest)
   private handleJoinLobbyRequest(
     @MessageBody('uuid', ParseUUIDPipe) uuid: string,
@@ -62,7 +49,7 @@ export class LobbiesGateway extends IoGateway {
   }
 
   @SubscribeMessage(IoInput.lobbyListRequest)
-  private handleGetLobbyList(@MessageBody() options: ILobbyListOptions): [string, ILobbyData][] {
+  private handleGetLobbyList(@MessageBody() options: ILobbyListOptions): ILobbyData[] {
     return this.lobbiesService.getLobbyList(options);
   }
 }

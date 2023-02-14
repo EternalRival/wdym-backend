@@ -1,20 +1,18 @@
 export enum IoInput {
-  chatMessageRequest = 'messageToServer', // "chat-message-request"
-  createLobbyRequest = 'createLobbyRequest', // "create-lobby-request"
-  joinLobbyRequest = 'joinLobbyRequest', // "join-lobby-request"
-  destroyLobbyRequest = 'destroy-lobby-request', // "destroy-lobby-request"
-  lobbyDataRequest = 'getLobbyData', // "lobby-data-request"
-  lobbyListRequest = 'getLobbyList', // "lobby-list-request"
-  isPasswordCorrectRequest = 'isPasswordCorrectRequest', // "is-password-correct-request"
-  isLobbyTitleUniqueRequest = 'isLobbyNameUniqueRequest', // "is-lobby-name-unique-request"
-  leaveLobbyRequest = 'leave-lobby-request', // "leave-lobby-request"
-  randomMemesRequest = 'getRandomMemes', // "random-memes-request"
+  chatMessageRequest = 'chat-message-request',
+  createLobbyRequest = 'create-lobby-request',
+  joinLobbyRequest = 'join-lobby-request',
+  destroyLobbyRequest = 'destroy-lobby-request',
+  lobbyDataRequest = 'lobby-data-request',
+  lobbyListRequest = 'lobby-list-request',
+  leaveLobbyRequest = 'leave-lobby-request',
+  randomMemesRequest = 'random-memes-request',
 }
 
 export enum IoOutput {
-  chatMessage = 'globalChatMessage', // chat-message
-  createLobby = 'create-lobby', // create-lobby
-  joinLobby = 'joinLobby', // join-lobby
-  leaveLobby = 'leave-lobby', // leave-lobby
-  deleteLobby = 'delete-lobby', // delete-lobby
+  chatMessage = 'chat-message',
+  createLobby = 'create-lobby',
+  joinLobby = 'join-lobby',
+  leaveLobby = 'leave-lobby',
+  deleteLobby = 'delete-lobby',
 }

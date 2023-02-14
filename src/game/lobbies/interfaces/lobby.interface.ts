@@ -12,23 +12,23 @@ export interface ILobbyListOptions {
 }
 
 export interface ICreateLobbyData {
-  maxUsers: number;
-  rounds: number;
-  lobbyName: string;
-  lobbyOwner: string;
-  lobbyImage: string;
+  maxPlayers: number;
+  maxRound: number;
+  title: string;
+  owner: string;
+  image: string;
   password: string;
 }
 
 export interface ILobbyData {
   uuid: string;
-  lobbyImage: string;
-  lobbyOwner: string;
+  image: string;
+  owner: string;
   privacyType: LobbyPrivacyType;
-  lobbyName: string;
-  currentUsers: number;
-  maxUsers: number;
-  rounds: number;
+  title: string;
+  playersQuantity: number;
+  maxPlayers: number;
+  maxRounds: number;
 }
 
 export interface ILobby {

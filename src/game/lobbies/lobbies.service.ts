@@ -19,7 +19,7 @@ export class LobbiesService {
 
   public createLobby(io: Server, createLobbyData: ICreateLobbyData): ILobbyData {
     const uuid = this.generateUniqueUuid();
-    const lobby = new Lobby(createLobbyData, uuid);
+    const lobby = new Lobby(uuid, createLobbyData);
     this.lobbyMap.set(uuid, lobby);
     this.logger.log(`Lobby ${uuid} created`);
 
@@ -41,16 +41,18 @@ export class LobbiesService {
   public isPasswordCorrect(uuid: string, password: string): boolean {
     return this.lobbyMap.get(uuid)?.password === password;
   }
+  public isLobbyOwner(username: string): boolean {
+    return [...this.lobbyMap.values()].some((lobby) => lobby.owner === username);
+  }
 
   public joinLobby(io: Server, socket: Socket, uuid: string, password?: string): Lobby {
-    const lobby = this.lobbyMap.get(uuid); 
+    const lobby = this.lobbyMap.get(uuid);
     const { username, image } = socket.handshake.auth;
 
     if (!(lobby instanceof Lobby)) {
       throw new WsException(`joinLobby: Lobby not found (${uuid})`);
     }
     if (!username) {
-      console.log(socket.handshake.auth)
       throw new WsException(`joinLobby: Invalid username (${username})`);
     }
     if (lobby.privacyType === LobbyPrivacyType.PRIVATE && lobby.password !== password) {
@@ -108,10 +110,10 @@ export class LobbiesService {
     return lobby;
   }
 
-  public getLobbyList(options: ILobbyListOptions): [string, ILobbyData][] {
+  public getLobbyList(options: ILobbyListOptions): ILobbyData[] {
     this.logger.log(`GetLobbyList: ${JSON.stringify(options)}`);
 
-    const list: [string, Lobby][] = [...this.lobbyMap.entries()].filter(([_, lobby]) => {
+    const list: Lobby[] = [...this.lobbyMap.values()].filter((lobby) => {
       const privacy: boolean =
         'privacy' in options && options.privacy !== LobbyPrivacyType.ALL ? options.privacy === lobby.privacyType : true;
       const nameContains: boolean =
@@ -120,9 +122,10 @@ export class LobbiesService {
       return !lobby.isStarted && privacy && nameContains;
     });
 
-    const chunk: [string, Lobby][] =
+    const chunk: Lobby[] =
       'chunk' in options && options.chunk ? getChunk(options.chunk.page, options.chunk.limit, list) : list;
 
-    return chunk.map(([uuid, lobby]): [string, ILobbyData] => [uuid, lobby.lobbyData]);
+    // return chunk.map(([uuid, lobby]): [string, ILobbyData] => [uuid, lobby.lobbyData]);
+    return chunk.map((lobby): ILobbyData => lobby.lobbyData); // ILobbyData[]
   }
 }
