@@ -1,5 +1,5 @@
-import { Controller, Get, Param, ParseUUIDPipe, Query } from '@nestjs/common';
-import { ApiParam, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, ParseUUIDPipe, Query } from '@nestjs/common';
+import { ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { LobbiesService } from './lobbies.service';
 
 @ApiTags('Lobbies')
@@ -12,7 +12,6 @@ export class LobbiesController {
     return this.lobbiesService.isLobbyTitleUnique(title);
   }
 
-  @ApiParam({ name: 'uuid', format: 'uuid' })
   @Get('is-password-correct')
   private isPasswordCorrect(@Query('uuid', ParseUUIDPipe) uuid: string, @Query('password') password: string): boolean {
     return this.lobbiesService.isPasswordCorrect(uuid, password);
