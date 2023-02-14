@@ -59,12 +59,12 @@ export class LobbiesService {
       throw new WsException(`joinLobby: Incorrect password (${password} !== ${lobby.password})`);
     }
 
+    this.roomsService.joinRoom(io, socket, lobby.uuid);
     if (!lobby.hasPlayer(username)) {
       lobby.addPlayer(new Player(username, image));
       io.to(uuid).emit(IoOutput.joinLobby, lobby.players);
       this.logger.log(`Join lobby: ${username} -> ${lobby.title}(${uuid})`);
     }
-    this.roomsService.joinRoom(io, socket, lobby.uuid);
     return lobby;
   }
 
