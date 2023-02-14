@@ -18,7 +18,13 @@ export class Lobby implements ILobby {
   public currentRound: number = 1;
 
   constructor(uuid: string, createLobbyData: ICreateLobbyData) {
-    Object.assign(this, { uuid, ...createLobbyData });
+    this.uuid = uuid;
+    this.maxPlayers = createLobbyData.maxPlayers;
+    this.maxRounds = createLobbyData.maxRounds;
+    this.title = createLobbyData.title;
+    this.owner = createLobbyData.owner;
+    this.image = createLobbyData.image;
+    this.password = createLobbyData.password;
   }
 
   private get playersQuantity(): number {
@@ -29,7 +35,7 @@ export class Lobby implements ILobby {
     this.players[player.username] = player;
   }
   public removePlayer(username: string): void {
-    delete this.players[username]
+    delete this.players[username];
   }
   public hasPlayer(username: string): boolean {
     return username in this.players;
