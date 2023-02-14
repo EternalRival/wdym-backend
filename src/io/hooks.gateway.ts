@@ -18,10 +18,10 @@ export class HooksGateway extends IoGateway implements OnGatewayInit, OnGatewayC
 
   public afterInit(): void {
     instrument(this.io, { auth: false, mode: 'development' });
-    this.io.use((socket, next) => {
-      socket.on('exception', (...args) => console.log('exceptioned >>', args));
+    /* this.io.use((socket, next) => {
+      socket.on('exception', (...args) => console.log('exceptioned >>', args)); // do nothing
       next();
-    });
+    }); */
     this.logger.log('Socket Server Started');
   }
 
@@ -34,11 +34,12 @@ export class HooksGateway extends IoGateway implements OnGatewayInit, OnGatewayC
     const { image } = user;
 
     Object.assign(socket.data, { username, image });
-    this.logger.log(`Client connected: ${username}`);
+
+    this.logger.log(`Socket connected to server: ${JSON.stringify({ username, image })}`);
   }
 
   public handleDisconnect(@ConnectedSocket() socket: Socket): void {
-    const { username } = socket.data;
-    this.logger.log(`Client disconnected: ${username}`);
+    const { username, image } = socket.data;
+    this.logger.log(`Socket disconnected to server: ${JSON.stringify({ username, image })}`);
   }
 }

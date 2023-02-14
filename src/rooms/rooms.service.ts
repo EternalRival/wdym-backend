@@ -7,16 +7,12 @@ export class RoomsService {
   public logger = new Logger(LoggerTag.ROOMS);
 
   public joinRoom(io: Server, socket: Socket, roomname: string): void {
-    const { username } = socket.data;
-
     socket.join(roomname);
-    this.logger.log(`User ${username} joined to ${roomname}`);
+    this.logger.log(`[${roomname}] Socket joined (${JSON.stringify(socket.data)})`);
   }
   public leaveRoom(socket: Socket, roomname: string): void {
-    const { username } = socket.data;
-
     socket.leave(roomname);
-    this.logger.log(`User ${username} left ${roomname}`);
+    this.logger.log(`[${roomname}] Socket left (${JSON.stringify(socket.data)})`);
   }
 
   public getRoomList(io: Server, socket: Socket): Record<string, string[]> {

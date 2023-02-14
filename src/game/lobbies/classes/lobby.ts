@@ -31,6 +31,9 @@ export class Lobby implements ILobby {
     return Object.keys(this.players).length;
   }
 
+  public addPlayer(player:Player) :void{
+    this.players[player.username] = player;
+  }
   public hasPlayer(username: string): boolean {
     return username in this.players;
   }

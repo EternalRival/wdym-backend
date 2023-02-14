@@ -10,11 +10,6 @@ import { ICreateLobbyData, ILobbyData, ILobbyListOptions } from './interfaces/lo
 import { Player } from './classes/player';
 import { LobbyPrivacyType } from './enum/lobby-privacy-type.enum';
 
-//  TODO перепроверить ВСЁ в этом файле!! (и переписать)
-//* TODO перепроверить ВСЁ в этом файле!! (и переписать)
-//! TODO перепроверить ВСЁ в этом файле!! (и переписать)
-//? TODO перепроверить ВСЁ в этом файле!! (и переписать)
-
 @Injectable()
 export class LobbiesService {
   public logger = new Logger('Lobbies');
@@ -50,56 +45,66 @@ export class LobbiesService {
   public joinLobby(io: Server, socket: Socket, uuid: string, password?: string): Lobby {
     const lobby = this.lobbyMap.get(uuid);
     const { username, image } = socket.data;
-    if (
-      lobby instanceof Lobby &&
-      username &&
-      (lobby.privacyType === LobbyPrivacyType.PUBLIC || lobby.password === password)
-    ) {
-      if (!lobby.hasPlayer(username)) {
-        const player = new Player(username, image);
-        lobby.players[username] = player;
-        io.to(uuid).emit(IoOutput.joinLobby, lobby.players);
-        this.logger.log(`Join: ${username} -> ${lobby.title}(${uuid})`);
-      }
-      this.roomsService.joinRoom(io, socket, lobby.uuid);
-      return lobby;
+
+    if (!(lobby instanceof Lobby)) {
+      throw new WsException(`joinLobby: Lobby not found (${uuid})`);
     }
-    throw new WsException(`Join failed: ${username} -> ${lobby?.title}(${uuid})`);
+    if (!username) {
+      throw new WsException(`joinLobby: Invalid username (${username})`);
+    }
+    if (lobby.privacyType === LobbyPrivacyType.PRIVATE && lobby.password !== password) {
+      throw new WsException(`joinLobby: Incorrect password (${password} !== ${lobby.password})`);
+    }
+
+    if (!lobby.hasPlayer(username)) {
+      lobby.addPlayer(new Player(username, image));
+      io.to(uuid).emit(IoOutput.joinLobby, lobby.players);
+      this.logger.log(`Join lobby: ${username} -> ${lobby.title}(${uuid})`);
+    }
+    this.roomsService.joinRoom(io, socket, lobby.uuid);
+    return lobby;
   }
 
   public leaveLobby(io: Server, socket: Socket, uuid: string): string {
     const lobby = this.lobbyMap.get(uuid);
     const { username } = socket.data;
 
-    if (lobby instanceof Lobby && username && lobby.hasPlayer(username)) {
-      this.roomsService.leaveRoom(socket, uuid);
-      io.to(uuid).emit(IoOutput.leaveLobby, lobby.players);
-      this.logger.log(`Leave: ${username} -> ${lobby.title}(${uuid})`);
-      if (lobby.isEmpty) {
-        // TODO реализовать отменяемое удаление с задержкой
-        this.destroyLobby(io, uuid);
-      }
-      return uuid;
+    if (!(lobby instanceof Lobby)) {
+      throw new WsException(`leaveLobby: Lobby not found: (${uuid})`);
     }
-    throw new WsException(`Leave failed: ${username} -> ${lobby?.title}(${uuid})`);
+    if (!username) {
+      throw new WsException(`leaveLobby: Invalid username (${username})`);
+    }
+    if (!lobby.hasPlayer(username)) {
+      throw new WsException(`leaveLobby: Player not found in lobby (${username})`);
+    }
+
+    this.roomsService.leaveRoom(socket, uuid);
+    io.to(uuid).emit(IoOutput.leaveLobby, lobby.players);
+    this.logger.log(`Leave: ${username} -> ${lobby.title}(${uuid})`);
+    if (lobby.isEmpty) {
+      this.destroyLobby(io, uuid); // TODO реализовать отменяемое удаление с задержкой
+    }
+    return uuid;
   }
 
   public destroyLobby(io: Server, uuid: string): string {
     const deleteResult: boolean = this.lobbyMap.delete(uuid);
-    if (deleteResult) {
-      this.roomsService.deleteRoom(io, uuid);
-      this.logger.log(`Destroy: ${uuid}`);
-      return uuid;
+    if (!deleteResult) {
+      throw new WsException(`destroyLobby: lobby not found (${uuid})`);
     }
-    throw new WsException(`Destroy failed: ${uuid}`);
+
+    this.roomsService.deleteRoom(io, uuid);
+    this.logger.log(`Destroy: ${uuid}`);
+    return uuid;
   }
 
   public getLobbyData(uuid: string): Lobby {
     const lobby = this.lobbyMap.get(uuid);
-    if (lobby instanceof Lobby) {
-      return lobby;
+    if (!(lobby instanceof Lobby)) {
+      throw new WsException(`getLobbyData: No lobby with uuid ${uuid}`);
     }
-    throw new WsException(`No lobby with uuid ${uuid}`);
+    return lobby;
   }
 
   public getLobbyList(options: ILobbyListOptions): [string, ILobbyData][] {
