@@ -1,3 +1,3 @@
 export class JwtTokenDto {
-  public access_token: string;
+  public access_token!: string;
 }

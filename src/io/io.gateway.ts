@@ -8,5 +8,5 @@ import { IoWsGateway } from './io.decorator';
 export class IoGateway {
   protected logger = new Logger(LoggerTag.IO);
   @WebSocketServer()
-  protected io: Server;
+  protected io!: Server;
 }

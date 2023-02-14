@@ -6,7 +6,7 @@ export enum IoInput {
   lobbyDataRequest = 'getLobbyData', // "lobby-data-request"
   lobbyListRequest = 'getLobbyList', // "lobby-list-request"
   isPasswordCorrectRequest = 'isPasswordCorrectRequest', // "is-password-correct-request"
-  isLobbyNameUniqueRequest = 'isLobbyNameUniqueRequest', // "is-lobby-name-unique-request"
+  isLobbyTitleUniqueRequest = 'isLobbyNameUniqueRequest', // "is-lobby-name-unique-request"
   leaveLobbyRequest = 'leave-lobby-request', // "leave-lobby-request"
   randomMemesRequest = 'getRandomMemes', // "random-memes-request"
 }

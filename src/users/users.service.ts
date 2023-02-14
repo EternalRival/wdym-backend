@@ -16,9 +16,9 @@ export class UsersService {
     const user = structuredClone(signUpUserDto);
     user.password = await hash(user.password, Math.random());
 
-    const entity: User = await this.usersRepository
-      .save(user)
-      .catch((e) => teapot(`[createUser failed]: ${e.detail || e.message}`));
+    const entity: User = await this.usersRepository.save(user).catch((e) => {
+      throw teapot(`[createUser failed]: ${e.detail || e.message}`);
+    });
     return entity;
   }
 
@@ -26,13 +26,17 @@ export class UsersService {
     return this.usersRepository.find({ order: { id: 'ASC' } });
   }
 
-  public findOneById(id: number): Promise<User> {
-    return this.usersRepository.findOneBy({ id });
+  public async findOneById(id: number): Promise<User> {
+    const user = await this.usersRepository.findOneBy({ id });
+    if (user instanceof User) {
+      return user;
+    }
+    throw teapot('user not found');
   }
 
   public async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
     const user = structuredClone(updateUserDto);
-    if ('password' in user) {
+    if ('password' in user && typeof user.password === 'string') {
       user.password = await hash(user.password, Math.random());
     }
 
@@ -41,18 +45,24 @@ export class UsersService {
       teapot(`[updateUser failed]: can't find user ${id}`);
     }
 
-    return this.usersRepository
-      .save({ ...entity, ...user })
-      .catch((e) => teapot(`[updateUser failed]: ${e.detail || e.message}`));
+    return this.usersRepository.save({ ...entity, ...user }).catch((e) => {
+      throw teapot(`[updateUser failed]: ${e.detail || e.message}`);
+    });
   }
 
   public async remove(id: number): Promise<User> {
     const entity = await this.findOneById(id);
-    return this.usersRepository.remove(entity).catch((e) => teapot(`deleteUser failed: ${e.message}`));
+    return this.usersRepository.remove(entity).catch((e) => {
+      throw teapot(`deleteUser failed: ${e.message}`);
+    });
   }
 
-  public findUserByUsername(username: string): Promise<User> {
-    return this.usersRepository.findOneBy({ username });
+  public async findUserByUsername(username: string): Promise<User> {
+    const user = await this.usersRepository.findOneBy({ username });
+    if (user) {
+      return user;
+    }
+    throw teapot(`User ${username} not found`);
   }
 
   //? TL Request

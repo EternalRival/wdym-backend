@@ -1,3 +1,3 @@
 export class ResponseBooleanDto {
-  public value: boolean;
+  public value!: boolean;
 }

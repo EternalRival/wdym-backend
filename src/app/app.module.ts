@@ -13,7 +13,7 @@ import { FileModule } from '../file/file.module';
 import { IoModule } from '../io/io.module';
 import { RoomsModule } from '../rooms/rooms.module';
 import { ChatModule } from '../chat/chat.module';
-import { LobbiesModule } from '../lobbies/lobbies.module';
+import { LobbiesModule } from '../game/lobbies/lobbies.module';
 
 @Module({
   imports: [

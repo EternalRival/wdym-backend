@@ -1,13 +1,12 @@
 import { ParseUUIDPipe } from '@nestjs/common';
 import { ConnectedSocket, MessageBody, SubscribeMessage } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
-import { IoInput } from '../io/enums/event-name.enum';
-import { CreateLobbyDto } from './dto/create-lobby.dto';
-import { Lobby } from './entities/lobby.entity';
+import { IoInput } from '../../io/enums/event-name.enum';
+import { Lobby } from './classes/lobby';
 import { LobbiesService } from './lobbies.service';
-import { ILobbyListOptions } from './interfaces/lobby-list-options.interface';
-import { IoGateway } from '../io/io.gateway';
-import { IoWsGateway } from '../io/io.decorator';
+import { IoGateway } from '../../io/io.gateway';
+import { IoWsGateway } from '../../io/io.decorator';
+import { ICreateLobbyData, ILobbyData, ILobbyListOptions } from './interfaces/lobby.interface';
 
 @IoWsGateway()
 export class LobbiesGateway extends IoGateway {
@@ -16,13 +15,13 @@ export class LobbiesGateway extends IoGateway {
   }
 
   @SubscribeMessage(IoInput.createLobbyRequest)
-  private handleCreateLobbyRequest(@MessageBody('lobby') lobby: CreateLobbyDto): Lobby {
-    return this.lobbiesService.createLobby(this.io, lobby);
+  private handleCreateLobbyRequest(@MessageBody('lobby') createLobbyData: ICreateLobbyData): ILobbyData {
+    return this.lobbiesService.createLobby(this.io, createLobbyData);
   }
 
-  @SubscribeMessage(IoInput.isLobbyNameUniqueRequest)
-  private handleIsLobbyNameUniqueRequest(@MessageBody('lobbyName') lobbyName: string): boolean {
-    return this.lobbiesService.isLobbyNameUnique(lobbyName);
+  @SubscribeMessage(IoInput.isLobbyTitleUniqueRequest)
+  private handleIsLobbyTitleUniqueRequest(@MessageBody('lobbyName') title: string): boolean {
+    return this.lobbiesService.isLobbyTitleUnique(title);
   }
 
   @SubscribeMessage(IoInput.isPasswordCorrectRequest)
@@ -39,6 +38,7 @@ export class LobbiesGateway extends IoGateway {
     @MessageBody('password') password: string,
     @ConnectedSocket() socket: Socket,
   ): Lobby {
+    // TODO согласовать с Игорем отправляемые данные, чтобы не отправлять лобби целиком
     return this.lobbiesService.joinLobby(this.io, socket, uuid, password);
   }
 
@@ -57,11 +57,12 @@ export class LobbiesGateway extends IoGateway {
 
   @SubscribeMessage(IoInput.lobbyDataRequest)
   private handleGetLobbyDataRequest(@MessageBody('uuid', ParseUUIDPipe) uuid: string): Lobby {
+    // TODO согласовать с Игорем отправляемые данные, чтобы не отправлять лобби целиком
     return this.lobbiesService.getLobbyData(uuid);
   }
 
   @SubscribeMessage(IoInput.lobbyListRequest)
-  private handleGetLobbyList(@MessageBody() options: ILobbyListOptions): [string, Lobby][] {
+  private handleGetLobbyList(@MessageBody() options: ILobbyListOptions): [string, ILobbyData][] {
     return this.lobbiesService.getLobbyList(options);
   }
 }

@@ -8,6 +8,7 @@ import { User } from '../users/entities/user.entity';
 import { UsersService } from '../users/users.service';
 import { IJwtPayload } from './interfaces/jwt-payload.interface';
 import { JwtTokenDto } from './dto/jwt-token.dto';
+import { teapot } from '../utils/custom-error';
 
 @Injectable()
 export class AuthService {
@@ -15,7 +16,11 @@ export class AuthService {
 
   public async validateUser(signInData: SignInUserDto): Promise<User> {
     const user = await this.usersService.findUserByUsername(signInData.username);
-    return user && (await compare(signInData.password, user.password)) ? user : null;
+    const validateResult = await compare(signInData.password, user.password);
+    if (user && validateResult) {
+      return user;
+    }
+    throw teapot('validation fail')
   }
 
   public generateJwtPayload(data: { id: number; image: string; username: string }): IJwtPayload {
