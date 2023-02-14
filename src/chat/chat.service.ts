@@ -7,12 +7,12 @@ import { IoOutput, IoInput } from '../io/enums/event-name.enum';
 export class ChatService {
   public logger = new Logger(LoggerTag.CHAT);
 
-  public handleMsgToServer(server: Server, socket: Socket, message: string, roomname: string): void {
+  public handleMsgToServer(io: Server, socket: Socket, message: string, roomname: string): void {
     const { username } = socket.data;
     const timestamp = Date.now();
 
-    server.to(roomname).emit(IoOutput.chatMessage, { username, message, timestamp });
+    io.to(roomname).emit(IoOutput.chatMessage, { username, message, timestamp });
 
-    this.logger.log(`${username}: ${message}`);
+    this.logger.log(`${timestamp}[${roomname}]${username}: ${message}`);
   }
 }

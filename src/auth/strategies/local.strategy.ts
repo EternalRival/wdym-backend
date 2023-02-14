@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
 import { LoggerTag } from '../../logger/enums/logger-tag.enum';
 import { SignInUserDto } from '../../users/dto/sign-in-user.dto';
+import { User } from '../../users/entities/user.entity';
 import { AuthService } from '../auth.service';
 import { ILocalAuthGuardRequest } from '../interfaces/local-auth.guard.interface';
 
@@ -21,8 +22,8 @@ export class LocalStrategy extends PassportStrategy(Strategy, 'local') {
     const signInData = { username, password };
     this.logger.log('local validate used');
 
-    const user = await this.authService.validateUser(signInData);
-    if (user) {
+    const user: User = await this.authService.validateUser(signInData);
+    if (user instanceof User) {
       return user;
     }
     throw new HttpException('Wrong Authorization Data', HttpStatus.FORBIDDEN);

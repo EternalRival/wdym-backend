@@ -50,7 +50,11 @@ export class LobbiesService {
   public joinLobby(io: Server, socket: Socket, uuid: string, password?: string): Lobby {
     const lobby = this.lobbyMap.get(uuid);
     const { username, image } = socket.data;
-    if (lobby && username && (lobby.privacyType === LobbyPrivacyType.PUBLIC || lobby.password === password)) {
+    if (
+      lobby instanceof Lobby &&
+      username &&
+      (lobby.privacyType === LobbyPrivacyType.PUBLIC || lobby.password === password)
+    ) {
       if (!lobby.hasPlayer(username)) {
         const player = new Player(username, image);
         lobby.players[username] = player;
@@ -67,11 +71,12 @@ export class LobbiesService {
     const lobby = this.lobbyMap.get(uuid);
     const { username } = socket.data;
 
-    if (lobby && username && lobby.hasPlayer(username)) {
+    if (lobby instanceof Lobby && username && lobby.hasPlayer(username)) {
       this.roomsService.leaveRoom(socket, uuid);
       io.to(uuid).emit(IoOutput.leaveLobby, lobby.players);
       this.logger.log(`Leave: ${username} -> ${lobby.title}(${uuid})`);
       if (lobby.isEmpty) {
+        // TODO реализовать отменяемое удаление с задержкой
         this.destroyLobby(io, uuid);
       }
       return uuid;
@@ -91,7 +96,7 @@ export class LobbiesService {
 
   public getLobbyData(uuid: string): Lobby {
     const lobby = this.lobbyMap.get(uuid);
-    if (lobby) {
+    if (lobby instanceof Lobby) {
       return lobby;
     }
     throw new WsException(`No lobby with uuid ${uuid}`);
@@ -100,7 +105,7 @@ export class LobbiesService {
   public getLobbyList(options: ILobbyListOptions): [string, ILobbyData][] {
     this.logger.log(`GetLobbyList: ${JSON.stringify(options)}`);
 
-    const list = [...this.lobbyMap.entries()].filter(([_, lobby]) => {
+    const list: [string, Lobby][] = [...this.lobbyMap.entries()].filter(([_, lobby]) => {
       const privacy: boolean =
         'privacy' in options && options.privacy !== LobbyPrivacyType.ALL ? options.privacy === lobby.privacyType : true;
       const nameContains: boolean =
@@ -112,6 +117,6 @@ export class LobbiesService {
     const chunk: [string, Lobby][] =
       'chunk' in options && options.chunk ? getChunk(options.chunk.page, options.chunk.limit, list) : list;
 
-    return chunk.map(([uuid, lobby]) => [uuid, lobby.lobbyData]);
+    return chunk.map(([uuid, lobby]): [string, ILobbyData] => [uuid, lobby.lobbyData]);
   }
 }

@@ -51,7 +51,7 @@ export class UsersService {
   }
 
   public async remove(id: number): Promise<User> {
-    const entity = await this.findOneById(id);
+    const entity: User = await this.findOneById(id);
     return this.usersRepository.remove(entity).catch((e) => {
       throw teapot(`deleteUser failed: ${e.message}`);
     });
@@ -59,7 +59,7 @@ export class UsersService {
 
   public async findUserByUsername(username: string): Promise<User> {
     const user = await this.usersRepository.findOneBy({ username });
-    if (user) {
+    if (user instanceof User) {
       return user;
     }
     throw teapot(`User ${username} not found`);
@@ -68,7 +68,7 @@ export class UsersService {
   //? TL Request
   public async isUserExists(username: string): Promise<ResponseBooleanDto> {
     const entity = await this.usersRepository.findOneBy({ username });
-    const value = Boolean(entity);
+    const value: boolean = entity instanceof User;
     return { value };
   }
 }

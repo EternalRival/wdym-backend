@@ -15,12 +15,12 @@ export class AuthService {
   constructor(private usersService: UsersService, private jwtService: JwtService) {}
 
   public async validateUser(signInData: SignInUserDto): Promise<User> {
-    const user = await this.usersService.findUserByUsername(signInData.username);
-    const validateResult = await compare(signInData.password, user.password);
-    if (user && validateResult) {
+    const user: User = await this.usersService.findUserByUsername(signInData.username);
+    const validateResult: boolean = await compare(signInData.password, user.password);
+    if (user instanceof User && validateResult) {
       return user;
     }
-    throw teapot('validation fail')
+    throw teapot('validation fail');
   }
 
   public generateJwtPayload(data: { id: number; image: string; username: string }): IJwtPayload {

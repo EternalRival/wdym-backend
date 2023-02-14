@@ -6,7 +6,7 @@ import { LoggerTag } from '../logger/enums/logger-tag.enum';
 export class RoomsService {
   public logger = new Logger(LoggerTag.ROOMS);
 
-  public joinRoom(server: Server, socket: Socket, roomname: string): void {
+  public joinRoom(io: Server, socket: Socket, roomname: string): void {
     const { username } = socket.data;
 
     socket.join(roomname);
@@ -19,13 +19,13 @@ export class RoomsService {
     this.logger.log(`User ${username} left ${roomname}`);
   }
 
-  public getRoomList(server: Server, socket: Socket): Record<string, string[]> {
-    const { rooms } = server.sockets.adapter;
+  public getRoomList(io: Server, socket: Socket): Record<string, string[]> {
+    const { rooms } = io.sockets.adapter;
     const entries: [string, string[]][] = [...rooms.entries()].map(([room, sockets]) => [room, [...sockets]]);
     return Object.fromEntries(entries);
   }
 
-  public deleteRoom(server: Server, roomname: string): void {
-    server.in(roomname).socketsLeave(roomname);
+  public deleteRoom(io: Server, roomname: string): void {
+    io.in(roomname).socketsLeave(roomname);
   }
 }
