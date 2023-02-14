@@ -13,7 +13,7 @@ export interface ILobbyListOptions {
 
 export interface ICreateLobbyData {
   maxPlayers: number;
-  maxRound: number;
+  maxRounds: number;
   title: string;
   owner: string;
   image: string;
