@@ -47,7 +47,7 @@ export class Lobby implements ILobby {
   }
 
   public get isStarted(): boolean {
-    return [GameStatus.PREPARE, GameStatus.FINISHED].includes(this.status);
+    return ![GameStatus.PREPARE, GameStatus.FINISHED].includes(this.status);
   }
 
   /** Для отрисовки списка лобби */
