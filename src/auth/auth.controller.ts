@@ -2,7 +2,6 @@ import { Body, Controller, Logger, Post, Req, Res, UseGuards } from '@nestjs/com
 import { ApiBody, ApiHeader, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { LoggerTag } from '../logger/enums/logger-tag.enum';
-import { ResponseBooleanDto } from '../shared/dto/response-boolean.dto';
 import { PasswordUserDto } from '../users/dto/password.dto';
 import { SignInUserDto } from '../users/dto/sign-in-user.dto';
 import { AuthService } from './auth.service';
@@ -47,10 +46,7 @@ export class AuthController {
   @ApiHeader({ name: 'Authorization', description: 'Bearer: access_token' })
   @UseGuards(JwtAuthGuard)
   @Post('validate')
-  public async validatePassword(
-    @Req() request: IJwtAuthGuardRequest,
-    @Body() body: PasswordUserDto,
-  ): Promise<ResponseBooleanDto> {
+  public async validatePassword(@Req() request: IJwtAuthGuardRequest, @Body() body: PasswordUserDto): Promise<boolean> {
     const isValid = await this.authService.validatePassword(request.user.id, body.password);
     Logger.log(JSON.stringify(isValid), LoggerTag.VALIDATE);
     return isValid;

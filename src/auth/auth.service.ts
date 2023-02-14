@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcrypt';
 import { Response } from 'express';
-import { ResponseBooleanDto } from '../shared/dto/response-boolean.dto';
 import { SignInUserDto } from '../users/dto/sign-in-user.dto';
 import { User } from '../users/entities/user.entity';
 import { UsersService } from '../users/users.service';
@@ -46,8 +45,8 @@ export class AuthService {
   }
 
   //? TL Request
-  public async validatePassword(id: number, password: string): Promise<ResponseBooleanDto> {
-    const user = await this.usersService.findOneById(id);
-    return { value: user && (await compare(password, user.password)) };
+  public async validatePassword(id: number, password: string): Promise<boolean> {
+    const user: User = await this.usersService.findOneById(id);
+    return user && (await compare(password, user.password));
   }
 }

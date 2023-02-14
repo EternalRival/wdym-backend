@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { hash } from 'bcrypt';
 import { Repository } from 'typeorm';
-import { ResponseBooleanDto } from '../shared/dto/response-boolean.dto';
 import { teapot } from '../utils/custom-error';
 import { SignUpUserDto } from './dto/sign-up-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -66,9 +65,8 @@ export class UsersService {
   }
 
   //? TL Request
-  public async isUserExists(username: string): Promise<ResponseBooleanDto> {
+  public async isUserExists(username: string): Promise<boolean> {
     const entity = await this.usersRepository.findOneBy({ username });
-    const value: boolean = entity instanceof User;
-    return { value };
+    return entity instanceof User;
   }
 }

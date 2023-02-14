@@ -20,7 +20,6 @@ import { SignUpUserDto } from './dto/sign-up-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { ResponseBooleanDto } from '../shared/dto/response-boolean.dto';
 import { IJwtAuthGuardRequest } from '../auth/interfaces/jwt-auth.guard.interface';
 import { LoggerTag } from '../logger/enums/logger-tag.enum';
 
@@ -67,8 +66,8 @@ export class UsersController {
 
   //? TL Request
   @Get('has')
-  private async isUserExists(@Query('username') username: string): Promise<ResponseBooleanDto> {
-    const isExists = await this.usersService.isUserExists(username);
+  private async isUserExists(@Query('username') username: string): Promise<boolean> {
+    const isExists: boolean = await this.usersService.isUserExists(username);
     this.logger.log(`isExists: ${JSON.stringify(isExists)}`);
     return isExists;
   }
