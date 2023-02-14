@@ -53,6 +53,7 @@ export class Lobby implements ILobby {
   /** Для отрисовки списка лобби */
   public get lobbyData(): ILobbyData {
     return {
+      uuid: this.uuid,
       lobbyImage: this.image,
       lobbyOwner: this.owner,
       privacyType: this.privacyType,

@@ -21,6 +21,7 @@ export interface ICreateLobbyData {
 }
 
 export interface ILobbyData {
+  uuid: string;
   lobbyImage: string;
   lobbyOwner: string;
   privacyType: LobbyPrivacyType;
@@ -42,4 +43,3 @@ export interface ILobby {
   status: GameStatus;
   currentRound: number;
 }
-
