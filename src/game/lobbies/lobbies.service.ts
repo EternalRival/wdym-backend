@@ -82,6 +82,7 @@ export class LobbiesService {
       throw new WsException(`leaveLobby: Player not found in lobby (${username})`);
     }
 
+    lobby.removePlayer(username);
     this.roomsService.leaveRoom(socket, uuid);
     io.to(uuid).emit(IoOutput.leaveLobby, lobby.players);
     this.logger.log(`Leave: ${username} -> ${lobby.title}(${uuid})`);

@@ -28,6 +28,9 @@ export class Lobby implements ILobby {
   public addPlayer(player: Player): void {
     this.players[player.username] = player;
   }
+  public removePlayer(username: string): void {
+    delete this.players[username]
+  }
   public hasPlayer(username: string): boolean {
     return username in this.players;
   }
