@@ -12,13 +12,14 @@ export class GameService {
 
   private getPlayer(uuid: string, username: string): Player {
     const lobby = this.getLobby(uuid);
-    if (lobby instanceof Lobby) {
-      const player = lobby.getPlayer(username);
-      if (player instanceof Player) {
-        return player;
-      }
-      throw new WsException(`${GameService.name}.getPlayer: player not found!`);
+    if (!(lobby instanceof Lobby)) {
+      throw new WsException(`${this.constructor.name}.getPlayer: lobby not found!`);
     }
-    throw new WsException(`${GameService.name}.getPlayer: lobby not found!`);
+
+    const player = lobby.getPlayer(username);
+    if (!(player instanceof Player)) {
+      throw new WsException(`${this.constructor.name}.getPlayer: player not found!`);
+    }
+    return player;
   }
 }

@@ -27,10 +27,10 @@ export class UsersService {
 
   public async findOneById(id: number): Promise<User> {
     const user = await this.usersRepository.findOneBy({ id });
-    if (user instanceof User) {
-      return user;
+    if (!(user instanceof User)) {
+      throw teapot('user not found');
     }
-    throw teapot('user not found');
+    return user;
   }
 
   public async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
@@ -58,10 +58,10 @@ export class UsersService {
 
   public async findUserByUsername(username: string): Promise<User> {
     const user = await this.usersRepository.findOneBy({ username });
-    if (user instanceof User) {
-      return user;
+    if (!(user instanceof User)) {
+      throw teapot(`User ${username} not found`);
     }
-    throw teapot(`User ${username} not found`);
+    return user;
   }
 
   //? TL Request

@@ -23,9 +23,9 @@ export class LocalStrategy extends PassportStrategy(Strategy, 'local') {
     this.logger.log('local validate used');
 
     const user: User = await this.authService.validateUser(signInData);
-    if (user instanceof User) {
-      return user;
+    if (!(user instanceof User)) {
+      throw new HttpException('Wrong Authorization Data', HttpStatus.FORBIDDEN);
     }
-    throw new HttpException('Wrong Authorization Data', HttpStatus.FORBIDDEN);
+    return user;
   }
 }
