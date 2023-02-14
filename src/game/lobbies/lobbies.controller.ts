@@ -1,4 +1,4 @@
-import { Controller, Get, Param, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Param, ParseUUIDPipe, Query } from '@nestjs/common';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { LobbiesService } from './lobbies.service';
 
@@ -8,18 +8,18 @@ export class LobbiesController {
   constructor(private readonly lobbiesService: LobbiesService) {}
 
   @Get('is-title-unique')
-  private isLobbyTitleUnique(@Param('title') title: string): boolean {
+  private isLobbyTitleUnique(@Query('title') title: string): boolean {
     return this.lobbiesService.isLobbyTitleUnique(title);
   }
 
   @ApiParam({ name: 'uuid', format: 'uuid' })
   @Get('is-password-correct')
-  private isPasswordCorrect(@Param('uuid', ParseUUIDPipe) uuid: string, @Param('password') password: string): boolean {
+  private isPasswordCorrect(@Query('uuid', ParseUUIDPipe) uuid: string, @Query('password') password: string): boolean {
     return this.lobbiesService.isPasswordCorrect(uuid, password);
   }
 
   @Get('is-lobby-owner')
-  private isLobbyOwner(@Param('username') username: string): boolean {
+  private isLobbyOwner(@Query('username') username: string): boolean {
     return this.lobbiesService.isLobbyOwner(username);
   }
 }
