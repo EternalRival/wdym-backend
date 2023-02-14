@@ -8,7 +8,7 @@ export class ChatService {
   public logger = new Logger(LoggerTag.CHAT);
 
   public handleMsgToServer(io: Server, socket: Socket, message: string, roomname: string): void {
-    const { username } = socket.data;
+    const { username } = socket.handshake.auth;
     const timestamp = Date.now();
 
     io.to(roomname).emit(IoOutput.chatMessage, { username, message, timestamp });

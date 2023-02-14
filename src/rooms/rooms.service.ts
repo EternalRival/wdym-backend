@@ -8,11 +8,11 @@ export class RoomsService {
 
   public joinRoom(io: Server, socket: Socket, roomname: string): void {
     socket.join(roomname);
-    this.logger.log(`[${roomname}] Socket joined (${JSON.stringify(socket.data)})`);
+    this.logger.log(`[${roomname}] Socket joined (${JSON.stringify(socket.handshake.auth)})`);
   }
   public leaveRoom(socket: Socket, roomname: string): void {
     socket.leave(roomname);
-    this.logger.log(`[${roomname}] Socket left (${JSON.stringify(socket.data)})`);
+    this.logger.log(`[${roomname}] Socket left (${JSON.stringify(socket.handshake.auth)})`);
   }
 
   public getRoomList(io: Server, socket: Socket): Record<string, string[]> {

@@ -43,13 +43,14 @@ export class LobbiesService {
   }
 
   public joinLobby(io: Server, socket: Socket, uuid: string, password?: string): Lobby {
-    const lobby = this.lobbyMap.get(uuid);
-    const { username, image } = socket.data;
+    const lobby = this.lobbyMap.get(uuid); 
+    const { username, image } = socket.handshake.auth;
 
     if (!(lobby instanceof Lobby)) {
       throw new WsException(`joinLobby: Lobby not found (${uuid})`);
     }
     if (!username) {
+      console.log(socket.handshake.auth)
       throw new WsException(`joinLobby: Invalid username (${username})`);
     }
     if (lobby.privacyType === LobbyPrivacyType.PRIVATE && lobby.password !== password) {
@@ -67,7 +68,7 @@ export class LobbiesService {
 
   public leaveLobby(io: Server, socket: Socket, uuid: string): string {
     const lobby = this.lobbyMap.get(uuid);
-    const { username } = socket.data;
+    const { username } = socket.handshake.auth;
 
     if (!(lobby instanceof Lobby)) {
       throw new WsException(`leaveLobby: Lobby not found: (${uuid})`);

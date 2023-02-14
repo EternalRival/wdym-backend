@@ -4,7 +4,6 @@ import { HooksGateway } from './hooks.gateway';
 import { IoGateway } from './io.gateway';
 
 @Module({
-  imports: [UsersModule],
   providers: [IoGateway, HooksGateway],
 })
 export class IoModule {}
