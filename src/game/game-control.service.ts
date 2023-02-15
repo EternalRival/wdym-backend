@@ -1,35 +1,54 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { readFile } from 'fs/promises';
+import { resolve } from 'path';
+import { shuffle } from '../utils/randomize';
 import { Lobby } from './classes/lobby';
 import { Player } from './classes/player';
+import { Round } from './classes/round';
 import { GameStatus } from './enum/game-status.enum';
-import { ILobby } from './interfaces/lobby.interface';
 import { PlayerVote } from './interfaces/player.interface';
 
 @Injectable()
-export class GameControlService {
+export class GameControlService implements OnModuleInit {
+  public situations!: string[];
+
+  public async onModuleInit(): Promise<void> {
+    this.situations = await this.readSituations();
+  }
+  private async readSituations(): Promise<string[]> {
+    const path = resolve('src', 'public', 'assets', 'json', 'situations.json');
+    const string = await readFile(path, 'utf8');
+    return JSON.parse(string);
+  }
+
   public nextStatus(lobby: Lobby): void {
     switch (lobby.status) {
       case GameStatus.PREPARE:
-        lobby.setStatus(GameStatus.KARTISHKI);
+        lobby.setStatus(GameStatus.SITUATION);
         break;
-      case GameStatus.KARTISHKI:
+      case GameStatus.SITUATION:
         lobby.setStatus(GameStatus.VOTE);
         break;
       case GameStatus.VOTE:
         lobby.setStatus(GameStatus.VOTE_RESULTS);
         break;
       case GameStatus.VOTE_RESULTS:
-        lobby.setStatus(lobby.currentRound < lobby.maxRounds ? GameStatus.KARTISHKI : GameStatus.FINISHED);
+        lobby.setStatus(lobby.currentRound < lobby.maxRounds ? GameStatus.SITUATION : GameStatus.END);
         break;
-      case GameStatus.FINISHED:
-        lobby.setStatus(GameStatus.KARTISHKI); // TODO возможно заменить на GameStatus.PREPARE
+      case GameStatus.END:
+        lobby.setStatus(GameStatus.SITUATION); // TODO возможно заменить на GameStatus.PREPARE
         break;
       default:
     }
   }
 
-  public getSituation(): unknown {
-    throw new Error('не реализовано');
+  public createNewRound(lobby: Lobby): void {
+    const { rounds } = lobby;
+    const situations = shuffle(this.situations);
+
+    const pickedSituation = situations.find((situation) => rounds.every((round) => round.situation !== situation));
+
+    rounds.push(new Round(pickedSituation ?? situations[0]));
   }
   public setPlayerMeme(player: Player, meme: string | null): void {
     player.setMeme(meme);
@@ -52,15 +71,10 @@ export class GameControlService {
     throw new Error('не реализовано');
   }
   public resetGame(lobby: Lobby): void {
-    lobby.setCurrentRound(1);
-    Object.values(lobby.players).forEach((player: Player) => {
-      player.setScore(0);
-      player.setMeme(null);
-      player.setVote(null);
-    });
+    lobby.resetGame();
   }
 
-  private mockLobby: ILobby = {
+  /*   private mockLobby: ILobby = {
     players: {
       '1111': {
         username: '1111',
@@ -70,8 +84,7 @@ export class GameControlService {
         vote: null,
       },
     },
-    status: 0,
-    currentRound: 1,
+    status: GameStatus.PREPARE,
     uuid: 'f67408dc-ad8c-49a9-89cd-75e4847126a8',
     maxPlayers: 2,
     maxRounds: 1,
@@ -79,5 +92,5 @@ export class GameControlService {
     owner: '1111',
     image: 'https://cs5.pikabu.ru/post_img/2014/12/25/8/1419515300_641817002.gif',
     password: '',
-  };
+  }; */
 }

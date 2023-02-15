@@ -14,6 +14,7 @@ import { IoModule } from '../io/io.module';
 import { RoomsModule } from '../rooms/rooms.module';
 import { ChatModule } from '../chat/chat.module';
 import { LobbiesModule } from '../game/lobbies/lobbies.module';
+import { GameModule } from '../game/game.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { LobbiesModule } from '../game/lobbies/lobbies.module';
     RoomsModule,
     ChatModule,
     LobbiesModule,
+    GameModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,10 +1,10 @@
-import { IPlayer, PlayerVote } from '../interfaces/player.interface';
+import { IPlayer, PlayerMeme, PlayerVote } from '../interfaces/player.interface';
 
 export class Player implements IPlayer {
   constructor(public readonly username: string, public readonly image: string) {}
   public score: number = 0;
-  public meme: string | null = null;
-  public vote: PlayerVote | null = null;
+  public meme: PlayerMeme = null;
+  public vote: PlayerVote = null;
 
   public setMeme(meme: this['meme']): void {
     this.meme = meme;

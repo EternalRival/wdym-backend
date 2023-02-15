@@ -1,9 +1,10 @@
+export type PlayerMeme = null | string;
+export type PlayerVote = null | Pick<IPlayer, 'username' | 'meme'>;
+
 export interface IPlayer {
   image: string;
   username: string;
   score: number;
-  meme: string | null;
-  vote: PlayerVote | null;
+  meme: PlayerMeme;
+  vote: PlayerVote;
 }
-
-export type PlayerVote = Pick<IPlayer, 'username' | 'meme'>;

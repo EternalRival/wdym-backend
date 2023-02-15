@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { WsException } from '@nestjs/websockets';
+import { Server } from 'socket.io';
+import { IoOutput } from '../io/enums/event-name.enum';
 import { Lobby } from './classes/lobby';
 import { Player } from './classes/player';
 import { GameControlService } from './game-control.service';
@@ -26,7 +28,19 @@ export class GameService {
     return player;
   }
 
-  public func(): void{
+  private changePhaseAlert(io: Server, lobby: Lobby): void {
+    io.to(lobby.uuid).emit(IoOutput.changePhase, lobby.gameData);
+  }
+
+  public startGame(io: Server, uuid: string): void {
+    const lobby = this.getLobby(uuid);
+    this.gameControlService.resetGame(lobby);
+    this.gameControlService.nextStatus(lobby);
+    this.changePhaseAlert(io, lobby);
+  }
+
+  public startRound(io: Server, uuid: string): void {
+    const lobby = this.getLobby(uuid);
     /* this.gameControlService */
   }
 }
