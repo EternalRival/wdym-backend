@@ -6,15 +6,15 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppMiddleware } from './app.middleware';
 import { AppService } from './app.service';
-import { User } from '../users/entities/user.entity';
-import { UsersModule } from '../users/users.module';
-import { AuthModule } from '../auth/auth.module';
-import { FileModule } from '../file/file.module';
-import { IoModule } from '../io/io.module';
-import { RoomsModule } from '../rooms/rooms.module';
-import { ChatModule } from '../chat/chat.module';
-import { LobbiesModule } from '../game/lobbies/lobbies.module';
-import { GameModule } from '../game/game.module';
+import { User } from './users/entities/user.entity';
+import { IoModule } from './io/io.module';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
+import { FileModule } from './file/file.module';
+import { RoomsModule } from './rooms/rooms.module';
+import { ChatModule } from './chat/chat.module';
+import { LobbiesModule } from './game/lobbies/lobbies.module';
+import { GameModule } from './game/game.module';
 
 @Module({
   imports: [

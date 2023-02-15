@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { readdir } from 'fs/promises';
 import { resolve, join } from 'path';
 import { Server, Socket } from 'socket.io';
-import { getRandomArrayItem, shuffle } from '../utils/randomize';
+import { getRandomArrayItem, shuffle } from '../../utils/randomize';
 import { Folder } from './enums/folder.enum';
 
 enum Root {

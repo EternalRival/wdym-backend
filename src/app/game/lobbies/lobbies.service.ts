@@ -4,11 +4,11 @@ import { Server, Socket } from 'socket.io';
 import { WsException } from '@nestjs/websockets';
 import { RoomsService } from '../../rooms/rooms.service';
 import { IoOutput } from '../../io/enums/event-name.enum';
-import { getChunk } from '../../utils/get-chunk';
 import { Lobby } from '../classes/lobby';
 import { ICreateLobbyData, ILobbyData, ILobbyListOptions } from '../interfaces/lobby.interface';
 import { Player } from '../classes/player';
 import { LobbyPrivacyType } from '../enum/lobby-privacy-type.enum';
+import { getChunk } from '../../../utils/get-chunk';
 
 @Injectable()
 export class LobbiesService {

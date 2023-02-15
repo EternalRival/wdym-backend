@@ -1,7 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { readFile } from 'fs/promises';
 import { resolve } from 'path';
-import { shuffle } from '../utils/randomize';
+import { shuffle } from '../../utils/randomize';
 import { Lobby } from './classes/lobby';
 import { Player } from './classes/player';
 import { Round } from './classes/round';

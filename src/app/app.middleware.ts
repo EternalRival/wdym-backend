@@ -1,6 +1,6 @@
 import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
-import { LoggerTag } from '../logger/enums/logger-tag.enum';
+import { LoggerTag } from './logger/enums/logger-tag.enum';
 
 @Injectable()
 export class AppMiddleware implements NestMiddleware {

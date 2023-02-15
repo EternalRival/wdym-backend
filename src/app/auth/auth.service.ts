@@ -7,7 +7,7 @@ import { User } from '../users/entities/user.entity';
 import { UsersService } from '../users/users.service';
 import { IJwtPayload } from './interfaces/jwt-payload.interface';
 import { JwtTokenDto } from './dto/jwt-token.dto';
-import { teapot } from '../utils/custom-error';
+import { teapot } from '../../utils/custom-error';
 
 @Injectable()
 export class AuthService {
