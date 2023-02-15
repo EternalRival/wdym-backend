@@ -129,4 +129,8 @@ export class LobbiesService {
     // return chunk.map(([uuid, lobby]): [string, ILobbyData] => [uuid, lobby.lobbyData]);
     return chunk.map((lobby): ILobbyData => lobby.lobbyData); // ILobbyData[]
   }
+
+  public tempGetFullGameLobbyList(): unknown {
+    return Object.fromEntries(this.lobbyMap.entries());
+  }
 }

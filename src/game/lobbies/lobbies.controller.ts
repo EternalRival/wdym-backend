@@ -21,4 +21,10 @@ export class LobbiesController {
   private isLobbyOwner(@Query('username') username: string): boolean {
     return this.lobbiesService.isLobbyOwner(username);
   }
+
+  @ApiTags('⚠️Временное⚠️')
+  @Get('temp-get-full-game-lobby-list')
+  private tempGetFullGameLobbyList(): unknown {
+    return this.lobbiesService.tempGetFullGameLobbyList();
+  }
 }
