@@ -5,10 +5,10 @@ import { WsException } from '@nestjs/websockets';
 import { RoomsService } from '../../rooms/rooms.service';
 import { IoOutput } from '../../io/enums/event-name.enum';
 import { getChunk } from '../../utils/get-chunk';
-import { Lobby } from './classes/lobby';
-import { ICreateLobbyData, ILobbyData, ILobbyListOptions } from './interfaces/lobby.interface';
-import { Player } from './classes/player';
-import { LobbyPrivacyType } from './enum/lobby-privacy-type.enum';
+import { Lobby } from '../classes/lobby';
+import { ICreateLobbyData, ILobbyData, ILobbyListOptions } from '../interfaces/lobby.interface';
+import { Player } from '../classes/player';
+import { LobbyPrivacyType } from '../enum/lobby-privacy-type.enum';
 
 @Injectable()
 export class LobbiesService {
@@ -126,8 +126,7 @@ export class LobbiesService {
     const chunk: Lobby[] =
       'chunk' in options && options.chunk ? getChunk(options.chunk.page, options.chunk.limit, list) : list;
 
-    // return chunk.map(([uuid, lobby]): [string, ILobbyData] => [uuid, lobby.lobbyData]);
-    return chunk.map((lobby): ILobbyData => lobby.lobbyData); // ILobbyData[]
+    return chunk.map((lobby): ILobbyData => lobby.lobbyData);
   }
 
   public tempGetFullGameLobbyList(): unknown {

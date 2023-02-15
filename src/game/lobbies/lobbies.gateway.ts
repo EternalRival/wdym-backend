@@ -2,11 +2,11 @@ import { ParseUUIDPipe } from '@nestjs/common';
 import { ConnectedSocket, MessageBody, SubscribeMessage } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { IoInput } from '../../io/enums/event-name.enum';
-import { Lobby } from './classes/lobby';
+import { Lobby } from '../classes/lobby';
 import { LobbiesService } from './lobbies.service';
 import { IoGateway } from '../../io/io.gateway';
 import { IoWsGateway } from '../../io/io.decorator';
-import { ICreateLobbyData, ILobbyData, ILobbyListOptions } from './interfaces/lobby.interface';
+import { ICreateLobbyData, ILobbyData, ILobbyListOptions } from '../interfaces/lobby.interface';
 
 @IoWsGateway()
 export class LobbiesGateway extends IoGateway {

@@ -1,5 +1,5 @@
 import { Controller, Get, ParseUUIDPipe, Query } from '@nestjs/common';
-import { ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { LobbiesService } from './lobbies.service';
 
 @ApiTags('Lobbies')

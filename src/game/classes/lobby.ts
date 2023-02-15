@@ -27,7 +27,7 @@ export class Lobby implements ILobby {
     this.password = createLobbyData.password;
   }
 
-  private get playersQuantity(): number {
+  private get playersCount(): number {
     return Object.keys(this.players).length;
   }
 
@@ -45,7 +45,7 @@ export class Lobby implements ILobby {
   }
 
   public get isEmpty(): boolean {
-    return this.playersQuantity < 1;
+    return this.playersCount < 1;
   }
 
   public get privacyType(): LobbyPrivacyType {
@@ -64,10 +64,21 @@ export class Lobby implements ILobby {
       owner: this.owner,
       privacyType: this.privacyType,
       title: this.title,
-      playersQuantity: this.playersQuantity,
+      playersQuantity: this.playersCount, // TODO обговорить переименование
       maxPlayers: this.maxPlayers,
       maxRounds: this.maxRounds,
     };
+  }
+
+  public setStatus(status: GameStatus): void {
+    this.status = status;
+  }
+  public setCurrentRound(round: number): void {
+    this.currentRound = round;
+  }
+  private isReadyToChangeGameStatus(property: keyof Pick<Player, 'meme' | 'vote'>): boolean {
+    const players: Player[] = Object.values(this.players);
+    return players.reduce((counter, player) => counter + +(player[property] !== null), 0) >= this.playersCount; // (player[param] === null ? counter : counter + 1)
   }
 }
 
