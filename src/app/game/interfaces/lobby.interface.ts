@@ -64,4 +64,5 @@ export interface IGameData extends Pick<ILobby, 'players' | 'status' | 'rounds'>
   currentRound: number;
   memes: MemeList; // {'meme1':['oleg','petr'],'meme2':[egor]}
   votes: MemeList;
+  changeStatusDate: number | null;
 }

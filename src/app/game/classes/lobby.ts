@@ -21,7 +21,7 @@ export class Lobby implements ILobby {
   public status: GameStatus = GameStatus.PREPARE;
   public rounds: string[] = [];
 
-  public delayedChangePhase?: DelayedFunction;
+  public delayedChangePhase = new DelayedFunction(this.TIMER_DELAY);
 
   constructor(uuid: string, createLobbyData: ICreateLobbyData) {
     this.uuid = uuid;
@@ -121,6 +121,7 @@ export class Lobby implements ILobby {
       memes: this.getMemes('meme'),
       votes: this.getMemes('vote'),
       currentRound: this.currentRound,
+      changeStatusDate: this.delayedChangePhase.triggerDate,
     };
   }
 }

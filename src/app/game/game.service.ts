@@ -31,6 +31,15 @@ export class GameService {
 
   private changePhase(io: Server, lobby: Lobby): void {
     this.gameControlService.nextStatus(lobby);
+
+    if (lobby.status === GameStatus.SITUATION) {
+      this.gameControlService.createNewRound(lobby);
+    }
+    //? ↓↓↓ автотаймер ↓↓↓
+    if (lobby.isStarted) {
+      lobby.delayedChangePhase.set(() => this.changePhase(io, lobby));
+    }
+    //? ↑↑↑ автотаймер ↑↑↑
     io.to(lobby.uuid).emit(IoOutput.changePhase, lobby.gameData);
   }
 
@@ -38,14 +47,9 @@ export class GameService {
     const lobby = this.getLobby(uuid);
     this.gameControlService.resetGame(lobby);
 
-    this.startRound(io, lobby);
-    return uuid;
-  }
-
-  public startRound(io: Server, lobby: Lobby): void {
-    this.gameControlService.createNewRound(lobby);
-
     this.changePhase(io, lobby);
+
+    return uuid;
   }
 
   public pickMeme(io: Server, socket: Socket, uuid: string, meme: Meme): string {
@@ -87,8 +91,6 @@ export class GameService {
     }
     return uuid;
   }
-
-  public pavlik(): void {}
 }
 /* 
 Lobby: {
