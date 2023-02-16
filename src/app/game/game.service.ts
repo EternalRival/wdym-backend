@@ -54,8 +54,8 @@ export class GameService {
     if (!username) {
       throw new WsException(`Invalid username (${username})!`);
     }
-    if (lobby.status !== GameStatus.VOTE) {
-      throw new WsException(`${username}'s Socket GameStatus is not ${GameStatus.VOTE}!`);
+    if (lobby.status !== GameStatus.SITUATION) {
+      throw new WsException(`${username}'s Socket GameStatus is not ${GameStatus.SITUATION}!`);
     }
 
     const player = this.getPlayer(lobby, username);
