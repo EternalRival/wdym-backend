@@ -4,9 +4,8 @@ import { resolve } from 'path';
 import { shuffle } from '../../utils/randomize';
 import { Lobby } from './classes/lobby';
 import { Player } from './classes/player';
-import { Round } from './classes/round';
 import { GameStatus } from './enum/game-status.enum';
-import { PlayerVote } from './interfaces/player.interface';
+import { PlayerMeme } from './interfaces/player.interface';
 
 @Injectable()
 export class GameControlService implements OnModuleInit {
@@ -46,14 +45,14 @@ export class GameControlService implements OnModuleInit {
     const { rounds } = lobby;
     const situations = shuffle(this.situations);
 
-    const pickedSituation = situations.find((situation) => rounds.every((round) => round.situation !== situation));
+    const pickedSituation = situations.find((situation) => rounds.every((round) => round !== situation));
 
-    rounds.push(new Round(pickedSituation ?? situations[0] ?? ''));
+    rounds.push(pickedSituation ?? situations[0] ?? '');
   }
-  public setPlayerMeme(player: Player, meme: string | null): void {
+  public setPlayerMeme(player: Player, meme: PlayerMeme): void {
     player.setMeme(meme);
   }
-  public setPlayerVote(player: Player, vote: PlayerVote | null): void {
+  public setPlayerVote(player: Player, vote: PlayerMeme): void {
     player.setVote(vote);
   }
   //? что тут?

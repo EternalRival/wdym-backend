@@ -1,8 +1,8 @@
 import { GameStatus } from '../enum/game-status.enum';
 import { LobbyPrivacyType } from '../enum/lobby-privacy-type.enum';
 import { ICreateLobbyData, IGameData, ILobby, ILobbyData } from '../interfaces/lobby.interface';
+import { PlayerMeme } from '../interfaces/player.interface';
 import { Player } from './player';
-import { Round } from './round';
 
 export class Lobby implements ILobby {
   public readonly uuid!: string;
@@ -16,7 +16,7 @@ export class Lobby implements ILobby {
   public readonly players: Record<string, Player> = {}; // Record<Player['username'], Player>
 
   public status: GameStatus = GameStatus.PREPARE;
-  public rounds: Round[] = [];
+  public rounds: string[] = [];
 
   constructor(uuid: string, createLobbyData: ICreateLobbyData) {
     this.uuid = uuid;
@@ -69,6 +69,10 @@ export class Lobby implements ILobby {
     this.rounds.length = 0;
   }
 
+  public getMemes(property: keyof Pick<Player, 'meme' | 'vote'>): PlayerMeme[] {
+    return Object.values(this.players).map((player) => player[property]);
+  }
+
   public resetGame(): void {
     this.setStatus(GameStatus.PREPARE);
     Object.values(this.players).forEach((player: Player) => {
@@ -100,6 +104,8 @@ export class Lobby implements ILobby {
       status: this.status,
       players: this.players,
       rounds: this.rounds,
+      memes: this.getMemes('meme'),
+      votes: this.getMemes('vote'),
       currentRound: this.currentRound,
     };
   }

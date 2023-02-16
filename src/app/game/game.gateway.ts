@@ -5,7 +5,7 @@ import { IoInput } from '../io/enums/event-name.enum';
 import { IoWsGateway } from '../io/io.decorator';
 import { IoGateway } from '../io/io.gateway';
 import { GameService } from './game.service';
-import { PlayerVote } from './interfaces/player.interface';
+import { PlayerMeme } from './interfaces/player.interface';
 
 @IoWsGateway()
 export class GameGateway extends IoGateway {
@@ -21,7 +21,7 @@ export class GameGateway extends IoGateway {
   @SubscribeMessage(IoInput.pickMeme)
   private handlePickMemeRequest(
     @MessageBody('uuid', ParseUUIDPipe) uuid: string,
-    @MessageBody('meme') meme: string,
+    @MessageBody('meme') meme: PlayerMeme,
     @ConnectedSocket() socket: Socket,
   ): string {
     return this.gameService.pickMeme(this.io, socket, uuid, meme);
@@ -30,7 +30,7 @@ export class GameGateway extends IoGateway {
   @SubscribeMessage(IoInput.getVote)
   private handleGetVoteRequest(
     @MessageBody('uuid', ParseUUIDPipe) uuid: string,
-    @MessageBody('vote') vote: PlayerVote,
+    @MessageBody('vote') vote: PlayerMeme,
     @ConnectedSocket() socket: Socket,
   ): string {
     return this.gameService.getVote(this.io, socket, uuid, vote);

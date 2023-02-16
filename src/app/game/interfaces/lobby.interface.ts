@@ -1,7 +1,6 @@
-import { IPlayer, PlayerBasicInfo } from './player.interface';
+import { IPlayer, PlayerBasicInfo, PlayerMeme } from './player.interface';
 import { LobbyPrivacyType } from '../enum/lobby-privacy-type.enum';
 import { GameStatus } from '../enum/game-status.enum';
-import { Round } from '../classes/round';
 
 export interface ILobbyListOptions {
   chunk?: {
@@ -44,7 +43,7 @@ export interface ILobby {
   readonly players: Record<string, IPlayer>;
 
   status: GameStatus;
-  rounds: Round[];
+  rounds: string[];
 }
 
 /** Для отрисовки списка лобби */
@@ -63,4 +62,6 @@ export interface ILobbyData {
 /** Для отрисовки игры */
 export interface IGameData extends Pick<ILobby, 'players' | 'status' | 'rounds'> {
   currentRound: number;
+  memes: PlayerMeme[];
+  votes: PlayerMeme[];
 }
