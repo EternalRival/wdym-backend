@@ -1,3 +1,4 @@
+import { DelayedFunction } from '../../../utils/delayed-function';
 import { GameStatus } from '../enum/game-status.enum';
 import { LobbyPrivacyType } from '../enum/lobby-privacy-type.enum';
 import { ICreateLobbyData, IGameData, ILobby, ILobbyData } from '../interfaces/lobby.interface';
@@ -5,6 +6,8 @@ import { Meme, MemeList } from '../interfaces/player.interface';
 import { Player } from './player';
 
 export class Lobby implements ILobby {
+  public TIMER_DELAY = 30 * 1000;
+
   public readonly uuid!: string;
   public readonly title!: string;
   public readonly password!: string;
@@ -17,6 +20,8 @@ export class Lobby implements ILobby {
 
   public status: GameStatus = GameStatus.PREPARE;
   public rounds: string[] = [];
+
+  public delayedChangePhase?: DelayedFunction;
 
   constructor(uuid: string, createLobbyData: ICreateLobbyData) {
     this.uuid = uuid;
@@ -72,14 +77,13 @@ export class Lobby implements ILobby {
   public getMemes(property: keyof Pick<Player, 'meme' | 'vote'>): MemeList {
     return Object.values(this.players).reduce((list, player) => {
       const prop: Meme = player[property];
-      if (prop === null) {
-        return list;
-      }
-      if (prop in list) {
+      if (prop !== null) {
+        if (!(prop in list)) {
+          Object.assign(list, { [prop]: [] });
+        }
         list[prop].push(player.username);
-        return list;
       }
-      return { ...list, [prop]: [player.username] };
+      return list;
     }, {} as MemeList);
   }
 

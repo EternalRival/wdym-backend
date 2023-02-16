@@ -29,14 +29,14 @@ export class GameService {
     return player;
   }
 
-  private changePhaseAlert(io: Server, lobby: Lobby): void {
+  private changePhase(io: Server, lobby: Lobby): void {
+    this.gameControlService.nextStatus(lobby);
     io.to(lobby.uuid).emit(IoOutput.changePhase, lobby.gameData);
   }
 
   public startGame(io: Server, uuid: string): string {
     const lobby = this.getLobby(uuid);
     this.gameControlService.resetGame(lobby);
-    this.gameControlService.nextStatus(lobby);
 
     this.startRound(io, lobby);
     return uuid;
@@ -45,7 +45,7 @@ export class GameService {
   public startRound(io: Server, lobby: Lobby): void {
     this.gameControlService.createNewRound(lobby);
 
-    this.changePhaseAlert(io, lobby);
+    this.changePhase(io, lobby);
   }
 
   public pickMeme(io: Server, socket: Socket, uuid: string, meme: Meme): string {
@@ -63,8 +63,7 @@ export class GameService {
     player.setMeme(meme);
 
     if (lobby.isReadyToChangeGameStatus('meme')) {
-      this.gameControlService.nextStatus(lobby);
-      this.changePhaseAlert(io, lobby);
+      this.changePhase(io, lobby);
     }
     return uuid;
   }
@@ -84,11 +83,12 @@ export class GameService {
     player.setVote(vote);
 
     if (lobby.isReadyToChangeGameStatus('vote')) {
-      this.gameControlService.nextStatus(lobby);
-      this.changePhaseAlert(io, lobby);
+      this.changePhase(io, lobby);
     }
     return uuid;
   }
+
+  public pavlik(): void {}
 }
 /* 
 Lobby: {
