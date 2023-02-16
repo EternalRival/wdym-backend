@@ -7,7 +7,7 @@ import { Lobby } from './classes/lobby';
 import { Player } from './classes/player';
 import { GameStatus } from './enum/game-status.enum';
 import { Meme } from './interfaces/player.interface';
-import { LobbiesService } from './lobbies/lobbies.service';
+import { GameLobbiesService } from './lobbies/lobbies.service';
 
 @Injectable()
 export class GameControlService implements OnModuleInit {
@@ -22,7 +22,7 @@ export class GameControlService implements OnModuleInit {
     return JSON.parse(string);
   }
 
-  constructor(private lobbiesService: LobbiesService) {}
+  constructor(private lobbiesService: GameLobbiesService) {}
 
   public getLobby(uuid: string): Lobby {
     const lobby = this.lobbiesService.getLobbyData(uuid);

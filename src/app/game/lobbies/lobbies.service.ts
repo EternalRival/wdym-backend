@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { Server, Socket } from 'socket.io';
 import { WsException } from '@nestjs/websockets';
-import { RoomsService } from '../../rooms/rooms.service';
+import { IoRoomsService } from '../../io/rooms/rooms.service';
 import { IoOutput } from '../../io/enums/event-name.enum';
 import { Lobby } from '../classes/lobby';
 import { ICreateLobbyData, ILobbyData, ILobbyListOptions } from '../interfaces/lobby.interface';
@@ -11,11 +11,11 @@ import { LobbyPrivacyType } from '../enum/lobby-privacy-type.enum';
 import { getChunk } from '../../../utils/get-chunk';
 
 @Injectable()
-export class LobbiesService {
+export class GameLobbiesService {
   public logger = new Logger('Lobbies');
   private lobbyMap: Map<string, Lobby> = new Map(); // Map<Lobby['uuid'], Lobby>
 
-  constructor(private roomsService: RoomsService) {}
+  constructor(private roomsService: IoRoomsService) {}
 
   public createLobby(io: Server, createLobbyData: ICreateLobbyData): ILobbyData {
     const uuid = this.generateUniqueUuid();

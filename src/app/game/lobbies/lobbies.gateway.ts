@@ -3,14 +3,14 @@ import { ConnectedSocket, MessageBody, SubscribeMessage } from '@nestjs/websocke
 import { Socket } from 'socket.io';
 import { IoInput } from '../../io/enums/event-name.enum';
 import { Lobby } from '../classes/lobby';
-import { LobbiesService } from './lobbies.service';
+import { GameLobbiesService } from './lobbies.service';
 import { IoGateway } from '../../io/io.gateway';
 import { IoWsGateway } from '../../io/io.decorator';
 import { ICreateLobbyData, ILobbyData, ILobbyListOptions } from '../interfaces/lobby.interface';
 
 @IoWsGateway()
-export class LobbiesGateway extends IoGateway {
-  constructor(private readonly lobbiesService: LobbiesService) {
+export class GameLobbiesGateway extends IoGateway {
+  constructor(private readonly lobbiesService: GameLobbiesService) {
     super();
   }
 

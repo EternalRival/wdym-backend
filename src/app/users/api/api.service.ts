@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { hash } from 'bcrypt';
 import { Repository } from 'typeorm';
-import { teapot } from '../../utils/custom-error';
-import { SignUpUserDto } from './dto/sign-up-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './entities/user.entity';
+import { teapot } from '../../../utils/custom-error';
+import { SignUpUserDto } from '../dto/sign-up-user.dto';
+import { UpdateUserDto } from '../dto/update-user.dto';
+import { User } from '../entities/user.entity';
 
 @Injectable()
-export class UsersService {
+export class UsersApiService {
   constructor(@InjectRepository(User) private usersRepository: Repository<User>) {}
 
   public async create(signUpUserDto: SignUpUserDto): Promise<User> {

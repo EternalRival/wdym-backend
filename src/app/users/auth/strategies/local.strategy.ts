@@ -1,17 +1,17 @@
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
-import { LoggerTag } from '../../logger/enums/logger-tag.enum';
-import { SignInUserDto } from '../../users/dto/sign-in-user.dto';
-import { User } from '../../users/entities/user.entity';
-import { AuthService } from '../auth.service';
+import { LoggerTag } from '../../../shared/enums/logger-tag.enum';
+import { SignInUserDto } from '../../dto/sign-in-user.dto';
+import { User } from '../../entities/user.entity';
+import { UsersAuthService } from '../auth.service';
 import { ILocalAuthGuardRequest } from '../interfaces/local-auth.guard.interface';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy, 'local') {
   public logger = new Logger(LoggerTag.GUARD);
 
-  constructor(private authService: AuthService) {
+  constructor(private authService: UsersAuthService) {
     super();
   }
 
