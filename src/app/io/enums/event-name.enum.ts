@@ -9,9 +9,11 @@ export enum IoInput {
   randomMemes = 'random-memes-request',
   startGame = 'start-game-request',
   pickMeme = 'pick-meme-request',
+  getVote = 'get-vote-request',
 }
 
 export enum IoOutput {
+  error = 'error',
   chatMessage = 'chat-message',
   createLobby = 'create-lobby',
   joinLobby = 'join-lobby',

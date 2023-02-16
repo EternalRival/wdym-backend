@@ -1,6 +1,7 @@
 import { ArgumentsHost, Catch, Logger, WsExceptionFilter } from '@nestjs/common';
 import { WsException } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
+import { IoOutput } from './enums/event-name.enum';
 
 @Catch()
 export class IoExceptionFilter<T extends WsException> implements WsExceptionFilter {
@@ -14,7 +15,7 @@ export class IoExceptionFilter<T extends WsException> implements WsExceptionFilt
     console.log('datadatadatadatadatadatadatadatadatadatadatadata');
     console.log(data); */
     // socket.on('error', (err) => console.log(err));
-    socket.emit('error', exception);
+    socket.emit(IoOutput.error, exception);
     this.logger.warn(exception.message);
   }
 }

@@ -6,6 +6,7 @@ import { Lobby } from './classes/lobby';
 import { Player } from './classes/player';
 import { GameStatus } from './enum/game-status.enum';
 import { GameControlService } from './game-control.service';
+import { PlayerVote } from './interfaces/player.interface';
 import { LobbiesService } from './lobbies/lobbies.service';
 
 @Injectable()
@@ -62,6 +63,27 @@ export class GameService {
     player.setMeme(meme);
 
     if (lobby.isReadyToChangeGameStatus('meme')) {
+      this.gameControlService.nextStatus(lobby);
+      this.changePhaseAlert(io, lobby);
+    }
+    return uuid;
+  }
+
+  public getVote(io: Server, socket: Socket, uuid: string, vote: PlayerVote): string {
+    const lobby = this.getLobby(uuid);
+    const { username } = socket.handshake.auth;
+
+    if (!username) {
+      throw new WsException(`Invalid username (${username})!`);
+    }
+    if (lobby.status !== GameStatus.VOTE) {
+      throw new WsException(`${username}'s Socket GameStatus is not ${GameStatus.VOTE}!`);
+    }
+
+    const player = this.getPlayer(lobby, username);
+    player.setVote(vote);
+
+    if (lobby.isReadyToChangeGameStatus('vote')) {
       this.gameControlService.nextStatus(lobby);
       this.changePhaseAlert(io, lobby);
     }
