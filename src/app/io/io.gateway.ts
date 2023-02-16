@@ -1,7 +1,7 @@
 import { OnGatewayInit, WebSocketServer } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 import { Logger } from '@nestjs/common';
-import { LoggerTag } from '../logger/enums/logger-tag.enum';
+import { LoggerTag } from '../shared/enums/logger-tag.enum';
 import { IoWsGateway } from './io.decorator';
 
 @IoWsGateway()

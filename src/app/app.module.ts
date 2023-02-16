@@ -8,13 +8,11 @@ import { AppMiddleware } from './app.middleware';
 import { AppService } from './app.service';
 import { User } from './users/entities/user.entity';
 import { IoModule } from './io/io.module';
-import { UsersModule } from './users/users.module';
-import { AuthModule } from './auth/auth.module';
-import { FileModule } from './file/file.module';
-import { RoomsModule } from './rooms/rooms.module';
-import { ChatModule } from './chat/chat.module';
-import { LobbiesModule } from './game/lobbies/lobbies.module';
+import { UsersApiModule } from './users/api/api.module';
+import { UsersAuthModule } from './users/auth/auth.module';
 import { GameModule } from './game/game.module';
+import { FileModule } from './file/file.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -39,13 +37,9 @@ import { GameModule } from './game/game.module';
       serveRoot: '/socketio',
     }),
     ServeStaticModule.forRoot({ rootPath: resolve('dist', 'docs') }),
-    IoModule,
     UsersModule,
-    AuthModule,
     FileModule,
-    RoomsModule,
-    ChatModule,
-    LobbiesModule,
+    IoModule,
     GameModule,
   ],
   controllers: [AppController],

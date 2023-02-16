@@ -2,19 +2,19 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcrypt';
 import { Response } from 'express';
-import { SignInUserDto } from '../users/dto/sign-in-user.dto';
-import { User } from '../users/entities/user.entity';
-import { UsersService } from '../users/users.service';
+import { SignInUserDto } from '../dto/sign-in-user.dto';
+import { User } from '../entities/user.entity';
+import { UsersApiService } from '../api/api.service';
 import { IJwtPayload } from './interfaces/jwt-payload.interface';
 import { JwtTokenDto } from './dto/jwt-token.dto';
-import { teapot } from '../../utils/custom-error';
+import { teapot } from '../../../utils/custom-error';
 
 @Injectable()
-export class AuthService {
-  constructor(private usersService: UsersService, private jwtService: JwtService) {}
+export class UsersAuthService {
+  constructor(private usersApiService: UsersApiService, private jwtService: JwtService) {}
 
   public async validateUser(signInData: SignInUserDto): Promise<User> {
-    const user: User = await this.usersService.findUserByUsername(signInData.username);
+    const user: User = await this.usersApiService.findUserByUsername(signInData.username);
     const validateResult: boolean = await compare(signInData.password, user.password);
     if (!(user instanceof User && validateResult)) {
       throw teapot('validation fail');
@@ -27,7 +27,7 @@ export class AuthService {
   }
 
   public async generateToken(id: User['id']): Promise<JwtTokenDto> {
-    const entity: User = await this.usersService.findOneById(id);
+    const entity: User = await this.usersApiService.findOneById(id);
     const payload: IJwtPayload = this.generateJwtPayload(entity);
     return { access_token: this.jwtService.sign(payload) };
   }
@@ -46,7 +46,7 @@ export class AuthService {
 
   //? TL Request
   public async validatePassword(id: number, password: string): Promise<boolean> {
-    const user: User = await this.usersService.findOneById(id);
+    const user: User = await this.usersApiService.findOneById(id);
     return user && (await compare(password, user.password));
   }
 }

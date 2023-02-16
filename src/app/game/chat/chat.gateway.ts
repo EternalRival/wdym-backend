@@ -1,16 +1,16 @@
 import { ConnectedSocket, MessageBody, SubscribeMessage, WsException } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
-import { RoomsService } from '../rooms/rooms.service';
-import { IoInput } from '../io/enums/event-name.enum';
-import { ChatService } from './chat.service';
-import { IoGateway } from '../io/io.gateway';
-import { IoWsGateway } from '../io/io.decorator';
+import { IoRoomsService } from '../../io/rooms/rooms.service';
+import { IoInput } from '../../io/enums/event-name.enum';
+import { GameChatService } from './chat.service';
+import { IoGateway } from '../../io/io.gateway';
+import { IoWsGateway } from '../../io/io.decorator';
 
 @IoWsGateway()
-export class ChatGateway extends IoGateway {
+export class GameChatGateway extends IoGateway {
   private GLOBAL_CHAT_NAME = 'GlobalChat';
 
-  constructor(private chatService: ChatService, private roomService: RoomsService) {
+  constructor(private chatService: GameChatService, private roomService: IoRoomsService) {
     super();
   }
 

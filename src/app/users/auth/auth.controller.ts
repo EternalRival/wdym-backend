@@ -1,10 +1,10 @@
 import { Body, Controller, Logger, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { ApiBody, ApiHeader, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
-import { LoggerTag } from '../logger/enums/logger-tag.enum';
-import { PasswordUserDto } from '../users/dto/password.dto';
-import { SignInUserDto } from '../users/dto/sign-in-user.dto';
-import { AuthService } from './auth.service';
+import { LoggerTag } from '../../shared/enums/logger-tag.enum';
+import { PasswordUserDto } from '../dto/password.dto';
+import { SignInUserDto } from '../dto/sign-in-user.dto';
+import { UsersAuthService } from './auth.service';
 import { IJwtAuthGuardRequest } from './interfaces/jwt-auth.guard.interface';
 import { JwtTokenDto } from './dto/jwt-token.dto';
 import { ILocalAuthGuardRequest } from './interfaces/local-auth.guard.interface';
@@ -13,8 +13,8 @@ import { LocalAuthGuard } from './guards/local-auth.guard';
 
 @ApiTags('Auth')
 @Controller('auth')
-export class AuthController {
-  constructor(private authService: AuthService) {}
+export class UsersAuthController {
+  constructor(private authService: UsersAuthService) {}
 
   @ApiBody({ type: SignInUserDto })
   @UseGuards(LocalAuthGuard)

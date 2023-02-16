@@ -3,11 +3,9 @@ import { WsException } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { IoOutput } from '../io/enums/event-name.enum';
 import { Lobby } from './classes/lobby';
-import { Player } from './classes/player';
 import { GameStatus } from './enum/game-status.enum';
 import { GameControlService } from './game-control.service';
 import { Meme } from './interfaces/player.interface';
-import { LobbiesService } from './lobbies/lobbies.service';
 
 @Injectable()
 export class GameService {

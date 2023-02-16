@@ -2,14 +2,12 @@ import { ConnectedSocket, OnGatewayConnection, OnGatewayDisconnect, OnGatewayIni
 import { Socket } from 'socket.io';
 import { instrument } from '@socket.io/admin-ui';
 import { Logger } from '@nestjs/common';
-import { LoggerTag } from '../logger/enums/logger-tag.enum';
-import { IoGateway } from './io.gateway';
-import { IoWsGateway } from './io.decorator';
-import { UsersService } from '../users/users.service';
-import { User } from '../users/entities/user.entity';
+import { LoggerTag } from '../../shared/enums/logger-tag.enum';
+import { IoGateway } from '../io.gateway';
+import { IoWsGateway } from '../io.decorator';
 
 @IoWsGateway()
-export class HooksGateway extends IoGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+export class IoHooksGateway extends IoGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   public logger = new Logger(LoggerTag.HOOKS);
 
   public afterInit(): void {
