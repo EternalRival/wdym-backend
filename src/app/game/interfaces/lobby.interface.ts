@@ -1,4 +1,4 @@
-import { IPlayer, PlayerBasicInfo, Meme } from './player.interface';
+import { IPlayer, PlayerBasicInfo, MemeList } from './player.interface';
 import { LobbyPrivacyType } from '../enum/lobby-privacy-type.enum';
 import { GameStatus } from '../enum/game-status.enum';
 
@@ -62,6 +62,6 @@ export interface ILobbyData {
 /** Для отрисовки игры */
 export interface IGameData extends Pick<ILobby, 'players' | 'status' | 'rounds'> {
   currentRound: number;
-  memes: Meme[];
-  votes: Meme[];
+  memes: MemeList; // {'meme1':['oleg','petr'],'meme2':[egor]}
+  votes: MemeList;
 }
