@@ -5,7 +5,7 @@ import { shuffle } from '../../utils/randomize';
 import { Lobby } from './classes/lobby';
 import { Player } from './classes/player';
 import { GameStatus } from './enum/game-status.enum';
-import { PlayerMeme } from './interfaces/player.interface';
+import { Meme } from './interfaces/player.interface';
 
 @Injectable()
 export class GameControlService implements OnModuleInit {
@@ -49,10 +49,10 @@ export class GameControlService implements OnModuleInit {
 
     rounds.push(pickedSituation ?? situations[0] ?? '');
   }
-  public setPlayerMeme(player: Player, meme: PlayerMeme): void {
+  public setPlayerMeme(player: Player, meme: Meme): void {
     player.setMeme(meme);
   }
-  public setPlayerVote(player: Player, vote: PlayerMeme): void {
+  public setPlayerVote(player: Player, vote: Meme): void {
     player.setVote(vote);
   }
   //? что тут?

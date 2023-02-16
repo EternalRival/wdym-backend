@@ -6,7 +6,7 @@ import { Lobby } from './classes/lobby';
 import { Player } from './classes/player';
 import { GameStatus } from './enum/game-status.enum';
 import { GameControlService } from './game-control.service';
-import { PlayerMeme } from './interfaces/player.interface';
+import { Meme } from './interfaces/player.interface';
 import { LobbiesService } from './lobbies/lobbies.service';
 
 @Injectable()
@@ -48,7 +48,7 @@ export class GameService {
     this.changePhaseAlert(io, lobby);
   }
 
-  public pickMeme(io: Server, socket: Socket, uuid: string, meme: PlayerMeme): string {
+  public pickMeme(io: Server, socket: Socket, uuid: string, meme: Meme): string {
     const lobby = this.getLobby(uuid);
     const { username } = socket.handshake.auth;
 
@@ -69,7 +69,7 @@ export class GameService {
     return uuid;
   }
 
-  public getVote(io: Server, socket: Socket, uuid: string, vote: PlayerMeme): string {
+  public getVote(io: Server, socket: Socket, uuid: string, vote: Meme): string {
     const lobby = this.getLobby(uuid);
     const { username } = socket.handshake.auth;
 

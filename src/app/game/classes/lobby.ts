@@ -1,7 +1,7 @@
 import { GameStatus } from '../enum/game-status.enum';
 import { LobbyPrivacyType } from '../enum/lobby-privacy-type.enum';
 import { ICreateLobbyData, IGameData, ILobby, ILobbyData } from '../interfaces/lobby.interface';
-import { PlayerMeme } from '../interfaces/player.interface';
+import { Meme } from '../interfaces/player.interface';
 import { Player } from './player';
 
 export class Lobby implements ILobby {
@@ -69,7 +69,7 @@ export class Lobby implements ILobby {
     this.rounds.length = 0;
   }
 
-  public getMemes(property: keyof Pick<Player, 'meme' | 'vote'>): PlayerMeme[] {
+  public getMemes(property: keyof Pick<Player, 'meme' | 'vote'>): Meme[] {
     return Object.values(this.players).map((player) => player[property]);
   }
 
