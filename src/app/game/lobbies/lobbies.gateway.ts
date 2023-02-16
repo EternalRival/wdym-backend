@@ -14,12 +14,12 @@ export class LobbiesGateway extends IoGateway {
     super();
   }
 
-  @SubscribeMessage(IoInput.createLobbyRequest)
+  @SubscribeMessage(IoInput.createLobby)
   private handleCreateLobbyRequest(@MessageBody('lobby') createLobbyData: ICreateLobbyData): ILobbyData {
     return this.lobbiesService.createLobby(this.io, createLobbyData);
   }
 
-  @SubscribeMessage(IoInput.joinLobbyRequest)
+  @SubscribeMessage(IoInput.joinLobby)
   private handleJoinLobbyRequest(
     @MessageBody('uuid', ParseUUIDPipe) uuid: string,
     @MessageBody('password') password: string,
@@ -29,7 +29,7 @@ export class LobbiesGateway extends IoGateway {
     return this.lobbiesService.joinLobby(this.io, socket, uuid, password);
   }
 
-  @SubscribeMessage(IoInput.leaveLobbyRequest)
+  @SubscribeMessage(IoInput.leaveLobby)
   private handleLeaveLobbyRequest(
     @MessageBody('uuid', ParseUUIDPipe) uuid: string,
     @ConnectedSocket() socket: Socket,
@@ -37,18 +37,18 @@ export class LobbiesGateway extends IoGateway {
     return this.lobbiesService.leaveLobby(this.io, socket, uuid);
   }
 
-  @SubscribeMessage(IoInput.destroyLobbyRequest)
+  @SubscribeMessage(IoInput.destroyLobby)
   private handleDestroyLobbyRequest(@MessageBody('uuid', ParseUUIDPipe) uuid: string): string {
     return this.lobbiesService.destroyLobby(this.io, uuid);
   }
 
-  @SubscribeMessage(IoInput.lobbyDataRequest)
+  @SubscribeMessage(IoInput.lobbyData)
   private handleGetLobbyDataRequest(@MessageBody('uuid', ParseUUIDPipe) uuid: string): Lobby {
     // TODO согласовать с Игорем отправляемые данные, чтобы не отправлять лобби целиком
     return this.lobbiesService.getLobbyData(uuid);
   }
 
-  @SubscribeMessage(IoInput.lobbyListRequest)
+  @SubscribeMessage(IoInput.lobbyList)
   private handleGetLobbyList(@MessageBody() options: ILobbyListOptions): ILobbyData[] {
     return this.lobbiesService.getLobbyList(options);
   }

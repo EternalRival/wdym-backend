@@ -11,7 +11,7 @@ export class FileGateway extends IoGateway {
     super();
   }
 
-  @SubscribeMessage(IoInput.randomMemesRequest)
+  @SubscribeMessage(IoInput.randomMemes)
   private handleGetRandomMemes(
     @MessageBody('quantity') quantity: number,
     @ConnectedSocket() socket: Socket,

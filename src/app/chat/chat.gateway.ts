@@ -14,7 +14,7 @@ export class ChatGateway extends IoGateway {
     super();
   }
 
-  @SubscribeMessage(IoInput.chatMessageRequest)
+  @SubscribeMessage(IoInput.chatMessage)
   private handleMsgToServer(
     @MessageBody('message') message: string,
     @MessageBody('roomname') roomname: string,

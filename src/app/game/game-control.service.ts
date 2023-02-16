@@ -48,7 +48,7 @@ export class GameControlService implements OnModuleInit {
 
     const pickedSituation = situations.find((situation) => rounds.every((round) => round.situation !== situation));
 
-    rounds.push(new Round(pickedSituation ?? situations[0]));
+    rounds.push(new Round(pickedSituation ?? situations[0] ?? ''));
   }
   public setPlayerMeme(player: Player, meme: string | null): void {
     player.setMeme(meme);

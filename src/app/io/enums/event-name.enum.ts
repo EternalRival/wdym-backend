@@ -1,12 +1,14 @@
 export enum IoInput {
-  chatMessageRequest = 'chat-message-request',
-  createLobbyRequest = 'create-lobby-request',
-  joinLobbyRequest = 'join-lobby-request',
-  destroyLobbyRequest = 'destroy-lobby-request',
-  lobbyDataRequest = 'lobby-data-request',
-  lobbyListRequest = 'lobby-list-request',
-  leaveLobbyRequest = 'leave-lobby-request',
-  randomMemesRequest = 'random-memes-request',
+  chatMessage = 'chat-message-request',
+  createLobby = 'create-lobby-request',
+  joinLobby = 'join-lobby-request',
+  destroyLobby = 'destroy-lobby-request',
+  lobbyData = 'lobby-data-request',
+  lobbyList = 'lobby-list-request',
+  leaveLobby = 'leave-lobby-request',
+  randomMemes = 'random-memes-request',
+  startGame = 'start-game-request',
+  pickMeme = 'pick-meme-request',
 }
 
 export enum IoOutput {

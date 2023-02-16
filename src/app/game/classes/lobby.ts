@@ -57,7 +57,7 @@ export class Lobby implements ILobby {
   public setStatus(status: GameStatus): void {
     this.status = status;
   }
-  private isReadyToChangeGameStatus(property: keyof Pick<Player, 'meme' | 'vote'>): boolean {
+  public isReadyToChangeGameStatus(property: keyof Pick<Player, 'meme' | 'vote'>): boolean {
     const players: Player[] = Object.values(this.players);
     return players.reduce((counter, player) => counter + +(player[property] !== null), 0) >= this.playersCount; // (player[property] === null ? counter : counter + 1)
   }
