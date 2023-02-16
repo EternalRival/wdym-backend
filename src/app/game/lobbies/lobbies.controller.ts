@@ -1,11 +1,11 @@
 import { Controller, Get, ParseUUIDPipe, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { LobbiesService } from './lobbies.service';
+import { GameLobbiesService } from './lobbies.service';
 
 @ApiTags('Lobbies')
 @Controller('lobbies')
-export class LobbiesController {
-  constructor(private readonly lobbiesService: LobbiesService) {}
+export class GameLobbiesController {
+  constructor(private readonly lobbiesService: GameLobbiesService) {}
 
   @Get('is-title-unique')
   private isLobbyTitleUnique(@Query('title') title: string): boolean {

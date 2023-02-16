@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
-import { UsersModule } from '../users/users.module';
-import { HooksGateway } from './hooks.gateway';
+import { IoHooksGateway } from './hooks/hooks.gateway';
 import { IoGateway } from './io.gateway';
+import { IoRoomsModule } from './rooms/rooms.module';
 
 @Module({
-  providers: [IoGateway, HooksGateway],
+  imports: [IoRoomsModule],
+  providers: [IoGateway, IoHooksGateway],
 })
 export class IoModule {}

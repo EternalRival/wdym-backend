@@ -6,7 +6,7 @@ import { Request } from 'express';
 import { IJwtPayload } from '../interfaces/jwt-payload.interface';
 import { IJwtAuthGuardRequest } from '../interfaces/jwt-auth.guard.interface';
 import { JwtTokenDto } from '../dto/jwt-token.dto';
-import { LoggerTag } from '../../logger/enums/logger-tag.enum';
+import { LoggerTag } from '../../../shared/enums/logger-tag.enum';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
