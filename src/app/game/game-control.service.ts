@@ -9,7 +9,7 @@ import { Meme } from './interfaces/player.interface';
 
 @Injectable()
 export class GameControlService implements OnModuleInit {
-  public situations!: string[];
+  private situations!: string[];
 
   public async onModuleInit(): Promise<void> {
     this.situations = await this.readSituations();
@@ -20,7 +20,7 @@ export class GameControlService implements OnModuleInit {
     return JSON.parse(string);
   }
 
-  public nextStatus(lobby: Lobby): void {
+  private nextStatus(lobby: Lobby): void {
     switch (lobby.status) {
       case GameStatus.PREPARE:
         lobby.setStatus(GameStatus.SITUATION);
@@ -41,8 +41,8 @@ export class GameControlService implements OnModuleInit {
     }
   }
 
-  public createNewRound(lobby: Lobby): void {
-    lobby.resetRound();
+  private createNewRound(lobby: Lobby): void {
+    this.resetRound(lobby);
     const situations = shuffle(this.situations);
     const pickedSituation = situations.find((situation) => lobby.rounds.every((round) => round !== situation));
     lobby.rounds.push(pickedSituation ?? situations[0] ?? '');
@@ -54,14 +54,54 @@ export class GameControlService implements OnModuleInit {
     player.setVote(vote);
   }
 
-  public updatePlayerScore(player: Player, plus: number): void {
+  private updatePlayerScore(player: Player, plus: number): void {
     player.setScore(player.score + plus);
   }
-  public resetPlayerScore(player: Player): void {
+  private resetPlayerScore(player: Player): void {
     player.setScore(0);
+  }
+  private updateLobbyScore(lobby: Lobby): void {
+    const memes = lobby.getMemes('meme');
+    const votes = lobby.getMemes('vote');
+
+    Object.entries(votes).forEach(([meme, playerNames]) => {
+      if (playerNames.length > 0) {
+        memes[meme].forEach((playerName) => {
+          const player = lobby.getPlayer(playerName);
+          this.updatePlayerScore(player, playerNames.length);
+        });
+      }
+    });
   }
 
   public resetGame(lobby: Lobby): void {
-    lobby.resetGame();
+    lobby.setStatus(GameStatus.PREPARE);
+    this.resetRound(lobby, { hardReset: true });
+  }
+
+  //?
+
+  private resetRound(lobby: Lobby, options?: { hardReset: boolean }): void {
+    Object.values(lobby.players).forEach((player: Player) => {
+      this.setPlayerMeme(player, null);
+      this.setPlayerVote(player, null);
+      if (options?.hardReset === true) {
+        this.resetPlayerScore(player);
+      }
+    });
+    if (options?.hardReset === true) {
+      lobby.cleanRounds();
+    }
+  }
+
+  public changePhase(lobby: Lobby): void {
+    this.nextStatus(lobby);
+
+    if (lobby.status === GameStatus.VOTE_RESULTS) {
+      this.updateLobbyScore(lobby);
+    }
+    if (lobby.status === GameStatus.SITUATION) {
+      this.createNewRound(lobby);
+    }
   }
 }

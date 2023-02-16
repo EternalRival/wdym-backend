@@ -30,11 +30,7 @@ export class GameService {
   }
 
   private changePhase(io: Server, lobby: Lobby): void {
-    this.gameControlService.nextStatus(lobby);
-
-    if (lobby.status === GameStatus.SITUATION) {
-      this.gameControlService.createNewRound(lobby);
-    }
+    this.gameControlService.changePhase(lobby);
     //? ↓↓↓ автотаймер ↓↓↓
     if (lobby.isStarted) {
       lobby.delayedChangePhase.set(() => this.changePhase(io, lobby));
@@ -64,7 +60,7 @@ export class GameService {
     }
 
     const player = this.getPlayer(lobby, username);
-    player.setMeme(meme);
+    this.gameControlService.setPlayerMeme(player, meme);
 
     if (lobby.isReadyToChangeGameStatus('meme')) {
       this.changePhase(io, lobby);
@@ -84,7 +80,7 @@ export class GameService {
     }
 
     const player = this.getPlayer(lobby, username);
-    player.setVote(vote);
+    this.gameControlService.setPlayerVote(player, vote);
 
     if (lobby.isReadyToChangeGameStatus('vote')) {
       this.changePhase(io, lobby);
