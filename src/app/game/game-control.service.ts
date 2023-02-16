@@ -1,4 +1,5 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
+import { WsException } from '@nestjs/websockets';
 import { readFile } from 'fs/promises';
 import { resolve } from 'path';
 import { shuffle } from '../../utils/randomize';
@@ -6,6 +7,7 @@ import { Lobby } from './classes/lobby';
 import { Player } from './classes/player';
 import { GameStatus } from './enum/game-status.enum';
 import { Meme } from './interfaces/player.interface';
+import { LobbiesService } from './lobbies/lobbies.service';
 
 @Injectable()
 export class GameControlService implements OnModuleInit {
@@ -18,6 +20,23 @@ export class GameControlService implements OnModuleInit {
     const path = resolve('src', 'public', 'assets', 'json', 'situations.json');
     const string = await readFile(path, 'utf8');
     return JSON.parse(string);
+  }
+
+  constructor(private lobbiesService: LobbiesService) {}
+
+  public getLobby(uuid: string): Lobby {
+    const lobby = this.lobbiesService.getLobbyData(uuid);
+    if (!(lobby instanceof Lobby)) {
+      throw new WsException(`${this.constructor.name}.getPlayer: lobby not found!`);
+    }
+    return lobby;
+  }
+  public getPlayer(lobby: Lobby, username: string): Player {
+    const player: Player = lobby.getPlayer(username);
+    if (!(player instanceof Player)) {
+      throw new WsException(`${this.constructor.name}.getPlayer: player not found!`);
+    }
+    return player;
   }
 
   private nextStatus(lobby: Lobby): void {
@@ -97,11 +116,14 @@ export class GameControlService implements OnModuleInit {
   public changePhase(lobby: Lobby): void {
     this.nextStatus(lobby);
 
-    if (lobby.status === GameStatus.VOTE_RESULTS) {
-      this.updateLobbyScore(lobby);
-    }
-    if (lobby.status === GameStatus.SITUATION) {
-      this.createNewRound(lobby);
+    switch (lobby.status) {
+      case GameStatus.VOTE_RESULTS:
+        this.updateLobbyScore(lobby);
+        break;
+      case GameStatus.SITUATION:
+        this.createNewRound(lobby);
+        break;
+      default:
     }
   }
 }

@@ -11,23 +11,7 @@ import { LobbiesService } from './lobbies/lobbies.service';
 
 @Injectable()
 export class GameService {
-  constructor(private lobbiesService: LobbiesService, private gameControlService: GameControlService) {}
-
-  private getLobby(uuid: string): Lobby {
-    const lobby = this.lobbiesService.getLobbyData(uuid);
-    if (!(lobby instanceof Lobby)) {
-      throw new WsException(`${this.constructor.name}.getPlayer: lobby not found!`);
-    }
-    return lobby;
-  }
-
-  private getPlayer(lobby: Lobby, username: string): Player {
-    const player: Player = lobby.getPlayer(username);
-    if (!(player instanceof Player)) {
-      throw new WsException(`${this.constructor.name}.getPlayer: player not found!`);
-    }
-    return player;
-  }
+  constructor(private gameControlService: GameControlService) {}
 
   private changePhase(io: Server, lobby: Lobby): void {
     this.gameControlService.changePhase(lobby);
@@ -40,7 +24,7 @@ export class GameService {
   }
 
   public startGame(io: Server, uuid: string): string {
-    const lobby = this.getLobby(uuid);
+    const lobby = this.gameControlService.getLobby(uuid);
     this.gameControlService.resetGame(lobby);
 
     this.changePhase(io, lobby);
@@ -49,7 +33,7 @@ export class GameService {
   }
 
   public pickMeme(io: Server, socket: Socket, uuid: string, meme: Meme): string {
-    const lobby = this.getLobby(uuid);
+    const lobby = this.gameControlService.getLobby(uuid);
     const { username } = socket.handshake.auth;
 
     if (!username) {
@@ -59,7 +43,7 @@ export class GameService {
       throw new WsException(`${username}'s Socket GameStatus is not ${GameStatus.SITUATION}!`);
     }
 
-    const player = this.getPlayer(lobby, username);
+    const player = this.gameControlService.getPlayer(lobby, username);
     this.gameControlService.setPlayerMeme(player, meme);
 
     if (lobby.isReadyToChangeGameStatus('meme')) {
@@ -69,7 +53,7 @@ export class GameService {
   }
 
   public getVote(io: Server, socket: Socket, uuid: string, vote: Meme): string {
-    const lobby = this.getLobby(uuid);
+    const lobby = this.gameControlService.getLobby(uuid);
     const { username } = socket.handshake.auth;
 
     if (!username) {
@@ -79,7 +63,7 @@ export class GameService {
       throw new WsException(`${username}'s Socket GameStatus is not ${GameStatus.VOTE}!`);
     }
 
-    const player = this.getPlayer(lobby, username);
+    const player = this.gameControlService.getPlayer(lobby, username);
     this.gameControlService.setPlayerVote(player, vote);
 
     if (lobby.isReadyToChangeGameStatus('vote')) {
@@ -88,25 +72,3 @@ export class GameService {
     return uuid;
   }
 }
-/* 
-Lobby: {
-  players: {
-    oleg: {
-      image: 'image-url',
-      username: 'oleg',
-      score: 0,
-      meme: 'meme-url', // | null
-      vote: 'meme-url', // | null
-    },
-  },
-  status: 'prepare', // |'situation'|'vote'|'vote-results'|'end'
-  rounds: [
-    {
-      situation: 'lorem',
-      winner: {
-        username: 'petr',
-        meme: 'meme-url',
-      },
-    },
-  ],
-} */
