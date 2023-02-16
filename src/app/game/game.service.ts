@@ -4,6 +4,7 @@ import { Server, Socket } from 'socket.io';
 import { IoOutput } from '../io/enums/event-name.enum';
 import { Lobby } from './classes/lobby';
 import { Player } from './classes/player';
+import { GameStatus } from './enum/game-status.enum';
 import { GameControlService } from './game-control.service';
 import { LobbiesService } from './lobbies/lobbies.service';
 
@@ -48,10 +49,20 @@ export class GameService {
 
   public pickMeme(io: Server, socket: Socket, uuid: string, meme: string): string {
     const lobby = this.getLobby(uuid);
-    const player = this.getPlayer(lobby, socket.handshake.auth.username);
+    const { username } = socket.handshake.auth;
+
+    if (!username) {
+      throw new WsException(`Invalid username (${username})!`);
+    }
+    if (lobby.status !== GameStatus.VOTE) {
+      throw new WsException(`${username}'s Socket GameStatus is not ${GameStatus.VOTE}!`);
+    }
+
+    const player = this.getPlayer(lobby, username);
     player.setMeme(meme);
 
     if (lobby.isReadyToChangeGameStatus('meme')) {
+      this.gameControlService.nextStatus(lobby);
       this.changePhaseAlert(io, lobby);
     }
     return uuid;
