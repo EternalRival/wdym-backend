@@ -73,24 +73,4 @@ export class GameControlService implements OnModuleInit {
   public resetGame(lobby: Lobby): void {
     lobby.resetGame();
   }
-
-  /*   private mockLobby: ILobby = {
-    players: {
-      '1111': {
-        username: '1111',
-        image: 'https://cs5.pikabu.ru/post_img/2014/12/25/8/1419515300_641817002.gif',
-        score: 0,
-        meme: null,
-        vote: null,
-      },
-    },
-    status: GameStatus.PREPARE,
-    uuid: 'f67408dc-ad8c-49a9-89cd-75e4847126a8',
-    maxPlayers: 2,
-    maxRounds: 1,
-    title: 'awdawd',
-    owner: '1111',
-    image: 'https://cs5.pikabu.ru/post_img/2014/12/25/8/1419515300_641817002.gif',
-    password: '',
-  }; */
 }

@@ -87,7 +87,8 @@ export class Lobby implements ILobby {
       owner: this.owner,
       privacyType: this.privacyType,
       title: this.title,
-      playersQuantity: this.playersCount, // TODO обговорить переименование
+      players: Object.values(this.players).map((player) => ({ username: player.username, image: player.image })),
+      playersCount: this.playersCount,
       maxPlayers: this.maxPlayers,
       maxRounds: this.maxRounds,
     };

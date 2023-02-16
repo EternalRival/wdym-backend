@@ -36,6 +36,7 @@ export class GameService {
     const lobby = this.getLobby(uuid);
     this.gameControlService.resetGame(lobby);
     this.gameControlService.nextStatus(lobby);
+    
     this.changePhaseAlert(io, lobby);
   }
 

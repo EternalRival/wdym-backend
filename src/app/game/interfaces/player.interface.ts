@@ -8,3 +8,5 @@ export interface IPlayer {
   meme: PlayerMeme;
   vote: PlayerVote;
 }
+
+export type PlayerBasicInfo = Pick<IPlayer, 'username' | 'image'>;

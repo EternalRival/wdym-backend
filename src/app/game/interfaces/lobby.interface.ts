@@ -1,4 +1,4 @@
-import { IPlayer } from './player.interface';
+import { IPlayer, PlayerBasicInfo } from './player.interface';
 import { LobbyPrivacyType } from '../enum/lobby-privacy-type.enum';
 import { GameStatus } from '../enum/game-status.enum';
 import { Round } from '../classes/round';
@@ -47,17 +47,20 @@ export interface ILobby {
   rounds: Round[];
 }
 
+/** Для отрисовки списка лобби */
 export interface ILobbyData {
   uuid: string;
   image: string;
   owner: string;
   privacyType: LobbyPrivacyType;
   title: string;
-  playersQuantity: number;
+  players: PlayerBasicInfo[];
+  playersCount: number;
   maxPlayers: number;
   maxRounds: number;
 }
 
+/** Для отрисовки игры */
 export interface IGameData extends Pick<ILobby, 'players' | 'status' | 'rounds'> {
   currentRound: number;
 }
