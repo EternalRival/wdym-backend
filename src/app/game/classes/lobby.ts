@@ -1,7 +1,7 @@
 import { GameStatus } from '../enum/game-status.enum';
 import { LobbyPrivacyType } from '../enum/lobby-privacy-type.enum';
 import { ICreateLobbyData, IGameData, ILobby, ILobbyData } from '../interfaces/lobby.interface';
-import { Meme } from '../interfaces/player.interface';
+import { Meme, MemeList } from '../interfaces/player.interface';
 import { Player } from './player';
 
 export class Lobby implements ILobby {
@@ -69,8 +69,18 @@ export class Lobby implements ILobby {
     this.rounds.length = 0;
   }
 
-  public getMemes(property: keyof Pick<Player, 'meme' | 'vote'>): Meme[] {
-    return Object.values(this.players).map((player) => player[property]);
+  public getMemes(property: keyof Pick<Player, 'meme' | 'vote'>): MemeList {
+    return Object.values(this.players).reduce((list, player) => {
+      const prop: Meme = player[property];
+      if (prop === null) {
+        return list;
+      }
+      if (prop in list) {
+        list[prop].push(player.username);
+        return list;
+      }
+      return { ...list, [prop]: [player.username] };
+    }, {} as MemeList);
   }
 
   public resetGame(): void {
