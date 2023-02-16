@@ -42,12 +42,10 @@ export class GameControlService implements OnModuleInit {
   }
 
   public createNewRound(lobby: Lobby): void {
-    const { rounds } = lobby;
+    lobby.resetRound();
     const situations = shuffle(this.situations);
-
-    const pickedSituation = situations.find((situation) => rounds.every((round) => round !== situation));
-
-    rounds.push(pickedSituation ?? situations[0] ?? '');
+    const pickedSituation = situations.find((situation) => lobby.rounds.every((round) => round !== situation));
+    lobby.rounds.push(pickedSituation ?? situations[0] ?? '');
   }
   public setPlayerMeme(player: Player, meme: Meme): void {
     player.setMeme(meme);
@@ -55,20 +53,14 @@ export class GameControlService implements OnModuleInit {
   public setPlayerVote(player: Player, vote: Meme): void {
     player.setVote(vote);
   }
-  //? что тут?
-  public displayVoteResults(): unknown {
-    throw new Error('не реализовано');
-  }
+
   public updatePlayerScore(player: Player, plus: number): void {
     player.setScore(player.score + plus);
   }
   public resetPlayerScore(player: Player): void {
     player.setScore(0);
   }
-  //? а тут что?
-  public displayEnding(): unknown {
-    throw new Error('не реализовано');
-  }
+
   public resetGame(lobby: Lobby): void {
     lobby.resetGame();
   }

@@ -70,8 +70,15 @@ export class Lobby implements ILobby {
   public get currentRound(): number {
     return this.rounds.length;
   }
-  public resetRounds(): void {
-    this.rounds.length = 0;
+  public resetRound(options?: { hardReset: boolean }): void {
+    Object.values(this.players).forEach((player: Player) => {
+      player.setMeme(null);
+      player.setVote(null);
+      if (options?.hardReset === true) {
+        player.setScore(0);
+        this.rounds.length = 0;
+      }
+    });
   }
 
   public getMemes(property: keyof Pick<Player, 'meme' | 'vote'>): MemeList {
@@ -89,12 +96,7 @@ export class Lobby implements ILobby {
 
   public resetGame(): void {
     this.setStatus(GameStatus.PREPARE);
-    Object.values(this.players).forEach((player: Player) => {
-      player.setScore(0);
-      player.setMeme(null);
-      player.setVote(null);
-    });
-    this.resetRounds();
+    this.resetRound({ hardReset: true });
   }
 
   /** Для отрисовки списка лобби */
