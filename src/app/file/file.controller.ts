@@ -10,32 +10,33 @@ export class FileController {
   constructor(private readonly fileService: FileService) {}
 
   // TODO под снос
-  @Get(`${Folder.Avatars}/:fileName`)
+  /*   @Get(`${Folder.Avatars}/:fileName`)
   private getAvatar(@Req() req: Request, @Param('fileName') fileName: string): string {
     const origin = `${req.protocol}://${req.headers.host}`;
     const path = this.fileService.getFile(Folder.Avatars, fileName);
     return origin + path;
-  }
+  } */
   @Get(Folder.Avatars)
-  private async getAvatarList(): Promise<string[]> {
-    return this.fileService.getFileNames(Folder.Avatars);
+  private async getAvatarList(@Req() req: Request): Promise<string[]> {
+    const origin = `${req.protocol}://${req.headers.host}`;
+    return this.fileService.getFileNames(origin, Folder.Avatars);
   }
   @Get('random-avatar')
   private async getRandomAvatar(@Req() req: Request): Promise<string> {
     const origin = `${req.protocol}://${req.headers.host}`;
-    const path = await this.fileService.getRandomAvatar();
-    return origin + path;
+    return this.fileService.getRandomAvatar(origin);
   }
 
   // TODO под снос
-  @Get(`${Folder.Meme}/:fileName`)
+  /*   @Get(`${Folder.Meme}/:fileName`)
   private getMeme(@Req() req: Request, @Param('fileName') fileName: string): string {
     const origin = `${req.protocol}://${req.headers.host}`;
     const path = this.fileService.getFile(Folder.Meme, fileName);
     return origin + path;
-  }
+  } */
   @Get(Folder.Meme)
-  private async getMemeList(): Promise<string[]> {
-    return this.fileService.getFileNames(Folder.Meme);
+  private async getMemeList(@Req() req: Request): Promise<string[]> {
+    const origin = `${req.protocol}://${req.headers.host}`;
+    return this.fileService.getFileNames(origin, Folder.Meme);
   }
 }

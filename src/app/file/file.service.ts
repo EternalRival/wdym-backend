@@ -16,20 +16,17 @@ export class FileService {
     return resolve(root, this.ASSETS_DIR, ...paths);
   }
 
-  public getFile(path: Folder, name: string): string {
-    return this.url(Root.web, path, name);
-  }
-
-  public getFileNames(path: Folder): Promise<string[]> {
+  public async getFileNames(origin: string, path: Folder): Promise<string[]> {
     const dir: string = this.url(Root.src, path);
-    return readdir(dir);
+    const fileNames: string[] = await readdir(dir);
+    return fileNames.map((fileName) => `${origin}${this.url(Root.web, path, fileName)}`);
   }
 
-  public async getRandomAvatar(): Promise<string> {
+  public async getRandomAvatar(origin: string): Promise<string> {
     const dir: string = this.url(Root.src, Folder.Avatars);
     const fileNames: string[] = await readdir(dir);
     const randomFileName: string = getRandomArrayItem(fileNames);
-    return this.url(Root.web, Folder.Avatars, randomFileName);
+    return `${origin}${this.url(Root.web, Folder.Avatars, randomFileName)}`;
   }
 
   public async getRandomMemes(io: Server, socket: Socket, quantity: number): Promise<string[]> {
@@ -37,6 +34,6 @@ export class FileService {
     const fileNames: string[] = await readdir(dir);
     const randomFileNames: string[] = shuffle(fileNames).slice(0, quantity);
     const { host } = socket.request.headers;
-    return randomFileNames.map((fileName) => host + this.url(Root.web, Folder.Meme, fileName));
+    return randomFileNames.map((fileName) => `${host}${this.url(Root.web, Folder.Meme, fileName)}`);
   }
 }
