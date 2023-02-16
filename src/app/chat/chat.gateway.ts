@@ -1,4 +1,4 @@
-import { ConnectedSocket, MessageBody, SubscribeMessage } from '@nestjs/websockets';
+import { ConnectedSocket, MessageBody, SubscribeMessage, WsException } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { RoomsService } from '../rooms/rooms.service';
 import { IoInput } from '../io/enums/event-name.enum';
@@ -26,4 +26,9 @@ export class ChatGateway extends IoGateway {
   public handleConnection(@ConnectedSocket() socket: Socket): void {
     socket.join(this.GLOBAL_CHAT_NAME);
   }
+  /* @SubscribeMessage('kek')
+  private kek(): string {
+    throw new WsException('KEKERRORRRRRRRRRRR');
+    return 'aaaaa';
+  } */
 }
