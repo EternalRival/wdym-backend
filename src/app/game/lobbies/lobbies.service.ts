@@ -90,7 +90,7 @@ export class GameLobbiesService {
 
     lobby.removePlayer(username);
     this.roomsService.leaveRoom(socket, uuid);
-    io.to(uuid).emit(IoOutput.leaveLobby, lobby.players);
+    io.to(uuid).emit(IoOutput.leaveLobby, lobby.gameData);
     this.logger.log(`Leave: ${username} -> ${lobby.title}(${uuid})`);
     if (lobby.isEmpty) {
       this.destroyLobby(io, uuid); // TODO реализовать отменяемое удаление с задержкой
