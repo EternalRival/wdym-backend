@@ -41,10 +41,10 @@ export class GameLobbiesGateway extends IoGateway {
     return this.lobbiesService.destroyLobby(this.io, uuid);
   }
 
-  @SubscribeMessage(IoInput.lobbyData)
+  /*   @SubscribeMessage(IoInput.lobbyData)
   private handleGetLobbyDataRequest(@MessageBody('uuid', ParseUUIDPipe) uuid: string): Lobby {
     return this.lobbiesService.getLobbyData(uuid);
-  }
+  } */
 
   @SubscribeMessage(IoInput.lobbyList)
   private handleGetLobbyList(@MessageBody() options: ILobbyListOptions): ILobbyData[] {

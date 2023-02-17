@@ -6,7 +6,7 @@ import { Meme, MemeList } from '../interfaces/player.interface';
 import { Player } from './player';
 
 export class Lobby implements ILobby {
-  public TIMER_DELAY = 30 * 1000;
+  public readonly TIMER_DELAY: number = 30 * 1000;
 
   public readonly uuid!: string;
   public readonly title!: string;

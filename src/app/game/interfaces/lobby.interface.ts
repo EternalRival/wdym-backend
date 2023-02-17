@@ -21,16 +21,7 @@ export interface ICreateLobbyData {
 }
 
 export interface ILobby {
-  /*   uuid: string;
-  title: string;
-  password: string;
-  owner: string;
-  image: string;
-  maxPlayers: number;
-  maxRounds: number;
-  players: Record<string, IPlayer>;
-  status: GameStatus;
-  currentRound: number; */
+  readonly TIMER_DELAY: number;
 
   readonly uuid: string;
   readonly title: string;
