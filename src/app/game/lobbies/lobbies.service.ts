@@ -5,7 +5,7 @@ import { WsException } from '@nestjs/websockets';
 import { IoRoomsService } from '../../io/rooms/rooms.service';
 import { IoOutput } from '../../io/enums/event-name.enum';
 import { Lobby } from '../classes/lobby';
-import { ICreateLobbyData, ILobbyData, ILobbyListOptions } from '../interfaces/lobby.interface';
+import { ICreateLobbyData, IGameData, ILobbyData, ILobbyListOptions } from '../interfaces/lobby.interface';
 import { Player } from '../classes/player';
 import { LobbyPrivacyType } from '../enum/lobby-privacy-type.enum';
 import { getChunk } from '../../../utils/get-chunk';
@@ -48,7 +48,7 @@ export class GameLobbiesService {
     return Boolean(this.lobbyMap.get(uuid)?.hasPlayer(username));
   }
 
-  public joinLobby(io: Server, socket: Socket, uuid: string, password?: string): Lobby {
+  public joinLobby(io: Server, socket: Socket, uuid: string, password?: string): IGameData {
     const lobby = this.lobbyMap.get(uuid);
     const { username, image } = socket.handshake.auth;
 
@@ -71,7 +71,7 @@ export class GameLobbiesService {
       io.to(uuid).emit(IoOutput.joinLobby, lobby.players);
       this.logger.log(`Join lobby: ${username} -> ${lobby.title}(${uuid})`);
     }
-    return lobby;
+    return lobby.gameData;
   }
 
   public leaveLobby(io: Server, socket: Socket, uuid: string): string {

@@ -6,7 +6,7 @@ import { Lobby } from '../classes/lobby';
 import { GameLobbiesService } from './lobbies.service';
 import { IoGateway } from '../../io/io.gateway';
 import { IoWsGateway } from '../../io/io.decorator';
-import { ICreateLobbyData, ILobbyData, ILobbyListOptions } from '../interfaces/lobby.interface';
+import { ICreateLobbyData, IGameData, ILobbyData, ILobbyListOptions } from '../interfaces/lobby.interface';
 
 @IoWsGateway()
 export class GameLobbiesGateway extends IoGateway {
@@ -24,7 +24,7 @@ export class GameLobbiesGateway extends IoGateway {
     @MessageBody('uuid', ParseUUIDPipe) uuid: string,
     @MessageBody('password') password: string,
     @ConnectedSocket() socket: Socket,
-  ): Lobby {
+  ): IGameData {
     return this.lobbiesService.joinLobby(this.io, socket, uuid, password);
   }
 
