@@ -68,7 +68,7 @@ export class GameLobbiesService {
     this.roomsService.joinRoom(io, socket, lobby.uuid);
     if (!(lobby.isStarted || lobby.hasPlayer(username))) {
       lobby.addPlayer(new Player(username, image));
-      io.to(uuid).emit(IoOutput.joinLobby, lobby.players);
+      io.to(uuid).emit(IoOutput.joinLobby, lobby.gameData);
       this.logger.log(`Join lobby: ${username} -> ${lobby.title}(${uuid})`);
     }
     return lobby.gameData;

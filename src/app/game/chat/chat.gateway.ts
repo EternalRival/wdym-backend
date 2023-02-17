@@ -17,7 +17,7 @@ export class GameChatGateway extends IoGateway {
   @SubscribeMessage(IoInput.chatMessage)
   private handleMsgToServer(
     @MessageBody('message') message: string,
-    @MessageBody('roomname') roomname: string,
+    @MessageBody('roomName') roomname: string,
     @ConnectedSocket() socket: Socket,
   ): void {
     this.chatService.handleMsgToServer(this.io, socket, message, roomname ?? this.GLOBAL_CHAT_NAME);
