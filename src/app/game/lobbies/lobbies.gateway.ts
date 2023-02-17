@@ -25,7 +25,6 @@ export class GameLobbiesGateway extends IoGateway {
     @MessageBody('password') password: string,
     @ConnectedSocket() socket: Socket,
   ): Lobby {
-    // TODO согласовать с Игорем отправляемые данные, чтобы не отправлять лобби целиком
     return this.lobbiesService.joinLobby(this.io, socket, uuid, password);
   }
 
@@ -44,7 +43,6 @@ export class GameLobbiesGateway extends IoGateway {
 
   @SubscribeMessage(IoInput.lobbyData)
   private handleGetLobbyDataRequest(@MessageBody('uuid', ParseUUIDPipe) uuid: string): Lobby {
-    // TODO согласовать с Игорем отправляемые данные, чтобы не отправлять лобби целиком
     return this.lobbiesService.getLobbyData(uuid);
   }
 

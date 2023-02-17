@@ -58,6 +58,9 @@ export class GameLobbiesService {
     if (lobby.privacyType === LobbyPrivacyType.PRIVATE && lobby.password !== password) {
       throw new WsException(`joinLobby: Incorrect password (${password} !== ${lobby.password})`);
     }
+    if (lobby.isFull) {
+      throw new WsException(`joinLobby: Lobby is full (${username})`);
+    }
 
     this.roomsService.joinRoom(io, socket, lobby.uuid);
     if (!lobby.hasPlayer(username)) {

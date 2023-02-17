@@ -56,6 +56,7 @@ export interface ILobbyData {
   players: PlayerBasicInfo[];
   playersCount: number;
   maxPlayers: number;
+  isFull: boolean;
   maxRounds: number;
 }
 

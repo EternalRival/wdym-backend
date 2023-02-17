@@ -42,6 +42,9 @@ export class Lobby implements ILobby {
   public get isEmpty(): boolean {
     return this.playersCount < 1;
   }
+  public get isFull(): boolean {
+    return this.playersCount >= this.maxPlayers;
+  }
 
   private get playersCount(): number {
     return Object.keys(this.players).length;
@@ -74,7 +77,6 @@ export class Lobby implements ILobby {
     this.rounds.length = 0;
   }
 
-
   public getMemes(property: keyof Pick<Player, 'meme' | 'vote'>): MemeList {
     return Object.values(this.players).reduce((list, player) => {
       const prop: Meme = player[property];
@@ -99,6 +101,7 @@ export class Lobby implements ILobby {
       players: Object.values(this.players).map((player) => ({ username: player.username, image: player.image })),
       playersCount: this.playersCount,
       maxPlayers: this.maxPlayers,
+      isFull: this.isFull,
       maxRounds: this.maxRounds,
     };
   }
