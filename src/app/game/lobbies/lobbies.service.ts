@@ -44,6 +44,9 @@ export class GameLobbiesService {
   public isLobbyOwner(username: string): boolean {
     return [...this.lobbyMap.values()].some((lobby) => lobby.owner === username);
   }
+  public isUserCanJoin(username: string, uuid: string): boolean {
+    return Boolean(this.lobbyMap.get(uuid)?.hasPlayer(username));
+  }
 
   public joinLobby(io: Server, socket: Socket, uuid: string, password?: string): Lobby {
     const lobby = this.lobbyMap.get(uuid);
@@ -63,7 +66,7 @@ export class GameLobbiesService {
     }
 
     this.roomsService.joinRoom(io, socket, lobby.uuid);
-    if (!lobby.hasPlayer(username)) {
+    if (!(lobby.isStarted || lobby.hasPlayer(username))) {
       lobby.addPlayer(new Player(username, image));
       io.to(uuid).emit(IoOutput.joinLobby, lobby.players);
       this.logger.log(`Join lobby: ${username} -> ${lobby.title}(${uuid})`);

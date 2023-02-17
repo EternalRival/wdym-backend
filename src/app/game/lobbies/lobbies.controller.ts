@@ -22,6 +22,11 @@ export class GameLobbiesController {
     return this.lobbiesService.isLobbyOwner(username);
   }
 
+  @Get('is-user-can-join')
+  private isUserCanJoin(@Query('username') username: string, @Query('uuid', ParseUUIDPipe) uuid: string): boolean {
+    return this.lobbiesService.isUserCanJoin(username, uuid);
+  }
+
   @ApiTags('⚠️Временное⚠️')
   @Get('temp-get-full-game-lobby-list')
   private tempGetFullGameLobbyList(): unknown {
