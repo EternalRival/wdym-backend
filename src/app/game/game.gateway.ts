@@ -35,4 +35,12 @@ export class GameGateway extends IoGateway {
   ): string {
     return this.gameService.getVote(this.io, socket, uuid, vote);
   }
+
+  @SubscribeMessage(IoInput.forcedChangePhase)
+  private handleForcedChangePhaseRequest(
+    @MessageBody(ParseUUIDPipe) uuid: string,
+    @ConnectedSocket() socket: Socket,
+  ): string {
+    return this.gameService.forcedChangePhase(this.io, socket, uuid);
+  }
 }

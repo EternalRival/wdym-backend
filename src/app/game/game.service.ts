@@ -21,6 +21,18 @@ export class GameService {
     io.to(lobby.uuid).emit(IoOutput.changePhase, lobby.gameData);
   }
 
+  public forcedChangePhase(io: Server, socket: Socket, uuid: string): string {
+    const lobby = this.gameControlService.getLobby(uuid);
+    const { username } = socket.handshake.auth;
+
+    if (lobby.owner !== username) {
+      throw new WsException(`${username} is not owner of lobby (${uuid})!`);
+    }
+
+    this.changePhase(io, lobby);
+    return uuid;
+  }
+
   public startGame(io: Server, uuid: string): string {
     const lobby = this.gameControlService.getLobby(uuid);
     this.gameControlService.resetGame(lobby);
