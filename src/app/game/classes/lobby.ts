@@ -34,7 +34,7 @@ export class Lobby implements ILobby {
       'timerDelay',
     ];
     properties.forEach((property) => {
-      if (property in createLobbyData) {
+      if (property in createLobbyData && createLobbyData[property]) {
         Object.assign(this, { [property]: createLobbyData[property] });
       }
     });
