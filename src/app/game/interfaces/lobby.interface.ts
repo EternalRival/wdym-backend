@@ -12,27 +12,18 @@ export interface ILobbyListOptions {
 }
 
 export interface ICreateLobbyData {
-  maxPlayers: number;
-  maxRounds: number;
   title: string;
   owner: string;
   image: string;
   password: string;
+  maxPlayers: number;
+  maxRounds: number;
+  timerDelay?: number;
 }
 
-export interface ILobby {
-  readonly TIMER_DELAY: number;
-
+export interface ILobby extends ICreateLobbyData {
   readonly uuid: string;
-  readonly title: string;
-  readonly password: string;
-  readonly owner: string;
-  readonly image: string;
-  readonly maxPlayers: number;
-  readonly maxRounds: number;
-
   readonly players: Record<string, IPlayer>;
-
   status: GameStatus;
   rounds: string[];
 }
@@ -40,10 +31,10 @@ export interface ILobby {
 /** Для отрисовки списка лобби */
 export interface ILobbyData {
   uuid: string;
-  image: string;
-  owner: string;
-  privacyType: LobbyPrivacyType;
   title: string;
+  owner: string;
+  image: string;
+  privacyType: LobbyPrivacyType;
   players: PlayerBasicInfo[];
   playersCount: number;
   maxPlayers: number;

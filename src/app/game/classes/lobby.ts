@@ -6,31 +6,38 @@ import { Meme, MemeList } from '../interfaces/player.interface';
 import { Player } from './player';
 
 export class Lobby implements ILobby {
-  public readonly TIMER_DELAY: number = 30 * 1000;
-
-  public readonly uuid!: string;
-  public readonly title!: string;
-  public readonly password!: string;
-  public readonly owner!: string;
-  public readonly image!: string;
-  public readonly maxPlayers!: number;
-  public readonly maxRounds!: number;
+  public readonly uuid: string;
+  public title: string = 'Game';
+  public owner: string = 'Player';
+  public image: string = '';
+  public password: string = '';
+  public maxPlayers: number = 3;
+  public maxRounds: number = 1;
+  public timerDelay: number = 30 * 1000;
 
   public readonly players: Record<string, Player> = {}; // Record<Player['username'], Player>
 
   public status: GameStatus = GameStatus.PREPARE;
   public rounds: string[] = [];
 
-  public delayedChangePhase = new DelayedFunction(this.TIMER_DELAY);
+  public delayedChangePhase = new DelayedFunction(this.timerDelay);
 
   constructor(uuid: string, createLobbyData: ICreateLobbyData) {
     this.uuid = uuid;
-    this.maxPlayers = createLobbyData.maxPlayers;
-    this.maxRounds = createLobbyData.maxRounds;
-    this.title = createLobbyData.title;
-    this.owner = createLobbyData.owner;
-    this.image = createLobbyData.image;
-    this.password = createLobbyData.password;
+    const properties: (keyof ICreateLobbyData)[] = [
+      'title',
+      'owner',
+      'image',
+      'password',
+      'maxPlayers',
+      'maxRounds',
+      'timerDelay',
+    ];
+    properties.forEach((property) => {
+      if (property in createLobbyData) {
+        Object.assign(this, { [property]: createLobbyData[property] });
+      }
+    });
   }
 
   public get privacyType(): LobbyPrivacyType {
