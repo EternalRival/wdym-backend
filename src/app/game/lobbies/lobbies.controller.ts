@@ -18,8 +18,8 @@ export class GameLobbiesController {
   }
 
   @Get('is-lobby-owner')
-  private isLobbyOwner(@Query('username') username: string): boolean {
-    return this.lobbiesService.isLobbyOwner(username);
+  private isLobbyOwner(@Query('username') username: string, @Query('uuid', ParseUUIDPipe) uuid: string): boolean {
+    return this.lobbiesService.isLobbyOwner(username, uuid);
   }
 
   @Get('is-user-can-join')

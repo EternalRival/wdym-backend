@@ -9,6 +9,7 @@ import { ICreateLobbyData, IGameData, ILobbyData, ILobbyListOptions } from '../i
 import { Player } from '../classes/player';
 import { LobbyPrivacyType } from '../enum/lobby-privacy-type.enum';
 import { getChunk } from '../../../utils/get-chunk';
+import { teapot } from '../../../utils/custom-error';
 
 @Injectable()
 export class GameLobbiesService {
@@ -41,8 +42,16 @@ export class GameLobbiesService {
   public isPasswordCorrect(uuid: string, password: string): boolean {
     return this.lobbyMap.get(uuid)?.password === password;
   }
-  public isLobbyOwner(username: string): boolean {
-    return [...this.lobbyMap.values()].some((lobby) => lobby.owner === username);
+  public isLobbyOwner(username: string, uuid: string): boolean {
+    if (!uuid) {
+      [...this.lobbyMap.values()].some((lobby) => lobby.owner === username);
+    }
+    
+    const lobby = this.lobbyMap.get(uuid);
+    if (!(lobby instanceof Lobby)) {
+      throw teapot('Lobby not found');
+    }
+    return lobby.owner === username;
   }
   public isUserCanJoin(username: string, uuid: string): boolean {
     return Boolean(this.lobbyMap.get(uuid)?.hasPlayer(username));
