@@ -96,6 +96,9 @@ export class Lobby implements ILobby {
       return list;
     }, {} as MemeList);
   }
+  public get hasMemes(): boolean {
+    return Object.keys(this.getMemes('meme')).length > 0;
+  }
 
   /** Для отрисовки списка лобби */
   public get lobbyData(): ILobbyData {

@@ -45,7 +45,7 @@ export class GameControlService implements OnModuleInit {
         lobby.setStatus(GameStatus.SITUATION);
         break;
       case GameStatus.SITUATION:
-        lobby.setStatus(GameStatus.VOTE);
+        lobby.setStatus(lobby.hasMemes ? GameStatus.VOTE : GameStatus.VOTE_RESULTS);
         break;
       case GameStatus.VOTE:
         lobby.setStatus(GameStatus.VOTE_RESULTS);
