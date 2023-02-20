@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, StreamableFile } from '@nestjs/common';
+import * as AdmZip from 'adm-zip';
 import { readdir } from 'fs/promises';
-import { resolve, join } from 'path';
+import { basename, resolve, join } from 'path';
 import { Server, Socket } from 'socket.io';
 import { getRandomArrayItem, shuffle } from '../../utils/randomize';
 import { Folder } from './enums/folder.enum';
@@ -35,5 +36,27 @@ export class FileService {
     const randomFileNames: string[] = shuffle(fileNames).slice(0, quantity);
     const { host } = socket.request.headers;
     return randomFileNames.map((fileName) => `${host}${this.url(Root.web, Folder.Meme, fileName)}`);
+  }
+
+  public async getMemeArchive(list: string[]): Promise<StreamableFile> {
+    const fileNames: string[] = await readdir(this.url(Root.src, Folder.Meme));
+    const missedFiles: string[] = [];
+
+    const zip = list.reduce((admZip, path) => {
+      const name = basename(path);
+      if (fileNames.includes(name)) {
+        admZip.addLocalFile(this.url(Root.src, Folder.Meme, name));
+      } else {
+        missedFiles.push(name);
+      }
+      return admZip;
+    }, new AdmZip());
+
+    if (missedFiles.length > 0) {
+      const message = `Missed Files:\n\n${missedFiles.join('\n')}`;
+      zip.addFile('README.md', Buffer.from(message, 'utf8'));
+    }
+
+    return new StreamableFile(zip.toBuffer());
   }
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query, Req, StreamableFile } from '@nestjs/common';
+import { Body, Controller, Get, Header, Post, Req, StreamableFile } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { Folder } from './enums/folder.enum';
@@ -38,5 +38,12 @@ export class FileController {
   private async getMemeList(@Req() req: Request): Promise<string[]> {
     const origin = `${req.protocol}://${req.headers.host}`;
     return this.fileService.getFileNames(origin, Folder.Meme);
+  }
+
+  @Post(`${Folder.Meme}/zip`)
+  @Header('Content-Type', 'application/zip')
+  @Header('Content-Disposition', 'attachment; filename="memes.zip"')
+  private getMemeArchive(@Body() list: string[]): Promise<StreamableFile> {
+    return this.fileService.getMemeArchive(list);
   }
 }

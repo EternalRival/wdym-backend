@@ -8,8 +8,6 @@ import { AppMiddleware } from './app.middleware';
 import { AppService } from './app.service';
 import { User } from './users/entities/user.entity';
 import { IoModule } from './io/io.module';
-import { UsersApiModule } from './users/api/api.module';
-import { UsersAuthModule } from './users/auth/auth.module';
 import { GameModule } from './game/game.module';
 import { FileModule } from './file/file.module';
 import { UsersModule } from './users/users.module';
