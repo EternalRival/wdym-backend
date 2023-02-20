@@ -38,23 +38,28 @@ export class FileService {
     return randomFileNames.map((fileName) => `${host}${this.url(Root.web, Folder.Meme, fileName)}`);
   }
 
-  public async getMemeArchive(list: string[]): Promise<StreamableFile> {
-    const fileNames: string[] = await readdir(this.url(Root.src, Folder.Meme));
+  public async getMemeArchive(urlList: string[]): Promise<StreamableFile> {
+    const dir: string = this.url(Root.src, Folder.Meme);
+    const fileNames: string[] = await readdir(dir);
     const missedFiles: string[] = [];
 
-    const zip = list.reduce((admZip, path) => {
-      const name = basename(path);
-      if (fileNames.includes(name)) {
-        admZip.addLocalFile(this.url(Root.src, Folder.Meme, name));
-      } else {
-        missedFiles.push(name);
-      }
-      return admZip;
-    }, new AdmZip());
+    const zip = new AdmZip();
+
+    if (urlList && urlList.length > 0) {
+      urlList.forEach((url) => {
+        const name: string = basename(url);
+        if (fileNames.includes(name)) {
+          zip.addLocalFile(join(dir, name));
+        } else {
+          missedFiles.push(name);
+        }
+      });
+    } else {
+      zip.addLocalFolder(dir);
+    }
 
     if (missedFiles.length > 0) {
-      const message = `Missed Files:\n\n${missedFiles.join('\n')}`;
-      zip.addFile('README.md', Buffer.from(message, 'utf8'));
+      zip.addFile('README.md', Buffer.from(`Missed Files:\n\n${missedFiles.join('\n')}`, 'utf8'));
     }
 
     return new StreamableFile(zip.toBuffer());

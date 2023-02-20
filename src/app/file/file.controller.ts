@@ -43,7 +43,7 @@ export class FileController {
   @Post(`${Folder.Meme}/zip`)
   @Header('Content-Type', 'application/zip')
   @Header('Content-Disposition', 'attachment; filename="memes.zip"')
-  private getMemeArchive(@Body() list: string[]): Promise<StreamableFile> {
-    return this.fileService.getMemeArchive(list);
+  private getMemeArchive(@Body() urlList: string[]): Promise<StreamableFile> {
+    return this.fileService.getMemeArchive(urlList);
   }
 }
