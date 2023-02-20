@@ -1,4 +1,5 @@
 import { DelayedFunction } from '../../../utils/delayed-function';
+import { GameMode } from '../enum/game-mode.enum';
 import { GameStatus } from '../enum/game-status.enum';
 import { LobbyPrivacyType } from '../enum/lobby-privacy-type.enum';
 import { ICreateLobbyData, IGameData, ILobby, ILobbyData } from '../interfaces/lobby.interface';
@@ -17,6 +18,7 @@ export class Lobby implements ILobby {
 
   public readonly players: Record<string, Player> = {}; // Record<Player['username'], Player>
 
+  public mode: GameMode = GameMode.DEFAULT;
   public status: GameStatus = GameStatus.PREPARE;
   public rounds: string[] = [];
 
@@ -25,6 +27,7 @@ export class Lobby implements ILobby {
   constructor(uuid: string, createLobbyData: ICreateLobbyData) {
     this.uuid = uuid;
     const properties: (keyof ICreateLobbyData)[] = [
+      'mode',
       'title',
       'owner',
       'image',
@@ -108,6 +111,7 @@ export class Lobby implements ILobby {
       owner: this.owner,
       privacyType: this.privacyType,
       title: this.title,
+      mode: this.mode,
       players: Object.values(this.players).map((player) => ({ username: player.username, image: player.image })),
       playersCount: this.playersCount,
       maxPlayers: this.maxPlayers,
@@ -119,6 +123,7 @@ export class Lobby implements ILobby {
   /** Для отрисовки игры */
   public get gameData(): IGameData {
     return {
+      mode: this.mode,
       status: this.status,
       players: this.players,
       rounds: this.rounds,

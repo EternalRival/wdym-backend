@@ -1,6 +1,7 @@
 import { IPlayer, PlayerBasicInfo, MemeList } from './player.interface';
 import { LobbyPrivacyType } from '../enum/lobby-privacy-type.enum';
 import { GameStatus } from '../enum/game-status.enum';
+import { GameMode } from '../enum/game-mode.enum';
 
 export interface ILobbyListOptions {
   chunk?: {
@@ -12,6 +13,7 @@ export interface ILobbyListOptions {
 }
 
 export interface ICreateLobbyData {
+  mode: GameMode;
   title: string;
   owner: string;
   image: string;
@@ -29,21 +31,16 @@ export interface ILobby extends ICreateLobbyData {
 }
 
 /** Для отрисовки списка лобби */
-export interface ILobbyData {
-  uuid: string;
-  title: string;
-  owner: string;
-  image: string;
+export interface ILobbyData
+  extends Pick<ILobby, 'uuid' | 'title' | 'owner' | 'image' | 'mode' | 'maxPlayers' | 'maxRounds'> {
   privacyType: LobbyPrivacyType;
   players: PlayerBasicInfo[];
   playersCount: number;
-  maxPlayers: number;
   isFull: boolean;
-  maxRounds: number;
 }
 
 /** Для отрисовки игры */
-export interface IGameData extends Pick<ILobby, 'players' | 'status' | 'rounds'> {
+export interface IGameData extends Pick<ILobby, 'players' | 'status' | 'rounds' | 'mode'> {
   currentRound: number;
   memes: MemeList; // {'meme1':['oleg','petr'],'meme2':[egor]}
   votes: MemeList;
