@@ -19,7 +19,7 @@ export class FileController {
   @Get(Folder.Avatars)
   private async getAvatarList(@Req() req: Request): Promise<string[]> {
     const origin = `${req.protocol}://${req.headers.host}`;
-    return this.fileService.getFileNames(origin, Folder.Avatars);
+    return this.fileService.getFileUrls(origin, Folder.Avatars);
   }
   @Get('random-avatar')
   private async getRandomAvatar(@Req() req: Request): Promise<string> {
@@ -36,9 +36,14 @@ export class FileController {
   } */
   @Get(Folder.Meme)
   @ApiQuery({ name: 'quantity', required: false })
-  private async getMemeList(@Req() req: Request, @Query('quantity') quantity: number): Promise<string[]> {
+  @ApiQuery({ name: 'shuffle', required: false })
+  private async getMemeList(
+    @Req() req: Request,
+    @Query('quantity') quantity?: number,
+    @Query('shuffle') shuffle?: boolean,
+  ): Promise<string[]> {
     const origin = `${req.protocol}://${req.headers.host}`;
-    return this.fileService.getFileNames(origin, Folder.Meme, quantity);
+    return this.fileService.getFileUrls(origin, Folder.Meme, quantity, shuffle);
   }
 
   @Post(`${Folder.Meme}/zip`)

@@ -2,7 +2,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { WsException } from '@nestjs/websockets';
 import { readFile } from 'fs/promises';
 import { resolve } from 'path';
-import { shuffle } from '../../utils/randomize';
+import { shuffleArray } from '../../utils/randomize';
 import { Lobby } from './classes/lobby';
 import { Player } from './classes/player';
 import { GameStatus } from './enum/game-status.enum';
@@ -62,7 +62,7 @@ export class GameControlService implements OnModuleInit {
 
   private createNewRound(lobby: Lobby): void {
     this.resetRound(lobby);
-    const situations = shuffle(this.situations);
+    const situations = shuffleArray(this.situations);
     const pickedSituation = situations.find((situation) => lobby.rounds.every((round) => round !== situation));
     lobby.rounds.push(pickedSituation ?? situations[0] ?? '');
   }

@@ -4,7 +4,7 @@ import { readdir } from 'fs/promises';
 import { basename, resolve, join } from 'path';
 import { Server, Socket } from 'socket.io';
 import { teapot } from 'src/utils/custom-error';
-import { getRandomArrayItem, shuffle } from '../../utils/randomize';
+import { getRandomArrayItem, shuffleArray } from '../../utils/randomize';
 import { Folder } from './enums/folder.enum';
 
 enum Root {
@@ -18,7 +18,7 @@ export class FileService {
     return resolve(root, this.ASSETS_DIR, ...paths);
   }
 
-  public async getFileNames(origin: string, path: Folder, quantity?: number): Promise<string[]> {
+  public async getFileUrls(origin: string, path: Folder, quantity?: number, shuffle?: boolean): Promise<string[]> {
     if (typeof quantity !== 'undefined') {
       if (!Number.isInteger(+quantity)) {
         throw teapot('Quantity is not an Integer');
@@ -28,7 +28,13 @@ export class FileService {
       }
     }
     const dir: string = this.url(Root.src, path);
-    const fileNames: string[] = await readdir(dir);
+    let fileNames: string[] = await readdir(dir);
+    if (shuffle) {
+      fileNames = shuffleArray(fileNames);
+    }
+    if (quantity) {
+      fileNames = fileNames.slice(0, quantity);
+    }
     return fileNames.map((fileName) => `${origin}${this.url(Root.web, path, fileName)}`);
   }
 
@@ -42,7 +48,7 @@ export class FileService {
   public async getRandomMemesWs(io: Server, socket: Socket, quantity: number): Promise<string[]> {
     const dir: string = this.url(Root.src, Folder.Meme);
     const fileNames: string[] = await readdir(dir);
-    const randomFileNames: string[] = shuffle(fileNames).slice(0, quantity);
+    const randomFileNames: string[] = shuffleArray(fileNames).slice(0, quantity);
     const { host } = socket.request.headers;
     return randomFileNames.map((fileName) => `${host}${this.url(Root.web, Folder.Meme, fileName)}`);
   }
