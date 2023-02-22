@@ -19,7 +19,6 @@ export class GameLobbiesGateway extends IoGateway {
   @SubscribeMessage(IoInput.createLobby)
   @UsePipes(new ValidationPipe({ transform: true }))
   private handleCreateLobbyRequest(@MessageBody('lobby') createLobbyDto: CreateLobbyDto): LobbyDataDto {
-    console.log(createLobbyDto);
     return this.lobbiesService.createLobby(this.io, createLobbyDto);
   }
 

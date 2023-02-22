@@ -12,10 +12,7 @@ export class IoHooksGateway extends IoGateway implements OnGatewayInit, OnGatewa
 
   public afterInit(): void {
     instrument(this.io, { auth: false, mode: 'development' });
-    /* this.io.use((socket, next) => {
-      socket.on('exception', (...args) => console.log('exceptioned >>', args)); // do nothing
-      next();
-    }); */
+
     this.logger.log(`[${this.constructor.name} initialized]`);
   }
 

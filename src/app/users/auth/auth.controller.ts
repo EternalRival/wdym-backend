@@ -46,7 +46,10 @@ export class UsersAuthController {
   @ApiHeader({ name: 'Authorization', description: 'Bearer: access_token' })
   @UseGuards(JwtAuthGuard)
   @Post('validate')
-  public async validatePassword(@Req() request: IJwtAuthGuardRequestDto, @Body() body: PasswordUserDto): Promise<boolean> {
+  public async validatePassword(
+    @Req() request: IJwtAuthGuardRequestDto,
+    @Body() body: PasswordUserDto,
+  ): Promise<boolean> {
     const isValid = await this.authService.validatePassword(request.user.id, body.password);
     Logger.log(JSON.stringify(isValid), LoggerTag.VALIDATE);
     return isValid;

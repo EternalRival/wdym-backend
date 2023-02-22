@@ -9,12 +9,7 @@ export class IoExceptionFilter<T extends WsException> implements WsExceptionFilt
   public catch(exception: T, host: ArgumentsHost): void {
     const ctx = host.switchToWs();
     const socket: Socket = ctx.getClient();
-    /* const data = ctx.getData();
-    console.log("clientclientclientclientclientclientclientclient");
-    console.log(client);
-    console.log('datadatadatadatadatadatadatadatadatadatadatadata');
-    console.log(data); */
-    // socket.on('error', (err) => console.log(err));
+
     socket.emit(IoOutput.error, exception);
     this.logger.warn(exception.message);
   }
