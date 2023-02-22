@@ -25,6 +25,7 @@ export class GameService {
       case GameStatus.PREPARE:
       case GameStatus.END:
       default:
+        lobby.delayedChangePhase.cancel()
     }
     //? ↑↑↑ автотаймер ↑↑↑
     io.to(lobby.uuid).emit(IoOutput.changePhase, lobby.gameData);

@@ -54,7 +54,7 @@ export class GameControlService implements OnModuleInit {
         lobby.setStatus(lobby.currentRound < lobby.maxRounds ? GameStatus.SITUATION : GameStatus.END);
         break;
       case GameStatus.END:
-        lobby.setStatus(GameStatus.SITUATION); // TODO возможно заменить на GameStatus.PREPARE
+        lobby.setStatus(GameStatus.PREPARE); // TODO возможно заменить на GameStatus.PREPARE
         break;
       default:
     }
