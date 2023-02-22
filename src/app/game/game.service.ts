@@ -14,8 +14,17 @@ export class GameService {
   private changePhase(io: Server, lobby: Lobby): void {
     this.gameControlService.changePhase(lobby);
     //? ↓↓↓ автотаймер ↓↓↓
-    if (lobby.isStarted) {
-      lobby.delayedChangePhase.set(() => this.changePhase(io, lobby));
+    switch (lobby.status) {
+      case GameStatus.VOTE_RESULTS:
+        lobby.delayedChangePhase.set(() => this.changePhase(io, lobby), lobby.timerDelayVoteResults);
+        break;
+      case GameStatus.SITUATION:
+      case GameStatus.VOTE:
+        lobby.delayedChangePhase.set(() => this.changePhase(io, lobby), lobby.timerDelay);
+        break;
+      case GameStatus.PREPARE:
+      case GameStatus.END:
+      default:
     }
     //? ↑↑↑ автотаймер ↑↑↑
     io.to(lobby.uuid).emit(IoOutput.changePhase, lobby.gameData);

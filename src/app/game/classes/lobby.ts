@@ -3,7 +3,7 @@ import { CreateLobbyDto } from '../dto/create-lobby.dto';
 import { GameMode } from '../enum/game-mode.enum';
 import { GameStatus } from '../enum/game-status.enum';
 import { LobbyPrivacyType } from '../enum/lobby-privacy-type.enum';
-import { GameDataDto } from "../dto/game-data.dto";
+import { GameDataDto } from '../dto/game-data.dto';
 import { Meme, MemeList } from '../dto/player.dto';
 import { Player } from './player';
 import { LobbyDataDto } from '../dto/lobby-data.dto';
@@ -18,14 +18,15 @@ export class Lobby implements LobbyDto {
   public maxPlayers: number = 3;
   public maxRounds: number = 1;
   public timerDelay: number = 30 * 1000;
-
+  
   public readonly players: Record<string, Player> = {}; // Record<Player['username'], Player>
-
+  
   public mode: GameMode = GameMode.DEFAULT;
   public status: GameStatus = GameStatus.PREPARE;
   public rounds: string[] = [];
-
-  public delayedChangePhase = new DelayedFunction(this.timerDelay);
+  
+  public timerDelayVoteResults: number = 5 * 1000;
+  public delayedChangePhase = new DelayedFunction();
 
   constructor(uuid: string, createLobbyData: CreateLobbyDto) {
     this.uuid = uuid;

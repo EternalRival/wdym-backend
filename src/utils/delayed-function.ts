@@ -2,12 +2,10 @@ export class DelayedFunction {
   private timer?: NodeJS.Timer;
   public triggerDate: null | number = null;
 
-  constructor(public delay: number) {}
-
-  public set(callback: () => void): void {
+  public set(callback: () => void, delay: number): void {
     this.cancel();
-    this.triggerDate = Date.now() + this.delay;
-    this.timer = setTimeout(callback, this.delay);
+    this.triggerDate = Date.now() + delay;
+    this.timer = setTimeout(callback, delay);
   }
 
   public cancel(): void {
