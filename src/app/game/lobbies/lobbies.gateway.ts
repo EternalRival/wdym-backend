@@ -11,13 +11,13 @@ import { LobbyListOptionsDto } from '../dto/lobby-list-options.dto';
 import { CreateLobbyDto } from '../dto/create-lobby.dto';
 
 @IoWsGateway()
-@UsePipes(new ValidationPipe({ transform: true }))
 export class GameLobbiesGateway extends IoGateway {
   constructor(private readonly lobbiesService: GameLobbiesService) {
     super();
   }
 
   @SubscribeMessage(IoInput.createLobby)
+  @UsePipes(new ValidationPipe({ transform: true }))
   private handleCreateLobbyRequest(@MessageBody('lobby') createLobbyDto: CreateLobbyDto): LobbyDataDto {
     console.log(createLobbyDto);
     return this.lobbiesService.createLobby(this.io, createLobbyDto);

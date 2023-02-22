@@ -1,5 +1,5 @@
-import { Controller, Get, ParseUUIDPipe, Query } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { Controller, Get, ParseUUIDPipe, Query, UsePipes, ValidationPipe } from '@nestjs/common';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { GameLobbiesService } from './lobbies.service';
 
 @ApiTags('Lobbies')
@@ -18,7 +18,8 @@ export class GameLobbiesController {
   }
 
   @Get('is-lobby-owner')
-  private isLobbyOwner(@Query('username') username: string, @Query('uuid'/* , ParseUUIDPipe */) uuid: string): boolean {
+  @ApiQuery({ name: 'uuid', required: false })
+  private isLobbyOwner(@Query('username') username: string, @Query('uuid') uuid: string): boolean {
     return this.lobbiesService.isLobbyOwner(username, uuid);
   }
 

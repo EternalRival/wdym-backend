@@ -47,7 +47,7 @@ export class GameLobbiesService {
   }
   public isLobbyOwner(username: string, uuid: string): boolean {
     if (!uuid) {
-      [...this.lobbyMap.values()].some((lobby) => lobby.owner === username);
+      return [...this.lobbyMap.values()].some((lobby) => lobby.owner === username);
     }
 
     const lobby = this.lobbyMap.get(uuid);
