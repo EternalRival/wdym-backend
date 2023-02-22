@@ -1,22 +1,26 @@
-import { ParseUUIDPipe } from '@nestjs/common';
+import { ParseUUIDPipe, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ConnectedSocket, MessageBody, SubscribeMessage } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { IoInput } from '../../io/enums/event-name.enum';
-import { Lobby } from '../classes/lobby';
 import { GameLobbiesService } from './lobbies.service';
 import { IoGateway } from '../../io/io.gateway';
 import { IoWsGateway } from '../../io/io.decorator';
-import { ICreateLobbyData, IGameData, ILobbyData, ILobbyListOptions } from '../interfaces/lobby.interface';
+import { GameDataDto } from '../dto/game-data.dto';
+import { LobbyDataDto } from '../dto/lobby-data.dto';
+import { LobbyListOptionsDto } from '../dto/lobby-list-options.dto';
+import { CreateLobbyDto } from '../dto/create-lobby.dto';
 
 @IoWsGateway()
+@UsePipes(new ValidationPipe({ transform: true }))
 export class GameLobbiesGateway extends IoGateway {
   constructor(private readonly lobbiesService: GameLobbiesService) {
     super();
   }
 
   @SubscribeMessage(IoInput.createLobby)
-  private handleCreateLobbyRequest(@MessageBody('lobby') createLobbyData: ICreateLobbyData): ILobbyData {
-    return this.lobbiesService.createLobby(this.io, createLobbyData);
+  private handleCreateLobbyRequest(@MessageBody('lobby') createLobbyDto: CreateLobbyDto): LobbyDataDto {
+    console.log(createLobbyDto);
+    return this.lobbiesService.createLobby(this.io, createLobbyDto);
   }
 
   @SubscribeMessage(IoInput.joinLobby)
@@ -24,7 +28,7 @@ export class GameLobbiesGateway extends IoGateway {
     @MessageBody('uuid', ParseUUIDPipe) uuid: string,
     @MessageBody('password') password: string,
     @ConnectedSocket() socket: Socket,
-  ): IGameData {
+  ): GameDataDto {
     return this.lobbiesService.joinLobby(this.io, socket, uuid, password);
   }
 
@@ -41,13 +45,8 @@ export class GameLobbiesGateway extends IoGateway {
     return this.lobbiesService.destroyLobby(this.io, uuid);
   }
 
-  /* @SubscribeMessage(IoInput.lobbyData)
-  private handleGetLobbyDataRequest(@MessageBody('uuid', ParseUUIDPipe) uuid: string): Lobby {
-    return this.lobbiesService.getLobbyData(uuid);
-  } */
-
   @SubscribeMessage(IoInput.lobbyList)
-  private handleGetLobbyList(@MessageBody() options: ILobbyListOptions): ILobbyData[] {
+  private handleGetLobbyList(@MessageBody() options: LobbyListOptionsDto): LobbyDataDto[] {
     return this.lobbiesService.getLobbyList(options);
   }
 }

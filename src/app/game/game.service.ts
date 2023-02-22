@@ -5,7 +5,7 @@ import { IoOutput } from '../io/enums/event-name.enum';
 import { Lobby } from './classes/lobby';
 import { GameStatus } from './enum/game-status.enum';
 import { GameControlService } from './game-control.service';
-import { Meme } from './interfaces/player.interface';
+import { Meme } from './dto/player.dto';
 
 @Injectable()
 export class GameService {

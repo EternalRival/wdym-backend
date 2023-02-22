@@ -5,9 +5,9 @@ import { LoggerTag } from '../../shared/enums/logger-tag.enum';
 import { PasswordUserDto } from '../dto/password.dto';
 import { SignInUserDto } from '../dto/sign-in-user.dto';
 import { UsersAuthService } from './auth.service';
-import { IJwtAuthGuardRequest } from './interfaces/jwt-auth.guard.interface';
+import { IJwtAuthGuardRequestDto } from './dto/jwt-auth.guard.dto';
 import { JwtTokenDto } from './dto/jwt-token.dto';
-import { ILocalAuthGuardRequest } from './interfaces/local-auth.guard.interface';
+import { ILocalAuthGuardRequestDto } from './dto/local-auth.guard.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 
@@ -20,7 +20,7 @@ export class UsersAuthController {
   @UseGuards(LocalAuthGuard)
   @Post('login')
   public async login(
-    @Req() request: ILocalAuthGuardRequest,
+    @Req() request: ILocalAuthGuardRequestDto,
     @Res({ passthrough: true }) response: Response,
   ): Promise<JwtTokenDto> {
     const token = await this.authService.login(request.user);
@@ -33,7 +33,7 @@ export class UsersAuthController {
   @UseGuards(JwtAuthGuard)
   @Post('refresh')
   public async refreshToken(
-    @Req() request: IJwtAuthGuardRequest,
+    @Req() request: IJwtAuthGuardRequestDto,
     @Res({ passthrough: true }) response: Response,
   ): Promise<JwtTokenDto> {
     console.log('refresh', request.user);
@@ -46,7 +46,7 @@ export class UsersAuthController {
   @ApiHeader({ name: 'Authorization', description: 'Bearer: access_token' })
   @UseGuards(JwtAuthGuard)
   @Post('validate')
-  public async validatePassword(@Req() request: IJwtAuthGuardRequest, @Body() body: PasswordUserDto): Promise<boolean> {
+  public async validatePassword(@Req() request: IJwtAuthGuardRequestDto, @Body() body: PasswordUserDto): Promise<boolean> {
     const isValid = await this.authService.validatePassword(request.user.id, body.password);
     Logger.log(JSON.stringify(isValid), LoggerTag.VALIDATE);
     return isValid;

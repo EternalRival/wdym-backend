@@ -5,7 +5,7 @@ import { Response } from 'express';
 import { SignInUserDto } from '../dto/sign-in-user.dto';
 import { User } from '../entities/user.entity';
 import { UsersApiService } from '../api/api.service';
-import { IJwtPayload } from './interfaces/jwt-payload.interface';
+import { IJwtPayloadDto } from './dto/jwt-payload.dto';
 import { JwtTokenDto } from './dto/jwt-token.dto';
 import { teapot } from '../../../utils/custom-error';
 
@@ -22,13 +22,13 @@ export class UsersAuthService {
     return user;
   }
 
-  public generateJwtPayload(data: { id: number; image: string; username: string }): IJwtPayload {
+  public generateJwtPayload(data: { id: number; image: string; username: string }): IJwtPayloadDto {
     return { sub: data.id, image: data.image, username: data.username };
   }
 
   public async generateToken(id: User['id']): Promise<JwtTokenDto> {
     const entity: User = await this.usersApiService.findOneById(id);
-    const payload: IJwtPayload = this.generateJwtPayload(entity);
+    const payload: IJwtPayloadDto = this.generateJwtPayload(entity);
     return { access_token: this.jwtService.sign(payload) };
   }
 

@@ -1,6 +1,6 @@
-import { IPlayer, Meme } from '../interfaces/player.interface';
+import { PlayerDto, Meme } from '../dto/player.dto';
 
-export class Player implements IPlayer {
+export class Player implements PlayerDto {
   constructor(public readonly username: string, public readonly image: string) {}
   public score: number = 0;
   public meme: Meme = null;

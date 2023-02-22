@@ -5,7 +5,7 @@ import { IoInput } from '../io/enums/event-name.enum';
 import { IoWsGateway } from '../io/io.decorator';
 import { IoGateway } from '../io/io.gateway';
 import { GameService } from './game.service';
-import { Meme } from './interfaces/player.interface';
+import { Meme } from './dto/player.dto';
 
 @IoWsGateway()
 export class GameGateway extends IoGateway {

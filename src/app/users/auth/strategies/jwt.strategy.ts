@@ -3,8 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from 'express';
-import { IJwtPayload } from '../interfaces/jwt-payload.interface';
-import { IJwtAuthGuardRequest } from '../interfaces/jwt-auth.guard.interface';
+import { IJwtPayloadDto } from '../dto/jwt-payload.dto';
+import { IJwtAuthGuardRequestDto } from '../dto/jwt-auth.guard.dto';
 import { JwtTokenDto } from '../dto/jwt-token.dto';
 import { LoggerTag } from '../../../shared/enums/logger-tag.enum';
 
@@ -19,7 +19,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       secretOrKey: configService.get('JWT_SECRET'),
     });
   }
-  private validate(payload: IJwtPayload): IJwtAuthGuardRequest['user'] {
+  private validate(payload: IJwtPayloadDto): IJwtAuthGuardRequestDto['user'] {
     this.logger.log(`jwt validate used: ${JSON.stringify(payload)}`);
     return { id: payload.sub };
   }

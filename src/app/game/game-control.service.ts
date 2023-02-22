@@ -6,7 +6,7 @@ import { shuffle } from '../../utils/randomize';
 import { Lobby } from './classes/lobby';
 import { Player } from './classes/player';
 import { GameStatus } from './enum/game-status.enum';
-import { Meme } from './interfaces/player.interface';
+import { Meme } from './dto/player.dto';
 import { GameLobbiesService } from './lobbies/lobbies.service';
 
 @Injectable()

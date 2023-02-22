@@ -3,6 +3,7 @@ import * as AdmZip from 'adm-zip';
 import { readdir } from 'fs/promises';
 import { basename, resolve, join } from 'path';
 import { Server, Socket } from 'socket.io';
+import { teapot } from 'src/utils/custom-error';
 import { getRandomArrayItem, shuffle } from '../../utils/randomize';
 import { Folder } from './enums/folder.enum';
 
@@ -17,7 +18,15 @@ export class FileService {
     return resolve(root, this.ASSETS_DIR, ...paths);
   }
 
-  public async getFileNames(origin: string, path: Folder): Promise<string[]> {
+  public async getFileNames(origin: string, path: Folder, quantity?: number): Promise<string[]> {
+    if (typeof quantity !== 'undefined') {
+      if (!Number.isInteger(+quantity)) {
+        throw teapot('Quantity is not an Integer');
+      }
+      if (quantity < 1) {
+        throw teapot('Quantity is negative');
+      }
+    }
     const dir: string = this.url(Root.src, path);
     const fileNames: string[] = await readdir(dir);
     return fileNames.map((fileName) => `${origin}${this.url(Root.web, path, fileName)}`);
@@ -30,7 +39,7 @@ export class FileService {
     return `${origin}${this.url(Root.web, Folder.Avatars, randomFileName)}`;
   }
 
-  public async getRandomMemes(io: Server, socket: Socket, quantity: number): Promise<string[]> {
+  public async getRandomMemesWs(io: Server, socket: Socket, quantity: number): Promise<string[]> {
     const dir: string = this.url(Root.src, Folder.Meme);
     const fileNames: string[] = await readdir(dir);
     const randomFileNames: string[] = shuffle(fileNames).slice(0, quantity);

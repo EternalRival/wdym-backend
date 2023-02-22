@@ -16,6 +16,6 @@ export class FileGateway extends IoGateway {
     @MessageBody('quantity') quantity: number,
     @ConnectedSocket() socket: Socket,
   ): Promise<string[]> {
-    return this.fileService.getRandomMemes(this.io, socket, quantity);
+    return this.fileService.getRandomMemesWs(this.io, socket, quantity);
   }
 }

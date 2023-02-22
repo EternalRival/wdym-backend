@@ -1,5 +1,5 @@
-import { Body, Controller, Get, Header, Post, Req, StreamableFile } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, Header, Post, Query, Req, StreamableFile } from '@nestjs/common';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { Folder } from './enums/folder.enum';
 import { FileService } from './file.service';
@@ -35,9 +35,10 @@ export class FileController {
     return origin + path;
   } */
   @Get(Folder.Meme)
-  private async getMemeList(@Req() req: Request): Promise<string[]> {
+  @ApiQuery({ name: 'quantity', required: false })
+  private async getMemeList(@Req() req: Request, @Query('quantity') quantity: number): Promise<string[]> {
     const origin = `${req.protocol}://${req.headers.host}`;
-    return this.fileService.getFileNames(origin, Folder.Meme);
+    return this.fileService.getFileNames(origin, Folder.Meme, quantity);
   }
 
   @Post(`${Folder.Meme}/zip`)

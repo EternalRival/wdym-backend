@@ -5,7 +5,7 @@ import { LoggerTag } from '../../../shared/enums/logger-tag.enum';
 import { SignInUserDto } from '../../dto/sign-in-user.dto';
 import { User } from '../../entities/user.entity';
 import { UsersAuthService } from '../auth.service';
-import { ILocalAuthGuardRequest } from '../interfaces/local-auth.guard.interface';
+import { ILocalAuthGuardRequestDto } from '../dto/local-auth.guard.dto';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy, 'local') {
@@ -18,7 +18,7 @@ export class LocalStrategy extends PassportStrategy(Strategy, 'local') {
   private async validate(
     username: SignInUserDto['username'],
     password: SignInUserDto['password'],
-  ): Promise<ILocalAuthGuardRequest['user']> {
+  ): Promise<ILocalAuthGuardRequestDto['user']> {
     const signInData = { username, password };
     this.logger.log('local validate used');
 

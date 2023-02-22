@@ -5,11 +5,14 @@ import { WsException } from '@nestjs/websockets';
 import { IoRoomsService } from '../../io/rooms/rooms.service';
 import { IoOutput } from '../../io/enums/event-name.enum';
 import { Lobby } from '../classes/lobby';
-import { ICreateLobbyData, IGameData, ILobbyData, ILobbyListOptions } from '../interfaces/lobby.interface';
+import { GameDataDto } from '../dto/game-data.dto';
 import { Player } from '../classes/player';
 import { LobbyPrivacyType } from '../enum/lobby-privacy-type.enum';
 import { getChunk } from '../../../utils/get-chunk';
 import { teapot } from '../../../utils/custom-error';
+import { CreateLobbyDto } from '../dto/create-lobby.dto';
+import { LobbyDataDto } from '../dto/lobby-data.dto';
+import { LobbyListOptionsDto } from '../dto/lobby-list-options.dto';
 
 @Injectable()
 export class GameLobbiesService {
@@ -18,9 +21,9 @@ export class GameLobbiesService {
 
   constructor(private roomsService: IoRoomsService) {}
 
-  public createLobby(io: Server, createLobbyData: ICreateLobbyData): ILobbyData {
+  public createLobby(io: Server, createLobbyDto: CreateLobbyDto): LobbyDataDto {
     const uuid = this.generateUniqueUuid();
-    const lobby = new Lobby(uuid, createLobbyData);
+    const lobby = new Lobby(uuid, createLobbyDto);
     this.lobbyMap.set(uuid, lobby);
     this.logger.log(`Lobby ${uuid} created`);
 
@@ -46,7 +49,7 @@ export class GameLobbiesService {
     if (!uuid) {
       [...this.lobbyMap.values()].some((lobby) => lobby.owner === username);
     }
-    
+
     const lobby = this.lobbyMap.get(uuid);
     if (!(lobby instanceof Lobby)) {
       throw teapot('Lobby not found');
@@ -57,7 +60,7 @@ export class GameLobbiesService {
     return Boolean(this.lobbyMap.get(uuid)?.hasPlayer(username));
   }
 
-  public joinLobby(io: Server, socket: Socket, uuid: string, password?: string): IGameData {
+  public joinLobby(io: Server, socket: Socket, uuid: string, password?: string): GameDataDto {
     const lobby = this.lobbyMap.get(uuid);
     const { username, image } = socket.handshake.auth;
 
@@ -126,7 +129,7 @@ export class GameLobbiesService {
     return lobby;
   }
 
-  public getLobbyList(options: ILobbyListOptions): ILobbyData[] {
+  public getLobbyList(options: LobbyListOptionsDto): LobbyDataDto[] {
     this.logger.log(`GetLobbyList: ${JSON.stringify(options)}`);
 
     const list: Lobby[] = [...this.lobbyMap.values()].filter((lobby) => {
@@ -141,7 +144,7 @@ export class GameLobbiesService {
     const chunk: Lobby[] =
       'chunk' in options && options.chunk ? getChunk(options.chunk.page, options.chunk.limit, list) : list;
 
-    return chunk.map((lobby): ILobbyData => lobby.lobbyData);
+    return chunk.map((lobby): LobbyDataDto => lobby.lobbyData);
   }
 
   public tempGetFullGameLobbyList(): unknown {

@@ -1,12 +1,15 @@
 import { DelayedFunction } from '../../../utils/delayed-function';
+import { CreateLobbyDto } from '../dto/create-lobby.dto';
 import { GameMode } from '../enum/game-mode.enum';
 import { GameStatus } from '../enum/game-status.enum';
 import { LobbyPrivacyType } from '../enum/lobby-privacy-type.enum';
-import { ICreateLobbyData, IGameData, ILobby, ILobbyData } from '../interfaces/lobby.interface';
-import { Meme, MemeList } from '../interfaces/player.interface';
+import { GameDataDto } from "../dto/game-data.dto";
+import { Meme, MemeList } from '../dto/player.dto';
 import { Player } from './player';
+import { LobbyDataDto } from '../dto/lobby-data.dto';
+import { LobbyDto } from '../dto/lobby.dto';
 
-export class Lobby implements ILobby {
+export class Lobby implements LobbyDto {
   public readonly uuid: string;
   public title: string = 'Game';
   public owner: string = 'Player';
@@ -24,9 +27,9 @@ export class Lobby implements ILobby {
 
   public delayedChangePhase = new DelayedFunction(this.timerDelay);
 
-  constructor(uuid: string, createLobbyData: ICreateLobbyData) {
+  constructor(uuid: string, createLobbyData: CreateLobbyDto) {
     this.uuid = uuid;
-    const properties: (keyof ICreateLobbyData)[] = [
+    const properties: (keyof CreateLobbyDto)[] = [
       'mode',
       'title',
       'owner',
@@ -104,7 +107,7 @@ export class Lobby implements ILobby {
   }
 
   /** Для отрисовки списка лобби */
-  public get lobbyData(): ILobbyData {
+  public get lobbyData(): LobbyDataDto {
     return {
       uuid: this.uuid,
       image: this.image,
@@ -121,7 +124,7 @@ export class Lobby implements ILobby {
   }
 
   /** Для отрисовки игры */
-  public get gameData(): IGameData {
+  public get gameData(): GameDataDto {
     return {
       mode: this.mode,
       status: this.status,

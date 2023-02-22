@@ -1,3 +1,4 @@
+import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -19,6 +20,7 @@ async function bootstrap(): Promise<void> {
     }),
   );
   app.use(cookieParser());
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
   const swaggerConfig = new DocumentBuilder().setTitle('WDYM-API').setVersion('1.0.2').build();
   const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);

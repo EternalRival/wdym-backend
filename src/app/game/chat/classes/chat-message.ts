@@ -1,7 +1,7 @@
 import { Socket } from 'socket.io';
-import { IChatMessage } from '../interfaces/chat-message.interface';
+import { ChatMessageDto } from '../dto/chat-message.dto';
 
-export class ChatMessage implements IChatMessage {
+export class ChatMessage implements ChatMessageDto {
   public timestamp: number;
   public image: string;
   public username: string;
