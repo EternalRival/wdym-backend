@@ -45,14 +45,6 @@ export class FileService {
     return `${origin}${this.url(Root.web, Folder.Avatars, randomFileName)}`;
   }
 
-  public async getRandomMemesWs(io: Server, socket: Socket, quantity: number): Promise<string[]> {
-    const dir: string = this.url(Root.src, Folder.Meme);
-    const fileNames: string[] = await readdir(dir);
-    const randomFileNames: string[] = shuffleArray(fileNames).slice(0, quantity);
-    const { host } = socket.request.headers;
-    return randomFileNames.map((fileName) => `${host}${this.url(Root.web, Folder.Meme, fileName)}`);
-  }
-
   public async getMemeArchive(urlList: string[]): Promise<StreamableFile> {
     const dir: string = this.url(Root.src, Folder.Meme);
     const fileNames: string[] = await readdir(dir);
