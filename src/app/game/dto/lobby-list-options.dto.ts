@@ -1,6 +1,6 @@
 import { IsEnum, IsOptional } from 'class-validator';
 import { LobbyPrivacyType } from '../enum/lobby-privacy-type.enum';
-import { ListChunkDto } from '../../shared/dto/list-chunk.dto';
+import { ListChunkDto } from './list-chunk.dto';
 
 export class LobbyListOptionsDto {
   @IsOptional()

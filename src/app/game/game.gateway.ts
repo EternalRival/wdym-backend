@@ -13,11 +13,6 @@ export class GameGateway extends IoGateway {
     super();
   }
 
-  @SubscribeMessage(IoInput.startGame)
-  private handleStartGameRequest(@MessageBody(ParseUUIDPipe) uuid: string): string {
-    return this.gameService.startGame(this.io, uuid);
-  }
-
   @SubscribeMessage(IoInput.pickMeme)
   private handlePickMemeRequest(
     @MessageBody('uuid', ParseUUIDPipe) uuid: string,
@@ -36,11 +31,11 @@ export class GameGateway extends IoGateway {
     return this.gameService.getVote(this.io, socket, uuid, vote);
   }
 
-  @SubscribeMessage(IoInput.skipPhase)
-  private handleSkipPhaseRequest(
+  @SubscribeMessage(IoInput.changePhase)
+  private handleChangePhaseRequest(
     @MessageBody(ParseUUIDPipe) uuid: string,
     @ConnectedSocket() socket: Socket,
   ): string {
-    return this.gameService.skipPhase(this.io, socket, uuid);
+    return this.gameService.changePhase(this.io, socket, uuid);
   }
 }

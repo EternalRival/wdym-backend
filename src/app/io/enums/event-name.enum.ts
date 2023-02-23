@@ -9,7 +9,7 @@ export enum IoInput {
   startGame = 'start-game-request',
   pickMeme = 'pick-meme-request',
   getVote = 'get-vote-request',
-  skipPhase = 'skip-phase-request',
+  changePhase = 'change-phase-request',
 }
 
 export enum IoOutput {

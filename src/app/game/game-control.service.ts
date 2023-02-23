@@ -60,7 +60,11 @@ export class GameControlService implements OnModuleInit {
   }
 
   private createNewRound(lobby: Lobby): void {
-    this.reset(lobby);
+    if (lobby.currentRound > 0) {
+      this.reset(lobby);
+    } else {
+      this.reset(lobby, { hardReset: true });
+    }
     const situations = shuffleArray(this.situations);
     const pickedSituation = situations.find((situation) => lobby.rounds.every((round) => round !== situation));
     lobby.rounds.push(pickedSituation ?? situations[0] ?? '');
@@ -99,7 +103,7 @@ export class GameControlService implements OnModuleInit {
     }
   }
 
-  public changePhase(lobby: Lobby): void {
+  public changeCurrentPhase(lobby: Lobby): void {
     this.nextStatus(lobby);
 
     switch (lobby.status) {

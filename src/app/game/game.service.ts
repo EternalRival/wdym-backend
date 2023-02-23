@@ -11,16 +11,16 @@ import { Meme } from './dto/player.dto';
 export class GameService {
   constructor(private gameControlService: GameControlService) {}
 
-  private changePhase(io: Server, lobby: Lobby): void {
-    this.gameControlService.changePhase(lobby);
+  private changeCurrentPhase(io: Server, lobby: Lobby): void {
+    this.gameControlService.changeCurrentPhase(lobby);
     //? ↓↓↓ автотаймер ↓↓↓
     switch (lobby.status) {
       case GamePhase.VOTE_RESULTS:
-        lobby.delayedChangePhase.set(() => this.changePhase(io, lobby), lobby.timerDelayVoteResults);
+        lobby.delayedChangePhase.set(() => this.changeCurrentPhase(io, lobby), lobby.timerDelayVoteResults);
         break;
       case GamePhase.SITUATION:
       case GamePhase.VOTE:
-        lobby.delayedChangePhase.set(() => this.changePhase(io, lobby), lobby.timerDelay);
+        lobby.delayedChangePhase.set(() => this.changeCurrentPhase(io, lobby), lobby.timerDelay);
         break;
       case GamePhase.PREPARE:
       case GamePhase.END:
@@ -31,7 +31,7 @@ export class GameService {
     io.to(lobby.uuid).emit(IoOutput.changePhase, lobby.gameData);
   }
 
-  public skipPhase(io: Server, socket: Socket, uuid: string): string {
+  public changePhase(io: Server, socket: Socket, uuid: string): string {
     const lobby = this.gameControlService.getLobby(uuid);
     const { username } = socket.handshake.auth;
 
@@ -39,16 +39,7 @@ export class GameService {
       throw new WsException(`${username} is not owner of lobby (${uuid})!`);
     }
 
-    this.changePhase(io, lobby);
-    return uuid;
-  }
-
-  public startGame(io: Server, uuid: string): string {
-    const lobby = this.gameControlService.getLobby(uuid);
-    this.gameControlService.reset(lobby, { hardReset: true });
-
-    this.changePhase(io, lobby);
-
+    this.changeCurrentPhase(io, lobby);
     return uuid;
   }
 
@@ -67,7 +58,7 @@ export class GameService {
     player.setMeme(meme);
 
     if (lobby.isReadyToChangeGameStatus('meme')) {
-      this.changePhase(io, lobby);
+      this.changeCurrentPhase(io, lobby);
     }
     return uuid;
   }
@@ -87,7 +78,7 @@ export class GameService {
     player.setVote(vote);
 
     if (lobby.isReadyToChangeGameStatus('vote')) {
-      this.changePhase(io, lobby);
+      this.changeCurrentPhase(io, lobby);
     }
     return uuid;
   }
