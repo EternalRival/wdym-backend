@@ -60,11 +60,6 @@ export class GameControlService implements OnModuleInit {
   }
 
   private createNewRound(lobby: Lobby): void {
-    if (lobby.currentRound > 0) {
-      this.reset(lobby);
-    } else {
-      this.reset(lobby, { hardReset: true });
-    }
     const situations = shuffleArray(this.situations);
     const pickedSituation = situations.find((situation) => lobby.rounds.every((round) => round !== situation));
     lobby.rounds.push(pickedSituation ?? situations[0] ?? '');
@@ -88,16 +83,15 @@ export class GameControlService implements OnModuleInit {
     });
   }
 
-  public reset(lobby: Lobby, options?: { hardReset: boolean }): void {
+  public reset(lobby: Lobby): void {
     Object.values(lobby.players).forEach((player: Player) => {
       player.setMeme(null);
       player.setVote(null);
-      if (options?.hardReset === true) {
+      if (lobby.status === GamePhase.PREPARE) {
         player.setScore(0);
       }
     });
-    if (options?.hardReset === true) {
-      lobby.setStatus(GamePhase.PREPARE);
+    if (lobby.status === GamePhase.PREPARE) {
       lobby.delayedChangePhase.cancel();
       lobby.cleanRounds();
     }
@@ -111,7 +105,11 @@ export class GameControlService implements OnModuleInit {
         this.updateLobbyScore(lobby);
         break;
       case GamePhase.SITUATION:
+        this.reset(lobby);
         this.createNewRound(lobby);
+        break;
+      case GamePhase.PREPARE:
+        this.reset(lobby);
         break;
       default:
     }
