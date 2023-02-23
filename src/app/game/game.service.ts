@@ -3,7 +3,7 @@ import { WsException } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { IoOutput } from '../io/enums/event-name.enum';
 import { Lobby } from './classes/lobby';
-import { GamePhase } from './enum/game-status.enum';
+import { GamePhase } from './enum/game-phase.enum';
 import { GameControlService } from './game-control.service';
 import { Meme } from './dto/player.dto';
 
@@ -14,7 +14,7 @@ export class GameService {
   private changeCurrentPhase(io: Server, lobby: Lobby): void {
     this.gameControlService.changeCurrentPhase(lobby);
     //? ↓↓↓ автотаймер ↓↓↓
-    switch (lobby.status) {
+    switch (lobby.phase) {
       case GamePhase.VOTE_RESULTS:
         lobby.delayedChangePhase.set(() => this.changeCurrentPhase(io, lobby), lobby.timerDelayVoteResults);
         break;
@@ -50,14 +50,14 @@ export class GameService {
     if (!username) {
       throw new WsException(`Invalid username (${username})!`);
     }
-    if (lobby.status !== GamePhase.SITUATION) {
-      throw new WsException(`${username}'s Socket GameStatus is not ${GamePhase.SITUATION}!`);
+    if (lobby.phase !== GamePhase.SITUATION) {
+      throw new WsException(`${username}'s Socket GamePhase is not ${GamePhase.SITUATION}!`);
     }
 
     const player = this.gameControlService.getPlayer(lobby, username);
     player.setMeme(meme);
 
-    if (lobby.isReadyToChangeGameStatus('meme')) {
+    if (lobby.isReadyToChangeGamePhase('meme')) {
       this.changeCurrentPhase(io, lobby);
     }
     return uuid;
@@ -70,14 +70,14 @@ export class GameService {
     if (!username) {
       throw new WsException(`Invalid username (${username})!`);
     }
-    if (lobby.status !== GamePhase.VOTE) {
-      throw new WsException(`${username}'s Socket GameStatus is not ${GamePhase.VOTE}!`);
+    if (lobby.phase !== GamePhase.VOTE) {
+      throw new WsException(`${username}'s Socket GamePhase is not ${GamePhase.VOTE}!`);
     }
 
     const player = this.gameControlService.getPlayer(lobby, username);
     player.setVote(vote);
 
-    if (lobby.isReadyToChangeGameStatus('vote')) {
+    if (lobby.isReadyToChangeGamePhase('vote')) {
       this.changeCurrentPhase(io, lobby);
     }
     return uuid;

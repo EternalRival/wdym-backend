@@ -5,7 +5,7 @@ import { resolve } from 'path';
 import { shuffleArray } from '../../utils/randomize';
 import { Lobby } from './classes/lobby';
 import { Player } from './classes/player';
-import { GamePhase } from './enum/game-status.enum';
+import { GamePhase } from './enum/game-phase.enum';
 import { GameLobbiesService } from './lobbies/lobbies.service';
 
 @Injectable()
@@ -38,22 +38,22 @@ export class GameControlService implements OnModuleInit {
     return player;
   }
 
-  private nextStatus(lobby: Lobby): void {
-    switch (lobby.status) {
+  private nextPhase(lobby: Lobby): void {
+    switch (lobby.phase) {
       case GamePhase.PREPARE:
-        lobby.setStatus(GamePhase.SITUATION);
+        lobby.setPhase(GamePhase.SITUATION);
         break;
       case GamePhase.SITUATION:
-        lobby.setStatus(lobby.hasMemes ? GamePhase.VOTE : GamePhase.VOTE_RESULTS);
+        lobby.setPhase(lobby.hasMemes ? GamePhase.VOTE : GamePhase.VOTE_RESULTS);
         break;
       case GamePhase.VOTE:
-        lobby.setStatus(GamePhase.VOTE_RESULTS);
+        lobby.setPhase(GamePhase.VOTE_RESULTS);
         break;
       case GamePhase.VOTE_RESULTS:
-        lobby.setStatus(lobby.currentRound < lobby.maxRounds ? GamePhase.SITUATION : GamePhase.END);
+        lobby.setPhase(lobby.currentRound < lobby.maxRounds ? GamePhase.SITUATION : GamePhase.END);
         break;
       case GamePhase.END:
-        lobby.setStatus(GamePhase.PREPARE);
+        lobby.setPhase(GamePhase.PREPARE);
         break;
       default:
     }
@@ -87,20 +87,20 @@ export class GameControlService implements OnModuleInit {
     Object.values(lobby.players).forEach((player: Player) => {
       player.setMeme(null);
       player.setVote(null);
-      if (lobby.status === GamePhase.PREPARE) {
+      if (lobby.phase === GamePhase.PREPARE) {
         player.setScore(0);
       }
     });
-    if (lobby.status === GamePhase.PREPARE) {
+    if (lobby.phase === GamePhase.PREPARE) {
       lobby.delayedChangePhase.cancel();
       lobby.cleanRounds();
     }
   }
 
   public changeCurrentPhase(lobby: Lobby): void {
-    this.nextStatus(lobby);
+    this.nextPhase(lobby);
 
-    switch (lobby.status) {
+    switch (lobby.phase) {
       case GamePhase.VOTE_RESULTS:
         this.updateLobbyScore(lobby);
         break;

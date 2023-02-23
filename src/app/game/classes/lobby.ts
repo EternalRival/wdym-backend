@@ -1,7 +1,7 @@
 import { DelayedFunction } from '../../../utils/delayed-function';
 import { CreateLobbyDto } from '../dto/create-lobby.dto';
 import { GameMode } from '../enum/game-mode.enum';
-import { GamePhase } from '../enum/game-status.enum';
+import { GamePhase } from '../enum/game-phase.enum';
 import { LobbyPrivacyType } from '../enum/lobby-privacy-type.enum';
 import { GameDataDto } from '../dto/game-data.dto';
 import { Meme, MemeList } from '../dto/player.dto';
@@ -22,7 +22,7 @@ export class Lobby implements LobbyDto {
   public readonly players: Record<string, Player> = {};
 
   public mode: GameMode = GameMode.DEFAULT;
-  public status: GamePhase = GamePhase.PREPARE;
+  public phase: GamePhase = GamePhase.PREPARE;
   public rounds: string[] = [];
 
   public timerDelayVoteResults: number = 5 * 1000;
@@ -51,7 +51,7 @@ export class Lobby implements LobbyDto {
     return this.password === '' ? LobbyPrivacyType.PUBLIC : LobbyPrivacyType.PRIVATE;
   }
   public get isStarted(): boolean {
-    return ![GamePhase.PREPARE, GamePhase.END].includes(this.status);
+    return ![GamePhase.PREPARE, GamePhase.END].includes(this.phase);
   }
   public get isEmpty(): boolean {
     return this.playersCount < 1;
@@ -76,10 +76,10 @@ export class Lobby implements LobbyDto {
     return this.players[username];
   }
 
-  public setStatus(status: GamePhase): void {
-    this.status = status;
+  public setPhase(phase: GamePhase): void {
+    this.phase = phase;
   }
-  public isReadyToChangeGameStatus(property: keyof Pick<Player, 'meme' | 'vote'>): boolean {
+  public isReadyToChangeGamePhase(property: keyof Pick<Player, 'meme' | 'vote'>): boolean {
     const players: Player[] = Object.values(this.players);
     return players.reduce((counter, player) => counter + +(player[property] !== null), 0) >= this.playersCount; // (player[property] === null ? counter : counter + 1)
   }
@@ -128,13 +128,13 @@ export class Lobby implements LobbyDto {
   public get gameData(): GameDataDto {
     return {
       mode: this.mode,
-      status: this.status,
+      phase: this.phase,
       players: this.players,
       rounds: this.rounds,
       memes: this.getMemes('meme'),
       votes: this.getMemes('vote'),
       currentRound: this.currentRound,
-      changeStatusDate: this.delayedChangePhase.triggerDate,
+      changePhaseDate: this.delayedChangePhase.triggerDate,
     };
   }
 }
