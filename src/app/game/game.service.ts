@@ -45,7 +45,7 @@ export class GameService {
 
   public startGame(io: Server, uuid: string): string {
     const lobby = this.gameControlService.getLobby(uuid);
-    this.gameControlService.resetGame(lobby);
+    this.gameControlService.reset(lobby, { hardReset: true });
 
     this.changePhase(io, lobby);
 
