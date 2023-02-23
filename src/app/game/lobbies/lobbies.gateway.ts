@@ -14,6 +14,7 @@ import { CreateLobbyDto } from '../dto/create-lobby.dto';
 export class GameLobbiesGateway extends IoGateway {
   constructor(private readonly lobbiesService: GameLobbiesService) {
     super();
+    setInterval(() => this.lobbiesService.clearEmptyLobbies(this.io), 5 * 60 * 1000);
   }
 
   @SubscribeMessage(IoInput.createLobby)

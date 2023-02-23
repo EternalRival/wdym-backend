@@ -144,6 +144,14 @@ export class GameLobbiesService {
     return chunk.map((lobby): LobbyDataDto => lobby.lobbyData);
   }
 
+  public clearEmptyLobbies(io: Server): void {
+    this.lobbyMap.forEach((lobby) => {
+      if (lobby.isEmpty) {
+        this.destroyLobby(io, lobby.uuid);
+      }
+    });
+  }
+
   public tempGetFullGameLobbyList(): unknown {
     return Object.fromEntries(this.lobbyMap.entries());
   }
