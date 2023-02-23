@@ -154,7 +154,43 @@ export class GameLobbiesService {
     });
   }
 
+  /** удалить на релизе */
   public tempGetFullGameLobbyList(): unknown {
-    return Object.fromEntries(this.lobbyMap.entries());
+    const entries = [...this.lobbyMap.entries()].map(([uuid, lobby]) => {
+      const {
+        title,
+        owner,
+        image,
+        password,
+        maxPlayers,
+        maxRounds,
+        timerDelay,
+        players,
+        mode,
+        phase,
+        rounds,
+        timerDelayVoteResults,
+      } = lobby;
+
+      return [
+        uuid,
+        {
+          title,
+          owner,
+          image,
+          password,
+          maxPlayers,
+          maxRounds,
+          timerDelay,
+          players,
+          mode,
+          phase,
+          rounds,
+          timerDelayVoteResults,
+          uuid,
+        },
+      ];
+    });
+    return Object.fromEntries(entries);
   }
 }

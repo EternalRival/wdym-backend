@@ -3,7 +3,6 @@ export enum IoInput {
   createLobby = 'create-lobby-request',
   joinLobby = 'join-lobby-request',
   destroyLobby = 'destroy-lobby-request',
-  /* lobbyData = 'lobby-data-request' ,*/ // > /dev/null
   lobbyList = 'lobby-list-request',
   leaveLobby = 'leave-lobby-request',
   pickMeme = 'pick-meme-request',

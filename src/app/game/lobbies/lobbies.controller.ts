@@ -28,6 +28,7 @@ export class GameLobbiesController {
     return this.lobbiesService.isUserCanJoin(username, uuid);
   }
 
+  /** удалить на релизе */
   @ApiTags('⚠️Временное⚠️')
   @Get('temp-get-full-game-lobby-list')
   private tempGetFullGameLobbyList(): unknown {
