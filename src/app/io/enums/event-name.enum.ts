@@ -6,7 +6,6 @@ export enum IoInput {
   /* lobbyData = 'lobby-data-request' ,*/ // > /dev/null
   lobbyList = 'lobby-list-request',
   leaveLobby = 'leave-lobby-request',
-  randomMemes = 'random-memes-request',
   startGame = 'start-game-request',
   pickMeme = 'pick-meme-request',
   getVote = 'get-vote-request',

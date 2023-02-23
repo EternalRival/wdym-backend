@@ -115,6 +115,8 @@ export class GameLobbiesService {
 
     this.roomsService.deleteRoom(io, uuid);
     this.logger.log(`Destroy: ${uuid}`);
+
+    io.emit(IoOutput.deleteLobby, uuid);
     return uuid;
   }
 
