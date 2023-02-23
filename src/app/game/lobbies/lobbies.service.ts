@@ -104,9 +104,6 @@ export class GameLobbiesService {
     this.roomsService.leaveRoom(socket, uuid);
     io.to(uuid).emit(IoOutput.leaveLobby, lobby.gameData);
     this.logger.log(`Leave: ${username} -> ${lobby.title}(${uuid})`);
-    if (lobby.isEmpty) {
-      this.destroyLobby(io, uuid); // TODO реализовать отменяемое удаление с задержкой
-    }
     return uuid;
   }
 
