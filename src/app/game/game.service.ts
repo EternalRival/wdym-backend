@@ -3,7 +3,7 @@ import { WsException } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { IoOutput } from '../io/enums/event-name.enum';
 import { Lobby } from './classes/lobby';
-import { GameStatus } from './enum/game-status.enum';
+import { GamePhase } from './enum/game-status.enum';
 import { GameControlService } from './game-control.service';
 import { Meme } from './dto/player.dto';
 
@@ -15,23 +15,23 @@ export class GameService {
     this.gameControlService.changePhase(lobby);
     //? ↓↓↓ автотаймер ↓↓↓
     switch (lobby.status) {
-      case GameStatus.VOTE_RESULTS:
+      case GamePhase.VOTE_RESULTS:
         lobby.delayedChangePhase.set(() => this.changePhase(io, lobby), lobby.timerDelayVoteResults);
         break;
-      case GameStatus.SITUATION:
-      case GameStatus.VOTE:
+      case GamePhase.SITUATION:
+      case GamePhase.VOTE:
         lobby.delayedChangePhase.set(() => this.changePhase(io, lobby), lobby.timerDelay);
         break;
-      case GameStatus.PREPARE:
-      case GameStatus.END:
+      case GamePhase.PREPARE:
+      case GamePhase.END:
       default:
-        lobby.delayedChangePhase.cancel()
+        lobby.delayedChangePhase.cancel();
     }
     //? ↑↑↑ автотаймер ↑↑↑
     io.to(lobby.uuid).emit(IoOutput.changePhase, lobby.gameData);
   }
 
-  public forcedChangePhase(io: Server, socket: Socket, uuid: string): string {
+  public skipPhase(io: Server, socket: Socket, uuid: string): string {
     const lobby = this.gameControlService.getLobby(uuid);
     const { username } = socket.handshake.auth;
 
@@ -59,12 +59,12 @@ export class GameService {
     if (!username) {
       throw new WsException(`Invalid username (${username})!`);
     }
-    if (lobby.status !== GameStatus.SITUATION) {
-      throw new WsException(`${username}'s Socket GameStatus is not ${GameStatus.SITUATION}!`);
+    if (lobby.status !== GamePhase.SITUATION) {
+      throw new WsException(`${username}'s Socket GameStatus is not ${GamePhase.SITUATION}!`);
     }
 
     const player = this.gameControlService.getPlayer(lobby, username);
-    this.gameControlService.setPlayerMeme(player, meme);
+    player.setMeme(meme);
 
     if (lobby.isReadyToChangeGameStatus('meme')) {
       this.changePhase(io, lobby);
@@ -79,12 +79,12 @@ export class GameService {
     if (!username) {
       throw new WsException(`Invalid username (${username})!`);
     }
-    if (lobby.status !== GameStatus.VOTE) {
-      throw new WsException(`${username}'s Socket GameStatus is not ${GameStatus.VOTE}!`);
+    if (lobby.status !== GamePhase.VOTE) {
+      throw new WsException(`${username}'s Socket GameStatus is not ${GamePhase.VOTE}!`);
     }
 
     const player = this.gameControlService.getPlayer(lobby, username);
-    this.gameControlService.setPlayerVote(player, vote);
+    player.setVote(vote);
 
     if (lobby.isReadyToChangeGameStatus('vote')) {
       this.changePhase(io, lobby);

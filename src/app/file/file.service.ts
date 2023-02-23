@@ -2,7 +2,6 @@ import { Injectable, StreamableFile } from '@nestjs/common';
 import * as AdmZip from 'adm-zip';
 import { readdir } from 'fs/promises';
 import { basename, resolve, join } from 'path';
-import { Server, Socket } from 'socket.io';
 import { teapot } from 'src/utils/custom-error';
 import { getRandomArrayItem, shuffleArray } from '../../utils/randomize';
 import { Folder } from './enums/folder.enum';
@@ -45,7 +44,7 @@ export class FileService {
     return `${origin}${this.url(Root.web, Folder.Avatars, randomFileName)}`;
   }
 
-  public async getMemeArchive(urlList: string[]): Promise<StreamableFile> {
+  public async getMemeArchive(urlList?: string[]): Promise<StreamableFile> {
     const dir: string = this.url(Root.src, Folder.Meme);
     const fileNames: string[] = await readdir(dir);
     const missedFiles: string[] = [];

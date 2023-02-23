@@ -5,8 +5,7 @@ import { resolve } from 'path';
 import { shuffleArray } from '../../utils/randomize';
 import { Lobby } from './classes/lobby';
 import { Player } from './classes/player';
-import { GameStatus } from './enum/game-status.enum';
-import { Meme } from './dto/player.dto';
+import { GamePhase } from './enum/game-status.enum';
 import { GameLobbiesService } from './lobbies/lobbies.service';
 
 @Injectable()
@@ -41,20 +40,20 @@ export class GameControlService implements OnModuleInit {
 
   private nextStatus(lobby: Lobby): void {
     switch (lobby.status) {
-      case GameStatus.PREPARE:
-        lobby.setStatus(GameStatus.SITUATION);
+      case GamePhase.PREPARE:
+        lobby.setStatus(GamePhase.SITUATION);
         break;
-      case GameStatus.SITUATION:
-        lobby.setStatus(lobby.hasMemes ? GameStatus.VOTE : GameStatus.VOTE_RESULTS);
+      case GamePhase.SITUATION:
+        lobby.setStatus(lobby.hasMemes ? GamePhase.VOTE : GamePhase.VOTE_RESULTS);
         break;
-      case GameStatus.VOTE:
-        lobby.setStatus(GameStatus.VOTE_RESULTS);
+      case GamePhase.VOTE:
+        lobby.setStatus(GamePhase.VOTE_RESULTS);
         break;
-      case GameStatus.VOTE_RESULTS:
-        lobby.setStatus(lobby.currentRound < lobby.maxRounds ? GameStatus.SITUATION : GameStatus.END);
+      case GamePhase.VOTE_RESULTS:
+        lobby.setStatus(lobby.currentRound < lobby.maxRounds ? GamePhase.SITUATION : GamePhase.END);
         break;
-      case GameStatus.END:
-        lobby.setStatus(GameStatus.PREPARE); // TODO возможно заменить на GameStatus.PREPARE
+      case GamePhase.END:
+        lobby.setStatus(GamePhase.PREPARE);
         break;
       default:
     }
@@ -66,19 +65,11 @@ export class GameControlService implements OnModuleInit {
     const pickedSituation = situations.find((situation) => lobby.rounds.every((round) => round !== situation));
     lobby.rounds.push(pickedSituation ?? situations[0] ?? '');
   }
-  public setPlayerMeme(player: Player, meme: Meme): void {
-    player.setMeme(meme);
-  }
-  public setPlayerVote(player: Player, vote: Meme): void {
-    player.setVote(vote);
-  }
 
   private updatePlayerScore(player: Player, plus: number): void {
     player.setScore(player.score + plus);
   }
-  private resetPlayerScore(player: Player): void {
-    player.setScore(0);
-  }
+
   private updateLobbyScore(lobby: Lobby): void {
     const memes = lobby.getMemes('meme');
     const votes = lobby.getMemes('vote');
@@ -94,18 +85,16 @@ export class GameControlService implements OnModuleInit {
   }
 
   public resetGame(lobby: Lobby): void {
-    lobby.setStatus(GameStatus.PREPARE);
+    lobby.setStatus(GamePhase.PREPARE);
     this.resetRound(lobby, { hardReset: true });
   }
 
-  //?
-
   private resetRound(lobby: Lobby, options?: { hardReset: boolean }): void {
     Object.values(lobby.players).forEach((player: Player) => {
-      this.setPlayerMeme(player, null);
-      this.setPlayerVote(player, null);
+      player.setMeme(null);
+      player.setVote(null);
       if (options?.hardReset === true) {
-        this.resetPlayerScore(player);
+        player.setScore(0);
       }
     });
     if (options?.hardReset === true) {
@@ -117,10 +106,10 @@ export class GameControlService implements OnModuleInit {
     this.nextStatus(lobby);
 
     switch (lobby.status) {
-      case GameStatus.VOTE_RESULTS:
+      case GamePhase.VOTE_RESULTS:
         this.updateLobbyScore(lobby);
         break;
-      case GameStatus.SITUATION:
+      case GamePhase.SITUATION:
         this.createNewRound(lobby);
         break;
       default:

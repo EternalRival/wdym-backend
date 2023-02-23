@@ -1,7 +1,7 @@
 import { DelayedFunction } from '../../../utils/delayed-function';
 import { CreateLobbyDto } from '../dto/create-lobby.dto';
 import { GameMode } from '../enum/game-mode.enum';
-import { GameStatus } from '../enum/game-status.enum';
+import { GamePhase } from '../enum/game-status.enum';
 import { LobbyPrivacyType } from '../enum/lobby-privacy-type.enum';
 import { GameDataDto } from '../dto/game-data.dto';
 import { Meme, MemeList } from '../dto/player.dto';
@@ -18,13 +18,13 @@ export class Lobby implements LobbyDto {
   public maxPlayers: number = 3;
   public maxRounds: number = 1;
   public timerDelay: number = 30 * 1000;
-  
-  public readonly players: Record<string, Player> = {}; // Record<Player['username'], Player>
-  
+
+  public readonly players: Record<string, Player> = {};
+
   public mode: GameMode = GameMode.DEFAULT;
-  public status: GameStatus = GameStatus.PREPARE;
+  public status: GamePhase = GamePhase.PREPARE;
   public rounds: string[] = [];
-  
+
   public timerDelayVoteResults: number = 5 * 1000;
   public delayedChangePhase = new DelayedFunction();
 
@@ -51,7 +51,7 @@ export class Lobby implements LobbyDto {
     return this.password === '' ? LobbyPrivacyType.PUBLIC : LobbyPrivacyType.PRIVATE;
   }
   public get isStarted(): boolean {
-    return ![GameStatus.PREPARE, GameStatus.END].includes(this.status);
+    return ![GamePhase.PREPARE, GamePhase.END].includes(this.status);
   }
   public get isEmpty(): boolean {
     return this.playersCount < 1;
@@ -76,7 +76,7 @@ export class Lobby implements LobbyDto {
     return this.players[username];
   }
 
-  public setStatus(status: GameStatus): void {
+  public setStatus(status: GamePhase): void {
     this.status = status;
   }
   public isReadyToChangeGameStatus(property: keyof Pick<Player, 'meme' | 'vote'>): boolean {

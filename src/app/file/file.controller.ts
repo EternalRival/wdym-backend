@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Header, Post, Query, Req, StreamableFile } from '@nestjs/common';
-import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { Folder } from './enums/folder.enum';
 import { FileService } from './file.service';
@@ -9,13 +9,6 @@ import { FileService } from './file.service';
 export class FileController {
   constructor(private readonly fileService: FileService) {}
 
-  // TODO под снос
-  /*   @Get(`${Folder.Avatars}/:fileName`)
-  private getAvatar(@Req() req: Request, @Param('fileName') fileName: string): string {
-    const origin = `${req.protocol}://${req.headers.host}`;
-    const path = this.fileService.getFile(Folder.Avatars, fileName);
-    return origin + path;
-  } */
   @Get(Folder.Avatars)
   private async getAvatarList(@Req() req: Request): Promise<string[]> {
     const origin = `${req.protocol}://${req.headers.host}`;
@@ -27,13 +20,6 @@ export class FileController {
     return this.fileService.getRandomAvatar(origin);
   }
 
-  // TODO под снос
-  /*   @Get(`${Folder.Meme}/:fileName`)
-  private getMeme(@Req() req: Request, @Param('fileName') fileName: string): string {
-    const origin = `${req.protocol}://${req.headers.host}`;
-    const path = this.fileService.getFile(Folder.Meme, fileName);
-    return origin + path;
-  } */
   @Get(Folder.Meme)
   @ApiQuery({ name: 'quantity', required: false })
   @ApiQuery({ name: 'shuffle', required: false })
@@ -49,6 +35,7 @@ export class FileController {
   @Post(`${Folder.Meme}/zip`)
   @Header('Content-Type', 'application/zip')
   @Header('Content-Disposition', 'attachment; filename="memes.zip"')
+  @ApiBody({ required: false, isArray: true })
   private getMemeArchive(@Body() urlList: string[]): Promise<StreamableFile> {
     return this.fileService.getMemeArchive(urlList);
   }

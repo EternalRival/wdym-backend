@@ -36,11 +36,11 @@ export class GameGateway extends IoGateway {
     return this.gameService.getVote(this.io, socket, uuid, vote);
   }
 
-  @SubscribeMessage(IoInput.forcedChangePhase)
-  private handleForcedChangePhaseRequest(
+  @SubscribeMessage(IoInput.skipPhase)
+  private handleSkipPhaseRequest(
     @MessageBody(ParseUUIDPipe) uuid: string,
     @ConnectedSocket() socket: Socket,
   ): string {
-    return this.gameService.forcedChangePhase(this.io, socket, uuid);
+    return this.gameService.skipPhase(this.io, socket, uuid);
   }
 }

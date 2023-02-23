@@ -10,7 +10,7 @@ export enum IoInput {
   startGame = 'start-game-request',
   pickMeme = 'pick-meme-request',
   getVote = 'get-vote-request',
-  forcedChangePhase = 'forced-change-phase-request',
+  skipPhase = 'skip-phase-request',
 }
 
 export enum IoOutput {
