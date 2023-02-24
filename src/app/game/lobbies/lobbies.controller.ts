@@ -1,4 +1,4 @@
-import { Controller, Get, ParseUUIDPipe, Query, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, ParseUUIDPipe, Query } from '@nestjs/common';
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { GameLobbiesService } from './lobbies.service';
 

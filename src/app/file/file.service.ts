@@ -2,7 +2,7 @@ import { Injectable, StreamableFile } from '@nestjs/common';
 import * as AdmZip from 'adm-zip';
 import { readdir } from 'fs/promises';
 import { basename, resolve, join } from 'path';
-import { teapot } from 'src/utils/custom-error';
+import { teapot } from '../../utils/custom-error';
 import { getRandomArrayItem, shuffleArray } from '../../utils/randomize';
 import { Folder } from './enums/folder.enum';
 

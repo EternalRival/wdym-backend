@@ -1,5 +1,5 @@
 import { IsEnum, IsOptional } from 'class-validator';
-import { LobbyPrivacyType } from '../enum/lobby-privacy-type.enum';
+import { LobbyPrivacyType } from '../enums/lobby-privacy-type.enum';
 import { ListChunkDto } from './list-chunk.dto';
 
 export class LobbyListOptionsDto {
