@@ -9,8 +9,9 @@ export interface IGameData {
   mode: GameMode;
   phase: GamePhase;
   players: Player[];
-  situations: NonNullable<Situation>[]; // TODO
+  situationOptions: Situation[];
   situation: Situation;
+  situations: ChoiceList;
   memes: ChoiceList;
   votes: ChoiceList;
   currentRound: number;

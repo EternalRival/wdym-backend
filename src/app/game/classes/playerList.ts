@@ -1,5 +1,4 @@
 import { CreatePlayerDto } from '../dto/create-player.dto';
-import { IGameData } from '../interfaces/game-data.interface';
 import { Player } from './player';
 
 export class PlayerList {

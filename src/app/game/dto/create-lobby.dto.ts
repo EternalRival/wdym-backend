@@ -32,11 +32,17 @@ export class CreateLobbyDto {
   @IsInt()
   @IsPositive()
   @Type(() => Number)
-  public timerDelay: number = 20 * 1000;
+  public timerDelay: number = 30 * 1000;
 
   @IsOptional()
   @IsInt()
   @IsPositive()
   @Type(() => Number)
-  public timerDelayShort: number = 5 * 1000;
+  public timerDelayVoteResults: number = 5 * 1000;
+
+  @IsOptional()
+  @IsInt()
+  @IsPositive()
+  @Type(() => Number)
+  public timerDelayChooseSituations: number = 15 * 1000;
 }

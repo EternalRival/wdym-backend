@@ -42,10 +42,7 @@ export class Lobby {
     return this.createLobbyData.owner === username;
   }
 
-  public updateSituation(): void {
-    throw new Error('Method not implemented.');
-  }
-  public getMemes(property: Choice): ChoiceList {
+  public getChoices(property: Choice): ChoiceList {
     return this.players.list.reduce((list, player) => {
       const prop = player[property];
       if (prop !== null) {
@@ -58,11 +55,11 @@ export class Lobby {
     }, {} as ChoiceList);
   }
   public get hasNoPickedMemes(): boolean {
-    return Object.keys(this.getMemes('meme')).length < 1;
+    return Object.keys(this.getChoices('meme')).length < 1;
   }
   public updateScore(): void {
-    const memes = this.getMemes('meme');
-    const votes = Object.entries(this.getMemes('vote'));
+    const memes = this.getChoices('meme');
+    const votes = Object.entries(this.getChoices('vote'));
 
     votes.forEach(([meme, playerNames]) => {
       if (playerNames.length > 0) {
@@ -83,10 +80,10 @@ export class Lobby {
         player.setScore(0);
       }
     });
+    this.situations.clear('options');
     if (isHardReset) {
-      this.delayedPhaseChanger.cancel();
       this.rounds.update({ reset: true });
-      this.situations.clear();
+      this.situations.clear('played');
     }
   }
 
@@ -113,10 +110,11 @@ export class Lobby {
       mode: this.createLobbyData.mode,
       phase: this.phase.current,
       players: this.players.list,
-      situations: [''],
+      situationOptions: this.situations.options,
       situation: this.situations.current,
-      memes: this.getMemes('meme'),
-      votes: this.getMemes('vote'),
+      situations: this.getChoices('situation'),
+      memes: this.getChoices('meme'),
+      votes: this.getChoices('vote'),
       currentRound: this.rounds.current,
       changePhaseDate: this.delayedPhaseChanger.triggerDate,
     };

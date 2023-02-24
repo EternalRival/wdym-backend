@@ -157,41 +157,17 @@ export class GameLobbiesService {
 
   /** удалить на релизе */
   public tempGetFullGameLobbyList(): unknown {
-    /* const entries = [...this.lobbyMap.entries()].map(([uuid, lobby]) => {
-       const {
-        title,
-        owner,
-        image,
-        password,
-        maxPlayers,
-        maxRounds,
-        timerDelay,
-        players,
-        mode,
-        phase,
-        rounds,
-        timerDelayVoteResults,
-      } = lobby;
-
-      return [
+    return Object.fromEntries(
+      [...this.lobbyMap.entries()].map(([uuid, lobby]) => [
         uuid,
         {
-          title,
-          owner,
-          image,
-          password,
-          maxPlayers,
-          maxRounds,
-          timerDelay,
-          players,
-          mode,
-          phase,
-          rounds,
-          timerDelayVoteResults,
           uuid,
+          createLobbyData: lobby.createLobbyData,
+          gameData: lobby.gameData,
+          lobbyData: lobby.lobbyData,
+          situations: lobby.situations,
         },
-      ]; 
-    });*/
-    return ''; // Object.fromEntries(entries);
+      ]),
+    );
   }
 }

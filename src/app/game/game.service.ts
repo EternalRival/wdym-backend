@@ -13,12 +13,12 @@ import { GameLobbiesService } from './lobbies/lobbies.service';
 export class GameService implements OnModuleInit {
   constructor(private lobbiesService: GameLobbiesService) {}
 
-  private situations!: string[];
+  private possibleSituations!: string[];
 
   public async onModuleInit(): Promise<void> {
     const path = resolve('src', 'public', 'assets', 'json', 'situations.json');
     const string = await readFile(path, 'utf8');
-    this.situations = JSON.parse(string);
+    this.possibleSituations = JSON.parse(string);
   }
 
   public changePhase(io: Server, socket: Socket, uuid: string): string {
@@ -29,7 +29,7 @@ export class GameService implements OnModuleInit {
       throw new WsException(`${username} is not owner of lobby (${uuid})!`);
     }
 
-    this.chPhase(io, lobby);
+    this.nextPhase(io, lobby);
     return uuid;
   }
   public pickSituation(io: Server, socket: Socket, uuid: string, situation: Situation): string {
@@ -49,6 +49,7 @@ export class GameService implements OnModuleInit {
     }
     player.setSituation(situation);
 
+    io.to(uuid).emit(IoOutput.pickSituation, lobby.gameData);
     return uuid;
   }
   public pickMeme(io: Server, socket: Socket, uuid: string, meme: Meme): string {
@@ -69,7 +70,7 @@ export class GameService implements OnModuleInit {
     player.setMeme(meme);
 
     if (lobby.isReadyToChangePhase('meme')) {
-      this.chPhase(io, lobby);
+      this.nextPhase(io, lobby);
     }
     return uuid;
   }
@@ -91,13 +92,13 @@ export class GameService implements OnModuleInit {
     player.setVote(vote);
 
     if (lobby.isReadyToChangePhase('vote')) {
-      this.chPhase(io, lobby);
+      this.nextPhase(io, lobby);
     }
     return uuid;
   }
 
-  // eslint-disable-next-line max-lines-per-function
-  private chPhase(io: Server, lobby: Lobby): void {
+  private nextPhase(io: Server, lobby: Lobby): void {
+    const delayedChangerCallback = (): void => this.nextPhase(io, lobby);
     if (lobby.isLastRound || lobby.phase.current !== GamePhase.VOTE_RESULTS) {
       lobby.phase.next();
     } else {
@@ -112,36 +113,28 @@ export class GameService implements OnModuleInit {
       case GamePhase.CHOOSE_SITUATION:
         lobby.reset();
         lobby.rounds.update();
-        // TODO выбор ситуации
-        lobby.delayedPhaseChanger.set(() => this.chPhase(io, lobby), lobby.createLobbyData.timerDelayShort * 3);
+        lobby.situations.setOptions(this.possibleSituations);
+        lobby.delayedPhaseChanger.set(delayedChangerCallback, lobby.createLobbyData.timerDelayChooseSituations);
         break;
       case GamePhase.SITUATION:
-        lobby.updateSituation();
-        //! тут вызывался createNewRound
-        /*   private createNewRound(lobby: Lobby): void {
-    const situations = shuffleArray(this.situations);
-    const pickedSituation = situations.find((situation) => lobby.rounds.every((round) => round !== situation));
-    lobby.rounds.push(pickedSituation ?? situations[0] ?? '');
-  } */
-        lobby.delayedPhaseChanger.set(() => this.chPhase(io, lobby), lobby.createLobbyData.timerDelay);
+        lobby.delayedPhaseChanger.set(delayedChangerCallback, lobby.createLobbyData.timerDelay);
         break;
       case GamePhase.VOTE:
         if (lobby.hasNoPickedMemes) {
-          this.chPhase(io, lobby);
+          this.nextPhase(io, lobby);
           return;
         }
-        lobby.delayedPhaseChanger.set(() => this.chPhase(io, lobby), lobby.createLobbyData.timerDelay);
+        lobby.delayedPhaseChanger.set(delayedChangerCallback, lobby.createLobbyData.timerDelay);
         break;
       case GamePhase.VOTE_RESULTS:
         lobby.updateScore();
-        lobby.delayedPhaseChanger.set(() => this.chPhase(io, lobby), lobby.createLobbyData.timerDelayShort);
+        lobby.delayedPhaseChanger.set(delayedChangerCallback, lobby.createLobbyData.timerDelayVoteResults);
         break;
       case GamePhase.END:
         lobby.delayedPhaseChanger.cancel();
         break;
       default:
     }
-
     io.to(lobby.uuid).emit(IoOutput.changePhase, lobby.gameData);
   }
 }
