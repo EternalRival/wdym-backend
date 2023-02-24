@@ -5,6 +5,7 @@ export enum IoInput {
   destroyLobby = 'destroy-lobby-request',
   lobbyList = 'lobby-list-request',
   leaveLobby = 'leave-lobby-request',
+  pickSituation = 'pick-situation-request',
   pickMeme = 'pick-meme-request',
   getVote = 'get-vote-request',
   changePhase = 'change-phase-request',

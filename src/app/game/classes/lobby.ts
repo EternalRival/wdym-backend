@@ -1,99 +1,53 @@
-import { DelayedFunction } from '../../../utils/delayed-function';
+import { LobbyPrivacyType } from '../enums/lobby-privacy-type.enum';
 import { CreateLobbyDto } from '../dto/create-lobby.dto';
-import { GameMode } from '../enum/game-mode.enum';
-import { GamePhase } from '../enum/game-phase.enum';
-import { LobbyPrivacyType } from '../enum/lobby-privacy-type.enum';
-import { GameDataDto } from '../dto/game-data.dto';
-import { Meme, MemeList } from '../dto/player.dto';
-import { Player } from './player';
-import { LobbyDataDto } from '../dto/lobby-data.dto';
-import { LobbyDto } from '../dto/lobby.dto';
+import { PhaseSwitcher } from './phase-switcher';
+import { GamePhase } from '../enums/game-phase.enum';
+import { PlayerList } from './playerList';
+import { IGameData, ChoiceList, Choice } from '../interfaces/game-data.interface';
+import { ILobbyData } from '../interfaces/lobby-data.interface';
+import { DelayedFunction } from '../../../utils/delayed-function';
+import { SituationsPicker } from './situations-picker';
+import { RoundCounter } from './round-counter';
 
-export class Lobby implements LobbyDto {
-  public readonly uuid: string;
-  public title: string = 'Game';
-  public owner: string = 'Player';
-  public image: string = '';
-  public password: string = '';
-  public maxPlayers: number = 3;
-  public maxRounds: number = 1;
-  public timerDelay: number = 30 * 1000;
+export class Lobby {
+  constructor(public readonly uuid: string, public readonly createLobbyData: CreateLobbyDto) {}
+  public players = new PlayerList();
+  public phase = new PhaseSwitcher();
+  public situations = new SituationsPicker();
+  public delayedPhaseChanger = new DelayedFunction();
+  public rounds = new RoundCounter();
 
-  public readonly players: Record<string, Player> = {};
-
-  public mode: GameMode = GameMode.DEFAULT;
-  public phase: GamePhase = GamePhase.PREPARE;
-  public rounds: string[] = [];
-
-  public timerDelayVoteResults: number = 5 * 1000;
-  public delayedChangePhase = new DelayedFunction();
-
-  constructor(uuid: string, createLobbyData: CreateLobbyDto) {
-    this.uuid = uuid;
-    const properties: (keyof CreateLobbyDto)[] = [
-      'mode',
-      'title',
-      'owner',
-      'image',
-      'password',
-      'maxPlayers',
-      'maxRounds',
-      'timerDelay',
-    ];
-    properties.forEach((property) => {
-      if (property in createLobbyData && createLobbyData[property]) {
-        Object.assign(this, { [property]: createLobbyData[property] });
-      }
-    });
+  public get privacyType(): LobbyPrivacyType.PRIVATE | LobbyPrivacyType.PUBLIC {
+    return this.createLobbyData.password === '' ? LobbyPrivacyType.PUBLIC : LobbyPrivacyType.PRIVATE;
   }
 
-  public get privacyType(): LobbyPrivacyType {
-    return this.password === '' ? LobbyPrivacyType.PUBLIC : LobbyPrivacyType.PRIVATE;
-  }
-  public get isStarted(): boolean {
-    return ![GamePhase.PREPARE, GamePhase.END].includes(this.phase);
-  }
   public get isEmpty(): boolean {
-    return this.playersCount < 1;
+    return this.players.count < 1;
   }
   public get isFull(): boolean {
-    return this.playersCount >= this.maxPlayers;
+    return this.players.count >= this.createLobbyData.maxPlayers;
+  }
+  public get isStarted(): boolean {
+    return this.phase.current !== GamePhase.PREPARE;
+  }
+  public get isLastRound(): boolean {
+    return this.rounds.current >= this.createLobbyData.maxRounds;
+  }
+  public isReadyToChangePhase(property: Choice): boolean {
+    const { list, count } = this.players;
+    return list.reduce((counter, player) => counter + +(player[property] !== null), 0) >= count;
+    // return list.reduce((counter, player) => (player[property] === null ? counter : counter + 1), 0) >= count;
+  }
+  public isOwner(username: string): boolean {
+    return this.createLobbyData.owner === username;
   }
 
-  private get playersCount(): number {
-    return Object.keys(this.players).length;
+  public updateSituation(): void {
+    throw new Error('Method not implemented.');
   }
-  public addPlayer(player: Player): void {
-    this.players[player.username] = player;
-  }
-  public removePlayer(username: string): void {
-    delete this.players[username];
-  }
-  public hasPlayer(username: string): boolean {
-    return username in this.players;
-  }
-  public getPlayer(username: string): Player {
-    return this.players[username];
-  }
-
-  public setPhase(phase: GamePhase): void {
-    this.phase = phase;
-  }
-  public isReadyToChangeGamePhase(property: keyof Pick<Player, 'meme' | 'vote'>): boolean {
-    const players: Player[] = Object.values(this.players);
-    return players.reduce((counter, player) => counter + +(player[property] !== null), 0) >= this.playersCount; // (player[property] === null ? counter : counter + 1)
-  }
-
-  public get currentRound(): number {
-    return this.rounds.length;
-  }
-  public cleanRounds(): void {
-    this.rounds.length = 0;
-  }
-
-  public getMemes(property: keyof Pick<Player, 'meme' | 'vote'>): MemeList {
-    return Object.values(this.players).reduce((list, player) => {
-      const prop: Meme = player[property];
+  public getMemes(property: Choice): ChoiceList {
+    return this.players.list.reduce((list, player) => {
+      const prop = player[property];
       if (prop !== null) {
         if (!(prop in list)) {
           Object.assign(list, { [prop]: [] });
@@ -101,40 +55,70 @@ export class Lobby implements LobbyDto {
         list[prop].push(player.username);
       }
       return list;
-    }, {} as MemeList);
+    }, {} as ChoiceList);
   }
-  public get hasMemes(): boolean {
-    return Object.keys(this.getMemes('meme')).length > 0;
+  public get hasNoPickedMemes(): boolean {
+    return Object.keys(this.getMemes('meme')).length < 1;
+  }
+  public updateScore(): void {
+    const memes = this.getMemes('meme');
+    const votes = Object.entries(this.getMemes('vote'));
+
+    votes.forEach(([meme, playerNames]) => {
+      if (playerNames.length > 0) {
+        memes[meme].forEach((playerName) => {
+          const player = this.players.get(playerName);
+          player?.setScore(player.score + playerNames.length);
+        });
+      }
+    });
+  }
+  public reset(): void {
+    const isHardReset = this.phase.current === GamePhase.PREPARE;
+    this.players.list.forEach((player) => {
+      player.setSituation(null);
+      player.setMeme(null);
+      player.setVote(null);
+      if (isHardReset) {
+        player.setScore(0);
+      }
+    });
+    if (isHardReset) {
+      this.delayedPhaseChanger.cancel();
+      this.rounds.update({ reset: true });
+      this.situations.clear();
+    }
   }
 
   /** Для отрисовки списка лобби */
-  public get lobbyData(): LobbyDataDto {
+  public get lobbyData(): ILobbyData {
     return {
       uuid: this.uuid,
-      image: this.image,
-      owner: this.owner,
+      image: this.createLobbyData.image,
+      owner: this.createLobbyData.owner,
       privacyType: this.privacyType,
-      title: this.title,
-      mode: this.mode,
-      players: Object.values(this.players).map((player) => ({ username: player.username, image: player.image })),
-      playersCount: this.playersCount,
-      maxPlayers: this.maxPlayers,
+      title: this.createLobbyData.title,
+      mode: this.createLobbyData.mode,
+      players: this.players.listShort,
+      playersCount: this.players.count,
+      maxPlayers: this.createLobbyData.maxPlayers,
       isFull: this.isFull,
-      maxRounds: this.maxRounds,
+      maxRounds: this.createLobbyData.maxRounds,
     };
   }
 
   /** Для отрисовки игры */
-  public get gameData(): GameDataDto {
+  public get gameData(): IGameData {
     return {
-      mode: this.mode,
-      phase: this.phase,
-      players: this.players,
-      rounds: this.rounds,
+      mode: this.createLobbyData.mode,
+      phase: this.phase.current,
+      players: this.players.list,
+      situations: [''],
+      situation: this.situations.current,
       memes: this.getMemes('meme'),
       votes: this.getMemes('vote'),
-      currentRound: this.currentRound,
-      changePhaseDate: this.delayedChangePhase.triggerDate,
+      currentRound: this.rounds.current,
+      changePhaseDate: this.delayedPhaseChanger.triggerDate,
     };
   }
 }

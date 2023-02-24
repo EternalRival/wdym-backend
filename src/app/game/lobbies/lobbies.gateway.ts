@@ -5,10 +5,10 @@ import { IoInput } from '../../io/enums/event-name.enum';
 import { GameLobbiesService } from './lobbies.service';
 import { IoGateway } from '../../io/io.gateway';
 import { IoWsGateway } from '../../io/io.decorator';
-import { GameDataDto } from '../dto/game-data.dto';
-import { LobbyDataDto } from '../dto/lobby-data.dto';
 import { LobbyListOptionsDto } from '../dto/lobby-list-options.dto';
 import { CreateLobbyDto } from '../dto/create-lobby.dto';
+import { IGameData } from '../interfaces/game-data.interface';
+import { ILobbyData } from '../interfaces/lobby-data.interface';
 
 @IoWsGateway()
 export class GameLobbiesGateway extends IoGateway {
@@ -18,8 +18,8 @@ export class GameLobbiesGateway extends IoGateway {
   }
 
   @SubscribeMessage(IoInput.createLobby)
-  @UsePipes(new ValidationPipe({ transform: true }))
-  private handleCreateLobbyRequest(@MessageBody('lobby') createLobbyDto: CreateLobbyDto): LobbyDataDto {
+  @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
+  private handleCreateLobbyRequest(@MessageBody('lobby') createLobbyDto: CreateLobbyDto): ILobbyData {
     return this.lobbiesService.createLobby(this.io, createLobbyDto);
   }
 
@@ -28,7 +28,7 @@ export class GameLobbiesGateway extends IoGateway {
     @MessageBody('uuid', ParseUUIDPipe) uuid: string,
     @MessageBody('password') password: string,
     @ConnectedSocket() socket: Socket,
-  ): GameDataDto {
+  ): IGameData {
     return this.lobbiesService.joinLobby(this.io, socket, uuid, password);
   }
 
@@ -46,7 +46,7 @@ export class GameLobbiesGateway extends IoGateway {
   }
 
   @SubscribeMessage(IoInput.lobbyList)
-  private handleGetLobbyList(@MessageBody() options: LobbyListOptionsDto): LobbyDataDto[] {
+  private handleGetLobbyList(@MessageBody() options: LobbyListOptionsDto): ILobbyData[] {
     return this.lobbiesService.getLobbyList(options);
   }
 }

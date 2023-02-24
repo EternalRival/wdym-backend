@@ -5,14 +5,13 @@ import { WsException } from '@nestjs/websockets';
 import { IoRoomsService } from '../../io/rooms/rooms.service';
 import { IoOutput } from '../../io/enums/event-name.enum';
 import { Lobby } from '../classes/lobby';
-import { GameDataDto } from '../dto/game-data.dto';
-import { Player } from '../classes/player';
-import { LobbyPrivacyType } from '../enum/lobby-privacy-type.enum';
+import { LobbyPrivacyType } from '../enums/lobby-privacy-type.enum';
 import { getChunk } from '../../../utils/get-chunk';
 import { teapot } from '../../../utils/custom-error';
 import { CreateLobbyDto } from '../dto/create-lobby.dto';
-import { LobbyDataDto } from '../dto/lobby-data.dto';
 import { LobbyListOptionsDto } from '../dto/lobby-list-options.dto';
+import { IGameData } from '../interfaces/game-data.interface';
+import { ILobbyData } from '../interfaces/lobby-data.interface';
 
 @Injectable()
 export class GameLobbiesService {
@@ -21,7 +20,7 @@ export class GameLobbiesService {
 
   constructor(private roomsService: IoRoomsService) {}
 
-  public createLobby(io: Server, createLobbyDto: CreateLobbyDto): LobbyDataDto {
+  public createLobby(io: Server, createLobbyDto: CreateLobbyDto): ILobbyData {
     const uuid = this.generateUniqueUuid();
     const lobby = new Lobby(uuid, createLobbyDto);
     this.lobbyMap.set(uuid, lobby);
@@ -37,30 +36,30 @@ export class GameLobbiesService {
   }
 
   public isLobbyTitleUnique(title: string): boolean {
-    return [...this.lobbyMap.values()].every((lobby): boolean => lobby.title !== title);
+    return [...this.lobbyMap.values()].every((lobby): boolean => lobby.createLobbyData.title !== title);
   }
   private isUuidUnique(uuid: string): boolean {
     return !this.lobbyMap.has(uuid);
   }
   public isPasswordCorrect(uuid: string, password: string): boolean {
-    return this.lobbyMap.get(uuid)?.password === password;
+    return this.lobbyMap.get(uuid)?.createLobbyData.password === password;
   }
   public isLobbyOwner(username: string, uuid: string): boolean {
     if (!uuid) {
-      return [...this.lobbyMap.values()].some((lobby) => lobby.owner === username);
+      return [...this.lobbyMap.values()].some((lobby) => lobby.createLobbyData.owner === username);
     }
 
     const lobby = this.lobbyMap.get(uuid);
     if (!(lobby instanceof Lobby)) {
       throw teapot('Lobby not found');
     }
-    return lobby.owner === username;
+    return lobby.createLobbyData.owner === username;
   }
   public isUserCanJoin(username: string, uuid: string): boolean {
-    return Boolean(this.lobbyMap.get(uuid)?.hasPlayer(username));
+    return Boolean(this.lobbyMap.get(uuid)?.players.has(username));
   }
 
-  public joinLobby(io: Server, socket: Socket, uuid: string, password?: string): GameDataDto {
+  public joinLobby(io: Server, socket: Socket, uuid: string, password?: string): IGameData {
     const lobby = this.lobbyMap.get(uuid);
     const { username, image } = socket.handshake.auth;
 
@@ -70,18 +69,18 @@ export class GameLobbiesService {
     if (!username) {
       throw new WsException(`joinLobby: Invalid username (${username})`);
     }
-    if (lobby.privacyType === LobbyPrivacyType.PRIVATE && lobby.password !== password) {
-      throw new WsException(`joinLobby: Incorrect password (${password} !== ${lobby.password})`);
+    if (lobby.privacyType === LobbyPrivacyType.PRIVATE && lobby.createLobbyData.password !== password) {
+      throw new WsException(`joinLobby: Incorrect password (${password} !== ${lobby.createLobbyData.password})`);
     }
     if (lobby.isFull) {
       throw new WsException(`joinLobby: Lobby is full (${username})`);
     }
 
     this.roomsService.joinRoom(io, socket, lobby.uuid);
-    if (!(lobby.isStarted || lobby.hasPlayer(username))) {
-      lobby.addPlayer(new Player(username, image));
+    if (!(lobby.isStarted || lobby.players.has(username))) {
+      lobby.players.add({ username, image });
       io.to(uuid).emit(IoOutput.joinLobby, lobby.gameData);
-      this.logger.log(`Join lobby: ${username} -> ${lobby.title}(${uuid})`);
+      this.logger.log(`Join lobby: ${username} -> ${lobby.createLobbyData.title}(${uuid})`);
     }
     return lobby.gameData;
   }
@@ -96,14 +95,14 @@ export class GameLobbiesService {
     if (!username) {
       throw new WsException(`leaveLobby: Invalid username (${username})`);
     }
-    if (!lobby.hasPlayer(username)) {
+    if (!lobby.players.has(username)) {
       throw new WsException(`leaveLobby: Player not found in lobby (${username})`);
     }
 
-    lobby.removePlayer(username);
+    lobby.players.remove(username);
     this.roomsService.leaveRoom(socket, uuid);
     io.to(uuid).emit(IoOutput.leaveLobby, lobby.gameData);
-    this.logger.log(`Leave: ${username} -> ${lobby.title}(${uuid})`);
+    this.logger.log(`Leave: ${username} -> ${lobby.createLobbyData.title}(${uuid})`);
     return uuid;
   }
 
@@ -120,7 +119,7 @@ export class GameLobbiesService {
     return uuid;
   }
 
-  public getLobbyData(uuid: string): Lobby {
+  public getLobby(uuid: string): Lobby {
     const lobby = this.lobbyMap.get(uuid);
     if (!(lobby instanceof Lobby)) {
       throw new WsException(`getLobbyData: No lobby with uuid ${uuid}`);
@@ -128,14 +127,16 @@ export class GameLobbiesService {
     return lobby;
   }
 
-  public getLobbyList(options: LobbyListOptionsDto): LobbyDataDto[] {
+  public getLobbyList(options: LobbyListOptionsDto): ILobbyData[] {
     this.logger.log(`GetLobbyList: ${JSON.stringify(options)}`);
 
     const list: Lobby[] = [...this.lobbyMap.values()].filter((lobby) => {
       const privacy: boolean =
         'privacy' in options && options.privacy !== LobbyPrivacyType.ALL ? options.privacy === lobby.privacyType : true;
       const nameContains: boolean =
-        'nameContains' in options && options.nameContains ? lobby.title.includes(options.nameContains) : true;
+        'nameContains' in options && options.nameContains
+          ? lobby.createLobbyData.title.includes(options.nameContains)
+          : true;
 
       return !lobby.isStarted && privacy && nameContains;
     });
@@ -143,7 +144,7 @@ export class GameLobbiesService {
     const chunk: Lobby[] =
       'chunk' in options && options.chunk ? getChunk(options.chunk.page, options.chunk.limit, list) : list;
 
-    return chunk.map((lobby): LobbyDataDto => lobby.lobbyData);
+    return chunk.map((lobby): ILobbyData => lobby.lobbyData);
   }
 
   public clearEmptyLobbies(io: Server): void {
@@ -156,8 +157,8 @@ export class GameLobbiesService {
 
   /** удалить на релизе */
   public tempGetFullGameLobbyList(): unknown {
-    const entries = [...this.lobbyMap.entries()].map(([uuid, lobby]) => {
-      const {
+    /* const entries = [...this.lobbyMap.entries()].map(([uuid, lobby]) => {
+       const {
         title,
         owner,
         image,
@@ -189,8 +190,8 @@ export class GameLobbiesService {
           timerDelayVoteResults,
           uuid,
         },
-      ];
-    });
-    return Object.fromEntries(entries);
+      ]; 
+    });*/
+    return ''; // Object.fromEntries(entries);
   }
 }

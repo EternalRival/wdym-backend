@@ -4,13 +4,30 @@ import { Socket } from 'socket.io';
 import { IoInput } from '../io/enums/event-name.enum';
 import { IoWsGateway } from '../io/io.decorator';
 import { IoGateway } from '../io/io.gateway';
+import { Meme, Situation, Vote } from './classes/player';
 import { GameService } from './game.service';
-import { Meme } from './dto/player.dto';
 
 @IoWsGateway()
 export class GameGateway extends IoGateway {
   constructor(private gameService: GameService) {
     super();
+  }
+
+  @SubscribeMessage(IoInput.changePhase)
+  private handleChangePhaseRequest(
+    @MessageBody(ParseUUIDPipe) uuid: string,
+    @ConnectedSocket() socket: Socket,
+  ): string {
+    return this.gameService.changePhase(this.io, socket, uuid);
+  }
+
+  @SubscribeMessage(IoInput.pickSituation)
+  private handlePickSituationRequest(
+    @MessageBody('uuid', ParseUUIDPipe) uuid: string,
+    @MessageBody('situation') situation: Situation,
+    @ConnectedSocket() socket: Socket,
+  ): string {
+    return this.gameService.pickSituation(this.io, socket, uuid, situation);
   }
 
   @SubscribeMessage(IoInput.pickMeme)
@@ -25,17 +42,9 @@ export class GameGateway extends IoGateway {
   @SubscribeMessage(IoInput.getVote)
   private handleGetVoteRequest(
     @MessageBody('uuid', ParseUUIDPipe) uuid: string,
-    @MessageBody('vote') vote: Meme,
+    @MessageBody('vote') vote: Vote,
     @ConnectedSocket() socket: Socket,
   ): string {
     return this.gameService.getVote(this.io, socket, uuid, vote);
-  }
-
-  @SubscribeMessage(IoInput.changePhase)
-  private handleChangePhaseRequest(
-    @MessageBody(ParseUUIDPipe) uuid: string,
-    @ConnectedSocket() socket: Socket,
-  ): string {
-    return this.gameService.changePhase(this.io, socket, uuid);
   }
 }
