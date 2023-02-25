@@ -80,7 +80,7 @@ export class GameLobbiesService {
     if (!(lobby.isStarted || lobby.players.has(username))) {
       lobby.players.add({ username, image });
       io.to(uuid).emit(IoOutput.joinLobby, lobby.gameData);
-      io.emit(IoOutput.updateLobby, lobby.gameData);
+      io.emit(IoOutput.updateLobby, lobby.lobbyData);
       this.logger.log(`Join lobby: ${username} -> ${lobby.createLobbyData.title}(${uuid})`);
     }
     return lobby.gameData;
@@ -103,7 +103,7 @@ export class GameLobbiesService {
     lobby.players.remove(username);
     this.roomsService.leaveRoom(socket, uuid);
     io.to(uuid).emit(IoOutput.leaveLobby, lobby.gameData);
-    io.emit(IoOutput.updateLobby, lobby.gameData);
+    io.emit(IoOutput.updateLobby, lobby.lobbyData);
     this.logger.log(`Leave: ${username} -> ${lobby.createLobbyData.title}(${uuid})`);
     return uuid;
   }
