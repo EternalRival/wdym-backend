@@ -104,7 +104,6 @@ export class GameService implements OnModuleInit {
     } else {
       lobby.phase.set(GamePhase.CHOOSE_SITUATION);
     }
-
     switch (lobby.phase.current) {
       case GamePhase.PREPARE:
         lobby.reset();
@@ -117,6 +116,7 @@ export class GameService implements OnModuleInit {
         lobby.delayedPhaseChanger.set(delayedChangerCallback, lobby.createLobbyData.timerDelayChooseSituations);
         break;
       case GamePhase.SITUATION:
+        lobby.updateSituation();
         lobby.delayedPhaseChanger.set(delayedChangerCallback, lobby.createLobbyData.timerDelay);
         break;
       case GamePhase.VOTE:

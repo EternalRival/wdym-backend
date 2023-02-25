@@ -17,4 +17,8 @@ export class SituationsPicker {
   public setOptions(list: Situation[]): void {
     this.options = shuffleArray(list.filter((situation) => !this.played.includes(situation))).slice(-2);
   }
+
+  public setPlayed(situation: Situation): void {
+    this.played.push(situation ?? this.options[Math.round(Math.random())]);
+  }
 }
