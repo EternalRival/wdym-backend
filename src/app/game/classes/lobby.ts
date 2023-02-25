@@ -28,7 +28,7 @@ export class Lobby {
     return this.players.count >= this.createLobbyData.maxPlayers;
   }
   public get isStarted(): boolean {
-    return this.phase.current !== GamePhase.PREPARE;
+    return ![GamePhase.PREPARE, GamePhase.END].includes(this.phase.current);
   }
   public get isLastRound(): boolean {
     return this.rounds.current >= this.createLobbyData.maxRounds;

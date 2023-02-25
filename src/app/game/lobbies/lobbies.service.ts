@@ -55,8 +55,9 @@ export class GameLobbiesService {
     }
     return lobby.createLobbyData.owner === username;
   }
-  public isUserCanJoin(username: string, uuid: string): boolean {
-    return Boolean(this.lobbyMap.get(uuid)?.players.has(username));
+  public canUserJoin(username: string, uuid: string): boolean {
+    const lobby = this.lobbyMap.get(uuid);
+    return lobby instanceof Lobby && (lobby.players.has(username) || !lobby.isFull);
   }
 
   public joinLobby(io: Server, socket: Socket, uuid: string, password?: string): IGameData {
@@ -72,12 +73,12 @@ export class GameLobbiesService {
     if (lobby.privacyType === LobbyPrivacyType.PRIVATE && lobby.createLobbyData.password !== password) {
       throw new WsException(`joinLobby: Incorrect password (${password} !== ${lobby.createLobbyData.password})`);
     }
-    if (lobby.isFull) {
+    if (!this.canUserJoin(username, uuid)) {
       throw new WsException(`joinLobby: Lobby is full (${username})`);
     }
 
     this.roomsService.joinRoom(io, socket, lobby.uuid);
-    if (!(lobby.isStarted || lobby.players.has(username))) {
+    if (!lobby.isStarted && !lobby.players.has(username)) {
       lobby.players.add({ username, image });
       io.to(uuid).emit(IoOutput.joinLobby, lobby.gameData);
       io.emit(IoOutput.updateLobby, lobby.lobbyData);

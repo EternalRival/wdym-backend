@@ -23,9 +23,9 @@ export class GameLobbiesController {
     return this.lobbiesService.isLobbyOwner(username, uuid);
   }
 
-  @Get('is-user-can-join')
-  private isUserCanJoin(@Query('username') username: string, @Query('uuid', ParseUUIDPipe) uuid: string): boolean {
-    return this.lobbiesService.isUserCanJoin(username, uuid);
+  @Get('can-user-join')
+  private canUserJoin(@Query('username') username: string, @Query('uuid', ParseUUIDPipe) uuid: string): boolean {
+    return this.lobbiesService.canUserJoin(username, uuid);
   }
 
   /** удалить на релизе */
