@@ -18,6 +18,7 @@ export enum IoOutput {
   joinLobby = 'join-lobby',
   leaveLobby = 'leave-lobby',
   deleteLobby = 'delete-lobby',
+  updateLobby = 'update-lobby',
   changePhase = 'change-phase',
   pickSituation = 'pick-situation',
 }
