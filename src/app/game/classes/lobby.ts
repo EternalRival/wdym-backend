@@ -73,8 +73,8 @@ export class Lobby {
   public updateSituation(): void {
     const choices = this.getChoices('situation');
     const entries = Object.entries(choices);
-    const [winner] = entries.sort(([, a], [, b]) => (a.length > b.length ? -1 : 1));
-    this.situations.setPlayed(winner[0]);
+    const [winner] = entries.sort(([, a], [, b]) => (a.length > b.length ? -1 : 1)).map((entry) => entry[0]);
+    this.situations.setPlayed(winner);
   }
   public reset(): void {
     const isHardReset = this.phase.current === GamePhase.PREPARE;
