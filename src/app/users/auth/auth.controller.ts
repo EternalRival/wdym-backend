@@ -24,7 +24,7 @@ export class UsersAuthController {
     @Res({ passthrough: true }) response: Response,
   ): Promise<JwtTokenDto> {
     const token = await this.authService.login(request.user);
-    this.authService.setCookies(response, token, 0.05);
+    this.authService.setCookies(response, token, 24);
     return token;
   }
 
@@ -38,7 +38,7 @@ export class UsersAuthController {
   ): Promise<JwtTokenDto> {
     console.log('refresh', request.user);
     const token = await this.authService.refreshToken(request.user.id);
-    this.authService.setCookies(response, token, 1);
+    this.authService.setCookies(response, token, 24);
     return token;
   }
 
