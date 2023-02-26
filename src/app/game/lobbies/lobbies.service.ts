@@ -106,6 +106,15 @@ export class GameLobbiesService {
     io.to(uuid).emit(IoOutput.leaveLobby, lobby.gameData);
     io.emit(IoOutput.updateLobby, lobby.lobbyData);
     this.logger.log(`Leave: ${username} -> ${lobby.createLobbyData.title}(${uuid})`);
+
+    if (!lobby.hasOwner || lobby.isEmpty) {
+      setTimeout(() => {
+        if (!lobby.hasOwner || lobby.isEmpty) {
+          this.destroyLobby(io, uuid);
+        }
+      }, 5000);
+    }
+
     return uuid;
   }
 

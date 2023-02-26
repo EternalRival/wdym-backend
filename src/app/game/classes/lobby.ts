@@ -27,6 +27,9 @@ export class Lobby {
   public get isFull(): boolean {
     return this.players.count >= this.createLobbyData.maxPlayers;
   }
+  public get hasOwner(): boolean {
+    return this.players.has(this.createLobbyData.owner);
+  }
   public get isStarted(): boolean {
     return ![GamePhase.PREPARE, GamePhase.END].includes(this.phase.current);
   }
@@ -59,16 +62,16 @@ export class Lobby {
   }
   public updateScore(): void {
     const memes = this.getChoices('meme');
-    const votes = Object.entries(this.getChoices('vote'));
 
-    votes.forEach(([meme, playerNames]) => {
-      if (playerNames.length > 0) {
+    Object.entries(this.getChoices('vote'))
+      .map<[string, number]>(([meme, playerNames]) => [meme, playerNames.length])
+      .filter(([meme, score]) => meme && meme in memes && score > 0)
+      .forEach(([meme, score]) =>
         memes[meme].forEach((playerName) => {
           const player = this.players.get(playerName);
-          player?.setScore(player.score + playerNames.length);
-        });
-      }
-    });
+          player?.setScore(player.score + score);
+        }),
+      );
   }
   public updateSituation(): void {
     const choices = this.getChoices('situation');

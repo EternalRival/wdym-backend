@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { WsException } from '@nestjs/websockets';
 import { readFile } from 'fs/promises';
 import { resolve } from 'path';
@@ -177,7 +177,9 @@ export class GameService implements OnModuleInit {
     const socketsInLobbyRoom = sockets.filter((socket) => socket.rooms.has(lobby.uuid));
     const missingPlayerSockets = socketsInLobby.filter((socket) => !socketsInLobbyRoom.includes(socket));
     missingPlayerSockets.forEach((socket) => {
+      Logger.log(`missingPlayerSockets.length: ${missingPlayerSockets.length}`, 'Тестовое');
       if (socket instanceof Socket) {
+        Logger.log(`socket instanceof Socket`, 'Тестовое');
         this.lobbiesService.leaveLobby(io, socket, lobby.uuid);
       }
     });
