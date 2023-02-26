@@ -163,10 +163,23 @@ export class GameService implements OnModuleInit {
     lobby.delayedPhaseChanger.cancel();
     io.to(lobby.uuid).emit(IoOutput.changePhase, lobby.gameData);
   }
-  private async removeMissingPlayers(io: Server, lobby: Lobby): Promise<void> {
+  /* private async removeMissingPlayers(io: Server, lobby: Lobby): Promise<void> {
     const connectedSockets = await io.in(lobby.uuid).fetchSockets();
     const connectedSocketNames = connectedSockets.map((socket) => socket.handshake.auth.username);
     const missingPlayers = lobby.players.list.filter(({ username }) => !connectedSocketNames.includes(username));
-    missingPlayers.forEach(({ username }) => lobby.players.remove(username));
+    missingPlayers.forEach(({ username }) => {
+      lobby.players.remove(username);
+    });
+  } */
+  private async removeMissingPlayers(io: Server, lobby: Lobby): Promise<void> {
+    const sockets = await io.fetchSockets();
+    const socketsInLobby = sockets.filter((socket) => lobby.players.has(socket.handshake.auth.username));
+    const socketsInLobbyRoom = sockets.filter((socket) => socket.rooms.has(lobby.uuid));
+    const missingPlayerSockets = socketsInLobby.filter((socket) => !socketsInLobbyRoom.includes(socket));
+    missingPlayerSockets.forEach((socket) => {
+      if (socket instanceof Socket) {
+        this.lobbiesService.leaveLobby(io, socket, lobby.uuid);
+      }
+    });
   }
 }
