@@ -98,43 +98,75 @@ export class GameService implements OnModuleInit {
   }
 
   private nextPhase(io: Server, lobby: Lobby): void {
-    const delayedChangerCallback = (): void => this.nextPhase(io, lobby);
     if (lobby.isLastRound || lobby.phase.current !== GamePhase.VOTE_RESULTS) {
       lobby.phase.next();
     } else {
       lobby.phase.set(GamePhase.CHOOSE_SITUATION);
     }
+
     switch (lobby.phase.current) {
       case GamePhase.PREPARE:
-        lobby.reset();
-        lobby.delayedPhaseChanger.cancel();
+        this.handlePreparePhase(io, lobby);
         break;
       case GamePhase.CHOOSE_SITUATION:
-        lobby.reset();
-        lobby.rounds.update();
-        lobby.situations.setOptions(this.possibleSituations);
-        lobby.delayedPhaseChanger.set(delayedChangerCallback, lobby.createLobbyData.timerDelayChooseSituations);
+        this.handleChooseSituationPhase(io, lobby);
         break;
       case GamePhase.SITUATION:
-        lobby.updateSituation();
-        lobby.delayedPhaseChanger.set(delayedChangerCallback, lobby.createLobbyData.timerDelay);
+        this.handleSituationPhase(io, lobby);
         break;
       case GamePhase.VOTE:
-        if (lobby.hasNoPickedMemes) {
-          this.nextPhase(io, lobby);
-          return;
-        }
-        lobby.delayedPhaseChanger.set(delayedChangerCallback, lobby.createLobbyData.timerDelay);
+        this.handleVotePhase(io, lobby);
         break;
       case GamePhase.VOTE_RESULTS:
-        lobby.updateScore();
-        lobby.delayedPhaseChanger.set(delayedChangerCallback, lobby.createLobbyData.timerDelayVoteResults);
+        this.handleVoteResultsPhase(io, lobby);
         break;
       case GamePhase.END:
-        lobby.delayedPhaseChanger.cancel();
+        this.handleEndPhase(io, lobby);
         break;
       default:
     }
+
+    this.removeMissingPlayers(io, lobby);
+  }
+
+  private handlePreparePhase(io: Server, lobby: Lobby): void {
+    lobby.reset();
+    lobby.delayedPhaseChanger.cancel();
     io.to(lobby.uuid).emit(IoOutput.changePhase, lobby.gameData);
+  }
+  private handleChooseSituationPhase(io: Server, lobby: Lobby): void {
+    lobby.reset();
+    lobby.rounds.update();
+    lobby.situations.setOptions(this.possibleSituations);
+    lobby.delayedPhaseChanger.set(() => this.nextPhase(io, lobby), lobby.createLobbyData.timerDelayChooseSituations);
+    io.to(lobby.uuid).emit(IoOutput.changePhase, lobby.gameData);
+  }
+  private handleSituationPhase(io: Server, lobby: Lobby): void {
+    lobby.updateSituation();
+    lobby.delayedPhaseChanger.set(() => this.nextPhase(io, lobby), lobby.createLobbyData.timerDelay);
+    io.to(lobby.uuid).emit(IoOutput.changePhase, lobby.gameData);
+  }
+  private handleVotePhase(io: Server, lobby: Lobby): void {
+    if (lobby.hasNoPickedMemes) {
+      this.nextPhase(io, lobby);
+      return;
+    }
+    lobby.delayedPhaseChanger.set(() => this.nextPhase(io, lobby), lobby.createLobbyData.timerDelay);
+    io.to(lobby.uuid).emit(IoOutput.changePhase, lobby.gameData);
+  }
+  private handleVoteResultsPhase(io: Server, lobby: Lobby): void {
+    lobby.updateScore();
+    lobby.delayedPhaseChanger.set(() => this.nextPhase(io, lobby), lobby.createLobbyData.timerDelayVoteResults);
+    io.to(lobby.uuid).emit(IoOutput.changePhase, lobby.gameData);
+  }
+  private handleEndPhase(io: Server, lobby: Lobby): void {
+    lobby.delayedPhaseChanger.cancel();
+    io.to(lobby.uuid).emit(IoOutput.changePhase, lobby.gameData);
+  }
+  private async removeMissingPlayers(io: Server, lobby: Lobby): Promise<void> {
+    const connectedSockets = await io.in(lobby.uuid).fetchSockets();
+    const connectedSocketNames = connectedSockets.map((socket) => socket.handshake.auth.username);
+    const missingPlayers = lobby.players.list.filter(({ username }) => !connectedSocketNames.includes(username));
+    missingPlayers.forEach(({ username }) => lobby.players.remove(username));
   }
 }
