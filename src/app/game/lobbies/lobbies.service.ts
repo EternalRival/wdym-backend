@@ -103,17 +103,12 @@ export class GameLobbiesService {
 
     lobby.players.remove(username);
     this.roomsService.leaveRoom(socket, uuid);
+
     io.to(uuid).emit(IoOutput.leaveLobby, lobby.gameData);
     io.emit(IoOutput.updateLobby, lobby.lobbyData);
     this.logger.log(`Leave: ${username} -> ${lobby.createLobbyData.title}(${uuid})`);
 
-    if (!lobby.hasOwner || lobby.isEmpty) {
-      setTimeout(() => {
-        if (!lobby.hasOwner || lobby.isEmpty) {
-          this.destroyLobby(io, uuid);
-        }
-      }, 5000);
-    }
+    this.destroyLobbyIfBroken(io, lobby, 5000);
 
     return uuid;
   }
@@ -129,6 +124,16 @@ export class GameLobbiesService {
 
     io.emit(IoOutput.deleteLobby, uuid);
     return uuid;
+  }
+
+  public destroyLobbyIfBroken(io: Server, lobby: Lobby, delay: number): void {
+    if (!lobby.hasOwner || lobby.isEmpty) {
+      setTimeout(() => {
+        if (!lobby.hasOwner || lobby.isEmpty) {
+          this.destroyLobby(io, lobby.uuid);
+        }
+      }, delay);
+    }
   }
 
   public getLobby(uuid: string): Lobby {
