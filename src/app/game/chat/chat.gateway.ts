@@ -16,11 +16,11 @@ export class GameChatGateway extends IoGateway {
 
   @SubscribeMessage(IoInput.chatMessage)
   private handleMsgToServer(
-    @MessageBody('message') message: string,
     @MessageBody('room') room: string,
+    @MessageBody('message') message: string,
     @ConnectedSocket() socket: Socket,
   ): void {
-    this.chatService.handleMsgToServer(this.io, socket, message, room ?? this.GLOBAL_CHAT_NAME);
+    this.chatService.handleMsgToServer(this.io, socket, room ?? this.GLOBAL_CHAT_NAME, message);
   }
 
   public handleConnection(@ConnectedSocket() socket: Socket): void {

@@ -61,6 +61,8 @@
 
 ## xCheck
 
+<sup>Информация для тимлида проекта:</sup>
+
 1. Task: https://github.com/rolling-scopes-school/tasks/blob/master/tasks/rsclone/rsclone.md
 
 2. <details><summary>Screenshots:</summary><img src='https://user-images.githubusercontent.com/59611223/221384211-451d1507-33cd-414c-a189-eb44afbae13a.png'><img src='https://user-images.githubusercontent.com/59611223/221384234-8f61f33d-0357-46da-8fb0-1e5590df6f67.png'></details>

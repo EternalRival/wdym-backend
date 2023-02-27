@@ -5,7 +5,7 @@ export class ChatMessage implements IChatMessage {
   public timestamp: number;
   public image: string;
   public username: string;
-  constructor(socket: Socket, public message: string, public room: string) {
+  constructor(socket: Socket, public room: string, public message: string) {
     const { image, username } = socket.handshake.auth;
     this.timestamp = Date.now();
     this.image = image;

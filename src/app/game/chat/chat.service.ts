@@ -8,7 +8,7 @@ import { ChatMessage } from './classes/chat-message';
 export class GameChatService {
   public logger = new Logger(LoggerTag.CHAT);
 
-  public handleMsgToServer(io: Server, socket: Socket, message: string, room: string): void {
+  public handleMsgToServer(io: Server, socket: Socket, room: string, message: string): void {
     const chatMessage = new ChatMessage(socket, room, message);
     io.to(room).emit(IoOutput.chatMessage, chatMessage);
 
