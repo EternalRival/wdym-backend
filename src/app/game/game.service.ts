@@ -162,6 +162,7 @@ export class GameService implements OnModuleInit {
   private handleEndPhase(io: Server, lobby: Lobby): void {
     lobby.delayedPhaseChanger.cancel();
     io.to(lobby.uuid).emit(IoOutput.changePhase, lobby.gameData);
+    io.emit(IoOutput.updateLobby, lobby.lobbyData);
   }
 
   private async removeMissingPlayers(io: Server, lobby: Lobby): Promise<void> {

@@ -8,6 +8,7 @@ import { ILobbyData } from '../interfaces/lobby-data.interface';
 import { DelayedFunction } from '../../../utils/delayed-function';
 import { SituationsPicker } from './situations-picker';
 import { RoundCounter } from './round-counter';
+import { Player } from './player';
 
 export class Lobby {
   constructor(public readonly uuid: string, public readonly createLobbyData: CreateLobbyDto) {}
@@ -45,15 +46,34 @@ export class Lobby {
     return this.createLobbyData.owner === username;
   }
 
+  public getSituationChoices(): ChoiceList<Pick<Player, 'username' | 'image'>> {
+    return this.players.list.reduce((list, player) => {
+      const { username, image, situation } = player;
+      if (situation === null) {
+        return list;
+      }
+
+      if (!(situation in list)) {
+        Object.assign(list, { [situation]: [] });
+      }
+      list[situation].push({ username, image });
+
+      return list;
+    }, {} as ChoiceList<Pick<Player, 'username' | 'image'>>);
+  }
+
   public getChoices(property: Choice): ChoiceList {
     return this.players.list.reduce((list, player) => {
       const prop = player[property];
-      if (prop !== null) {
-        if (!(prop in list)) {
-          Object.assign(list, { [prop]: [] });
-        }
-        list[prop].push(player.username);
+      if (prop === null) {
+        return list;
       }
+
+      if (!(prop in list)) {
+        Object.assign(list, { [prop]: [] });
+      }
+      list[prop].push(player.username);
+
       return list;
     }, {} as ChoiceList);
   }
@@ -121,7 +141,7 @@ export class Lobby {
       players: this.players.list,
       situationOptions: this.situations.options,
       situation: this.situations.current,
-      situations: this.getChoices('situation'),
+      situations: this.getSituationChoices(),
       memes: this.getChoices('meme'),
       votes: this.getChoices('vote'),
       currentRound: this.rounds.current,

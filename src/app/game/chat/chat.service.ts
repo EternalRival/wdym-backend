@@ -8,10 +8,10 @@ import { ChatMessage } from './classes/chat-message';
 export class GameChatService {
   public logger = new Logger(LoggerTag.CHAT);
 
-  public handleMsgToServer(io: Server, socket: Socket, message: string, roomname: string): void {
-    const chatMessage = new ChatMessage(socket, message);
-    io.to(roomname).emit(IoOutput.chatMessage, chatMessage);
+  public handleMsgToServer(io: Server, socket: Socket, message: string, room: string): void {
+    const chatMessage = new ChatMessage(socket, room, message);
+    io.to(room).emit(IoOutput.chatMessage, chatMessage);
 
-    this.logger.log(`${chatMessage.timestamp}[${roomname}]${chatMessage.username}: ${message}`);
+    this.logger.log(`${chatMessage.timestamp}[${room}]${chatMessage.username}: ${message}`);
   }
 }

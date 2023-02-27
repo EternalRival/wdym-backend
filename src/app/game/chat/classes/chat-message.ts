@@ -1,16 +1,14 @@
 import { Socket } from 'socket.io';
-import { ChatMessageDto } from '../dto/chat-message.dto';
+import { IChatMessage } from '../interfaces/chat-message.interface';
 
-export class ChatMessage implements ChatMessageDto {
+export class ChatMessage implements IChatMessage {
   public timestamp: number;
   public image: string;
   public username: string;
-  public message: string;
-  constructor(socket: Socket, message: string) {
+  constructor(socket: Socket, public message: string, public room: string) {
     const { image, username } = socket.handshake.auth;
     this.timestamp = Date.now();
     this.image = image;
     this.username = username;
-    this.message = message;
   }
 }
