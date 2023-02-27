@@ -16,7 +16,7 @@ import { ILobbyData } from '../interfaces/lobby-data.interface';
 @Injectable()
 export class GameLobbiesService {
   public logger = new Logger('Lobbies');
-  private lobbyMap: Map<string, Lobby> = new Map(); // Map<Lobby['uuid'], Lobby>
+  private lobbyMap: Map<string, Lobby> = new Map();
 
   constructor(private roomsService: IoRoomsService) {}
 
@@ -170,21 +170,5 @@ export class GameLobbiesService {
         this.destroyLobby(io, lobby.uuid);
       }
     });
-  }
-
-  /** удалить на релизе */
-  public tempGetFullGameLobbyList(): unknown {
-    return Object.fromEntries(
-      [...this.lobbyMap.entries()].map(([uuid, lobby]) => [
-        uuid,
-        {
-          uuid,
-          createLobbyData: lobby.createLobbyData,
-          gameData: lobby.gameData,
-          lobbyData: lobby.lobbyData,
-          situations: lobby.situations,
-        },
-      ]),
-    );
   }
 }

@@ -26,9 +26,4 @@ export class GameChatGateway extends IoGateway {
   public handleConnection(@ConnectedSocket() socket: Socket): void {
     socket.join(this.GLOBAL_CHAT_NAME);
   }
-  /* @SubscribeMessage('kek')
-  private kek(): string {
-    throw new WsException('KEKERRORRRRRRRRRRR');
-    return 'aaaaa';
-  } */
 }

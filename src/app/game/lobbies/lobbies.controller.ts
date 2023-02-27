@@ -27,11 +27,4 @@ export class GameLobbiesController {
   private canUserJoin(@Query('username') username: string, @Query('uuid', ParseUUIDPipe) uuid: string): boolean {
     return this.lobbiesService.canUserJoin(username, uuid);
   }
-
-  /** удалить на релизе */
-  @ApiTags('⚠️Временное⚠️')
-  @Get('temp-get-full-game-lobby-list')
-  private tempGetFullGameLobbyList(): unknown {
-    return this.lobbiesService.tempGetFullGameLobbyList();
-  }
 }

@@ -40,7 +40,6 @@ export class Lobby {
   public isReadyToChangePhase(property: Choice): boolean {
     const { list, count } = this.players;
     return list.reduce((counter, player) => counter + +(player[property] !== null), 0) >= count;
-    // return list.reduce((counter, player) => (player[property] === null ? counter : counter + 1), 0) >= count;
   }
   public isOwner(username: string): boolean {
     return this.createLobbyData.owner === username;

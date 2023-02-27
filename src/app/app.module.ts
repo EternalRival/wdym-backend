@@ -45,7 +45,6 @@ import { UsersModule } from './users/users.module';
 })
 export class AppModule {
   public configure(consumer: MiddlewareConsumer): void {
-    // const excluded = ['public', 'socketio', 'images', 'js', 'styles'].map((route) => `/${route}/(.*)`);
     const excluded = ['js', 'ico', 'png', 'svg', 'woff2', 'css', 'webp', 'gif', 'html', 'jpg'].map(
       (ext) => `/(.*).${ext}`,
     );
