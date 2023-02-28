@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WDYM-Server</title>
+</head>
+<body>
+  <script>
+    const main = async () => {
+      const uptime = document.createElement('h2');
+      uptime.style.margin = 0;
+      uptime.style.fontFamily = '"Segoe UI", "sans serif"';
+      document.body.append(uptime);
+
+      const response = await fetch('/uptime');
+      let seconds = await response.text();
+
+      const toPadded = (num) => Math.floor(num).toString().padStart(2, '0')
+      const toFormatted = (time) => {
+        const h = (time / 60 / 60) % 24;
+        const m = (time / 60) % 60;
+        const s = time % 60;
+        return `${[h, m, s].map(num => toPadded(num)).join(':')}`
+      }
+
+      setInterval(() => uptime.textContent = `Uptime: ${toFormatted(++seconds)}`, 1000)
+    }
+
+    main().catch((e) => console.warn(e.message));
+  </script>
+</body>
+</html>
